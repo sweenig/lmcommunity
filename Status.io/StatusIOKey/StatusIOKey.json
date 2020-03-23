@@ -1,0 +1,46 @@
+{
+    "scheduleOption": 0,
+    "dataType": 0,
+    "description": "",
+    "appliesTo": "devicetype == \"0\" && \n(hostname =~ \".com\" || \nhostname =~ \".io\" || \nhostname =~ \".org\" || \nhostname =~ \".us\" || \nhostname =~ \".ai\")",
+    "technology": "",
+    "type": "propertyrule",
+    "params": [
+        {
+            "name": "linuxcmdline",
+            "comment": "",
+            "value": ""
+        },
+        {
+            "name": "linuxscript",
+            "comment": "",
+            "value": ""
+        },
+        {
+            "name": "scriptgroovy",
+            "comment": "",
+            "value": "import groovy.json.JsonSlurper\n\nhostname = hostProps.get(\"system.hostname\")\nshort_name = hostname.split(\"\\\\.\")[1]\n\nString getResult = new URL(\"https://${short_name}.statuspage.io/api/v2/summary.json\").text\n\nmy_json = new JsonSlurper().parseText(getResult)\n\nprintln \"statusio_key=\" + my_json['page']['id']\n\nreturn 0;"
+        },
+        {
+            "name": "scripttype",
+            "comment": "embed",
+            "value": "embed"
+        },
+        {
+            "name": "windowscmdline",
+            "comment": "",
+            "value": ""
+        },
+        {
+            "name": "windowsscript",
+            "comment": "",
+            "value": ""
+        }
+    ],
+    "version": 1584997773,
+    "tags": "",
+    "auditVersion": 0,
+    "name": "StatusIOKey",
+    "id": 140,
+    "group": "_WeenigWare"
+}

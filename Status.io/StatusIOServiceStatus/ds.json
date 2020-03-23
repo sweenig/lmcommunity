@@ -1,0 +1,259 @@
+{
+    "LMApiVersion": "3",
+    "appliesTo": "statusio_key || auto.statusio_key",
+    "auditVersion": 0,
+    "autoDiscoveryConfig": {
+        "deleteInactiveInstance": false,
+        "disableInstance": false,
+        "filters": [],
+        "instanceAutoGroupMethod": "none",
+        "instanceAutoGroupMethodParams": "",
+        "method": {
+            "groovyScript": "ad",
+            "linuxCmdline": null,
+            "linuxScript": null,
+            "name": "ad_script",
+            "type": "embeded",
+            "winCmdline": null,
+            "winScript": null
+        },
+        "persistentInstance": false,
+        "scheduleInterval": 60
+    },
+    "checksum": "40d194a9011b90b0d6a988b04ea8f6dc",
+    "collectInterval": 300,
+    "collectMethod": "batchscript",
+    "collectorAttribute": {
+        "groovyScript": "collect",
+        "linuxCmdline": "",
+        "linuxScript": "",
+        "name": "batchscript",
+        "scriptType": "embed",
+        "windowsCmdline": "",
+        "windowsScript": ""
+    },
+    "coretools_format": "ds meV1",
+    "dataPoints": [
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 1,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 2,
+            "dataType": 7,
+            "description": "Status of the particular service.\n\nStatus codes:\n0=operational,\n1=degraded performance,\n2=partial outage,\n3=major outage",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "3",
+            "minValue": "0",
+            "name": "Status",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "##WILDVALUE##.status",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        }
+    ],
+    "description": "Monitor status of services.",
+    "displayName": "Service Status",
+    "enableAutoDiscovery": true,
+    "enableEriDiscovery": false,
+    "eriDiscoveryConfig": null,
+    "eriDiscoveryInterval": -1,
+    "graphs": [
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "Status",
+                    "name": "Status"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "silver",
+                    "dataPointName": "Status",
+                    "isVirtualDataPoint": false,
+                    "legend": "Status",
+                    "type": 1
+                },
+                {
+                    "colorName": "red1",
+                    "dataPointName": "critical",
+                    "isVirtualDataPoint": true,
+                    "legend": "Critical",
+                    "type": 3
+                },
+                {
+                    "colorName": "orange",
+                    "dataPointName": "major",
+                    "isVirtualDataPoint": true,
+                    "legend": "Major",
+                    "type": 3
+                },
+                {
+                    "colorName": "yellow",
+                    "dataPointName": "minor",
+                    "isVirtualDataPoint": true,
+                    "legend": "Minor",
+                    "type": 3
+                },
+                {
+                    "colorName": "lime",
+                    "dataPointName": "none",
+                    "isVirtualDataPoint": true,
+                    "legend": "None",
+                    "type": 3
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": 0.0,
+            "name": "Status",
+            "rigid": false,
+            "timeScale": "1day",
+            "title": "Status",
+            "verticalLabel": "status code",
+            "virtualDataPoints": [
+                {
+                    "name": "none",
+                    "rpn": "1.5"
+                },
+                {
+                    "name": "minor",
+                    "rpn": "1"
+                },
+                {
+                    "name": "major",
+                    "rpn": "1"
+                },
+                {
+                    "name": "critical",
+                    "rpn": "1"
+                }
+            ],
+            "width": 360
+        },
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "Status",
+                    "name": "Status"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "olive",
+                    "dataPointName": "OK",
+                    "isVirtualDataPoint": true,
+                    "legend": "OK",
+                    "type": 2
+                },
+                {
+                    "colorName": "silver",
+                    "dataPointName": "Status",
+                    "isVirtualDataPoint": false,
+                    "legend": "Status",
+                    "type": 1
+                },
+                {
+                    "colorName": "red2",
+                    "dataPointName": "critical",
+                    "isVirtualDataPoint": true,
+                    "legend": "Critical",
+                    "type": 2
+                },
+                {
+                    "colorName": "orange2",
+                    "dataPointName": "major",
+                    "isVirtualDataPoint": true,
+                    "legend": "Major",
+                    "type": 2
+                },
+                {
+                    "colorName": "yellow",
+                    "dataPointName": "minor",
+                    "isVirtualDataPoint": true,
+                    "legend": "Minor",
+                    "type": 2
+                }
+            ],
+            "maxValue": 3.5,
+            "minValue": -0.5,
+            "name": "Status Alternate",
+            "rigid": false,
+            "timeScale": "1day",
+            "title": "Status Alternate",
+            "verticalLabel": "0=OK, 1=Minor, 2=Major, 3=Critical",
+            "virtualDataPoints": [
+                {
+                    "name": "OK",
+                    "rpn": "if(eq(status,0),0,0)"
+                },
+                {
+                    "name": "minor",
+                    "rpn": "if(and(gt(status,0),le(status,1)),1,0)"
+                },
+                {
+                    "name": "major",
+                    "rpn": "if(and(gt(status,1),lt(status,2)),2,0)"
+                },
+                {
+                    "name": "critical",
+                    "rpn": "if(and(gt(status,2),lt(status,3)),3,0)"
+                }
+            ],
+            "width": 360
+        }
+    ],
+    "group": "",
+    "hasMultiInstances": true,
+    "lineageId": "oFBUdKvUTwCM8oAyyv5wrg",
+    "name": "StatusIOServiceStatus",
+    "overviewgraphs": [
+        {
+            "aggregated": false,
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "aggregateMethod": "sum",
+                    "consolidateFunc": 1,
+                    "dataPointName": "Status",
+                    "dpName": "Status"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "silver",
+                    "dataPointName": "Status",
+                    "isVirtualDataPoint": false,
+                    "legend": "##INSTANCE##",
+                    "type": 1
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": 0.0,
+            "name": "Status",
+            "rigid": false,
+            "timeScale": "1day",
+            "title": "Status",
+            "verticalLabel": "status code",
+            "virtualDataPoints": [],
+            "width": 360
+        }
+    ],
+    "tags": "chat,zoom,networking,video",
+    "technology": "Add status.[App].io as a resource and add 'statusio_key' as a property. To find the key, go to 'https://status.[App].us/api/v2#summary', expand the example, and look for the key in the url 'https://[key].statuspage.io/api/v2/summary.json'.\nIf the FQDN is not key.statuspage.io, this version of the DS will not work."
+}

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1584980306</version>
+        <name>StatusIOServiceStatus</name>
+        <displayedas>Service Status</displayedas>
+        <description>Monitor status of services.</description>
+        <collector>batchscript</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>300</schedule>
+        <appliesTo>statusio_key || auto.statusio_key</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>/*******************************************************************************
+ * © 2007-2020 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+
+import groovy.json.JsonSlurper
+
+def statusIoKey = hostProps.get(&#34;statusio_key&#34;) ?: hostProps.get(&#34;auto.statusio_key&#34;)
+def statusIoDomain = hostProps.get(&#34;statusio_domain&#34;) ?: &#34;statuspage.io&#34;
+
+url = &#34;https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json&#34;
+
+def payload = url.toURL().getText()
+def status = new JsonSlurper().parseText(payload)
+
+status.components.each { component -&#62;
+    println &#34;${component.id}##${component.name}&#34;
+}
+
+return 0
+</wildcardgroovyscript>
+        <wildcardschedule>60</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group></group>
+        <tags>chat,zoom,networking,video</tags>
+        <technology>Add status.[App].io as a resource and add &#39;statusio_key&#39; as a property. To find the key, go to &#39;https://status.[App].us/api/v2#summary&#39;, expand the example, and look for the key in the url &#39;https://[key].statuspage.io/api/v2/summary.json&#39;.
+If the FQDN is not key.statuspage.io, this version of the DS will not work.</technology>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"/*******************************************************************************\n * © 2007-2020 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\n\nimport groovy.json.JsonSlurper\n\ndef statusIoKey = hostProps.get(\"statusio_key\") ?: hostProps.get(\"auto.statusio_key\")\ndef statusIoDomain = hostProps.get(\"statusio_domain\") ?: \"statuspage.io\"\n\nurl = \"https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json\"\n\ndef payload = url.toURL().getText()\ndef status = new JsonSlurper().parseText(payload)\n\nstatus.components.each { component ->\n    println \"${component.id}##${component.name}\"\n}\n\nreturn 0\n"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>/*******************************************************************************
+ * © 2007-2020 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+
+
+import groovy.json.JsonSlurper
+
+def statusIoKey = hostProps.get(&#34;statusio_key&#34;)
+def statusIoDomain = hostProps.get(&#34;statusio_domain&#34;) ?: &#34;statuspage.io&#34;
+
+url = &#34;https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json&#34;
+
+def STATUS_MAP = [&#34;operational&#34;:0, &#34;degraded_performance&#34;: 1, &#34;partial_outage&#34;: 2, &#34;major_outage&#34;: 3]
+
+def payload = url.toURL().getText()
+def status = new JsonSlurper().parseText(payload)
+
+status.components.each { component -&#62;
+    println &#34;${component.id}.status=${STATUS_MAP.get(component.status, component.status)}&#34;
+}
+
+return 0</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>Status</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.status</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Status of the particular service.
+
+Status codes:
+0=operational,
+1=degraded performance,
+2=partial outage,
+3=major outage</description>
+            <maxvalue>3</maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>2</alertTransitionIval>
+            <alertClearTransitionIval>1</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Status</name>
+            <title>Status</title>
+            <verticallabel>status code</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>Status</name>
+            <datapointname>Status</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+        <graphvirtualdatapoint>
+            <name>none</name>
+            <rpn>1.5</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>minor</name>
+            <rpn>1</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>major</name>
+            <rpn>1</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>critical</name>
+            <rpn>1</rpn>
+        </graphvirtualdatapoint>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Status</legend>
+                <color>silver</color>
+                <datapointname>Status</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Critical</legend>
+                <color>red1</color>
+                <datapointname>critical</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Major</legend>
+                <color>orange</color>
+                <datapointname>major</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Minor</legend>
+                <color>yellow</color>
+                <datapointname>minor</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>None</legend>
+                <color>lime</color>
+                <datapointname>none</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Status Alternate</name>
+            <title>Status Alternate</title>
+            <verticallabel>0=OK, 1=Minor, 2=Major, 3=Critical</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>3.5</maxvalue>
+            <minvalue>-0.5</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>Status</name>
+            <datapointname>Status</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+        <graphvirtualdatapoint>
+            <name>OK</name>
+            <rpn>if(eq(status,0),0,0)</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>minor</name>
+            <rpn>if(and(gt(status,0),le(status,1)),1,0)</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>major</name>
+            <rpn>if(and(gt(status,1),lt(status,2)),2,0)</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>critical</name>
+            <rpn>if(and(gt(status,2),lt(status,3)),3,0)</rpn>
+        </graphvirtualdatapoint>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>2</type>
+                <legend>OK</legend>
+                <color>olive</color>
+                <datapointname>OK</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>1</type>
+                <legend>Status</legend>
+                <color>silver</color>
+                <datapointname>Status</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>2</type>
+                <legend>Critical</legend>
+                <color>red2</color>
+                <datapointname>critical</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>2</type>
+                <legend>Major</legend>
+                <color>orange2</color>
+                <datapointname>major</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>2</type>
+                <legend>Minor</legend>
+                <color>yellow</color>
+                <datapointname>minor</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        <overviewgraph>
+            <name>Status</name>
+            <title>Status</title>
+            <verticallabel>status code</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <aggregated>false</aggregated>
+            <datapoints>
+        <overviewgraphdatapoint>
+            <name>Status</name>
+            <datapointname>Status</datapointname>
+            <cf>1</cf>
+            <aggregateMethod>sum</aggregateMethod>
+        </overviewgraphdatapoint>
+            </datapoints>
+            <virtualdatapoints>
+            </virtualdatapoints>
+            <lines>
+            <overviewgraphline>
+                <type>1</type>
+                <legend>##INSTANCE##</legend>
+                <datapointname>Status</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>silver</color>
+            </overviewgraphline>
+            </lines>
+        </overviewgraph>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
