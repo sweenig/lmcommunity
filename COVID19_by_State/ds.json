@@ -6,8 +6,8 @@
         "deleteInactiveInstance": true,
         "disableInstance": false,
         "filters": [],
-        "instanceAutoGroupMethod": "none",
-        "instanceAutoGroupMethodParams": "",
+        "instanceAutoGroupMethod": "ilp",
+        "instanceAutoGroupMethodParams": "auto.country",
         "method": {
             "groovyScript": "ad",
             "linuxCmdline": null,
@@ -18,9 +18,9 @@
             "winScript": null
         },
         "persistentInstance": false,
-        "scheduleInterval": 0
+        "scheduleInterval": 1440
     },
-    "checksum": "a3dc8906d4e506f86d1017bf9d90685b",
+    "checksum": "28536ab67a17c93333728bfd51aa9f84",
     "collectInterval": 60,
     "collectMethod": "batchscript",
     "collectorAttribute": {
@@ -149,7 +149,7 @@
             "width": 360
         }
     ],
-    "group": "_WeenigWare",
+    "group": "_WeenigWare Community",
     "hasMultiInstances": true,
     "lineageId": "WMuZp-IkQ0irQXC6XqZM1A",
     "name": "COVID19_by_State",
@@ -173,7 +173,7 @@
                     "dataPointName": "dat",
                     "isVirtualDataPoint": false,
                     "legend": "##INSTANCE##",
-                    "type": 3
+                    "type": 1
                 }
             ],
             "maxValue": "NaN",
@@ -205,7 +205,7 @@
                     "dataPointName": "dat",
                     "isVirtualDataPoint": false,
                     "legend": "##INSTANCE##",
-                    "type": 3
+                    "type": 1
                 }
             ],
             "maxValue": "NaN",

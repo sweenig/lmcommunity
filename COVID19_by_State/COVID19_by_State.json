@@ -1,15 +1,15 @@
 {
   "id" : 13104224,
   "description" : "Gathers statistics about COVID-19",
-  "group" : "_WeenigWare",
+  "group" : "_WeenigWare Community",
   "appliesTo" : "finnhub.api.key",
   "technology" : "Created by Matt Kerfoot\n\nMust have an API key for Finnhub.io. The API key must be saved as a new custom property under the device you want to run this datasource on called, \"finnhub.api.key\" with the value being the API Key.",
   "tags" : "",
-  "checksum" : "a3dc8906d4e506f86d1017bf9d90685b",
+  "checksum" : "28536ab67a17c93333728bfd51aa9f84",
   "lineageId" : "WMuZp-IkQ0irQXC6XqZM1A",
   "name" : "COVID19_by_State",
   "displayName" : "COVID 19 by State",
-  "version" : 1584974687,
+  "version" : 1584976521,
   "auditVersion" : 0,
   "hasMultiInstances" : true,
   "collectInterval" : 60,
@@ -28,9 +28,9 @@
     "persistentInstance" : false,
     "disableInstance" : false,
     "deleteInactiveInstance" : true,
-    "instanceAutoGroupMethod" : "none",
-    "instanceAutoGroupMethodParams" : "",
-    "scheduleInterval" : 0,
+    "instanceAutoGroupMethod" : "ilp",
+    "instanceAutoGroupMethodParams" : "auto.country",
+    "scheduleInterval" : 1440,
     "method" : {
       "name" : "ad_script",
       "type" : "embeded",
@@ -38,7 +38,7 @@
       "winCmdline" : null,
       "linuxCmdline" : null,
       "linuxScript" : null,
-      "groovyScript" : "import groovy.json.JsonSlurper\njsondata = new URL(\"https://finnhub.io/api/v1/covid19/us?token=${hostProps.get('finnhub.api.key')}\").getText()\nobjectdata = new JsonSlurper().parseText(jsondata)\nobjectdata.each{\n  state = it.state.trim()\n  if (state.size() > 0){println(\"${state.replaceAll(/[\\s,\\.]/,\"\")}##${state}\")}\n}\nreturn 0\n"
+      "groovyScript" : "import groovy.json.JsonSlurper\njsondata = new URL(\"https://finnhub.io/api/v1/covid19/us?token=${hostProps.get('finnhub.api.key')}\").getText()\nobjectdata = new JsonSlurper().parseText(jsondata)\ncountries = [\n    canada: [\"Alberta\",\"British Columbia\",\"Manitoba\",\"New Brunswick\",\"Newfoundland and Labrador\",\"Northwest Territories\",\"Nova Scotia\",\"Nunavut\",\"Ontario\",\"Prince Edward Island\",\"Quebec\",\"Saskatchewan\",\"Yukon\"],\n    ships: [\"Diamond Princess\", \"Grand Princess\",\"Wuhan Evacuee\"]\n]\n\nobjectdata.each{\n  state = it.state.trim()\n  if (countries.canada.contains(state)) {country = \"Canada\"}\n  else if (countries.ships.contains(state)) {country = \"Other\"}\n  else country = \"US\"\n  if (state.size() > 0){println(\"${state.replaceAll(/[\\s,\\.]/,\"\")}##${state}######country=${country}\")}\n}\nreturn 0\n"
     },
     "filters" : [ ]
   },
