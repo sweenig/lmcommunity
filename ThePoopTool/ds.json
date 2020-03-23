@@ -3,7 +3,7 @@
     "appliesTo": "stash.count && stash.date && stash.people",
     "auditVersion": 0,
     "autoDiscoveryConfig": null,
-    "checksum": "ea89fe6e821c4e2cbacd46aac4d9cc6a",
+    "checksum": "32c52e5338c70bc1cf2a64285343bad0",
     "collectInterval": 60,
     "collectMethod": "script",
     "collectorAttribute": {
@@ -85,5 +85,5 @@
     "name": "ThePoopTool",
     "overviewgraphs": [],
     "tags": "",
-    "technology": ""
+    "technology": "Set the following properties:\nstash.date => the date the next property was accurate\nstash.count => the number of rolls you have\nstash.people => number of people using the stash"
 }

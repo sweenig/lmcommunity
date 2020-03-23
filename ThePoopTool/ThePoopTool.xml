@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1585001590</version>
+        <version>1585001999</version>
         <name>ThePoopTool</name>
         <displayedas>The Poop Tool</displayedas>
         <description></description>
@@ -27,7 +27,10 @@
         <agdparams></agdparams>
         <group>_WeenigWare</group>
         <tags></tags>
-        <technology></technology>
+        <technology>Set the following properties:
+stash.date =&#62; the date the next property was accurate
+stash.count =&#62; the number of rolls you have
+stash.people =&#62; number of people using the stash</technology>
         <adlist><![CDATA[{"agdmethod":"none","agdparams":"","id":0,"filters":[],"params":{}}]]></adlist>
         <schemaVersion>2</schemaVersion>
         <dataSourceType>1</dataSourceType>
