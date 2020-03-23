@@ -173,7 +173,7 @@
                     "dataPointName": "dat",
                     "isVirtualDataPoint": false,
                     "legend": "##INSTANCE##",
-                    "type": 1
+                    "type": 3
                 }
             ],
             "maxValue": "NaN",
@@ -205,7 +205,7 @@
                     "dataPointName": "dat",
                     "isVirtualDataPoint": false,
                     "legend": "##INSTANCE##",
-                    "type": 1
+                    "type": 3
                 }
             ],
             "maxValue": "NaN",

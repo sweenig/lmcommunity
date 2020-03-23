@@ -215,7 +215,7 @@ return 0</value>
             </virtualdatapoints>
             <lines>
             <overviewgraphline>
-                <type>1</type>
+                <type>3</type>
                 <legend>##INSTANCE##</legend>
                 <datapointname>dat</datapointname>
                 <isvirtualdatapoint>false</isvirtualdatapoint>
@@ -246,7 +246,7 @@ return 0</value>
             </virtualdatapoints>
             <lines>
             <overviewgraphline>
-                <type>1</type>
+                <type>3</type>
                 <legend>##INSTANCE##</legend>
                 <datapointname>dat</datapointname>
                 <isvirtualdatapoint>false</isvirtualdatapoint>
