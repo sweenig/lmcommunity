@@ -1,0 +1,894 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1580322711</version>
+        <name>Resource_Group_Member_Counts</name>
+        <displayedas>Resource Group Member Counts</displayedas>
+        <description>Gives group level count statistics: number of hosts, number of cloud resources, etc.</description>
+        <collector>batchscript</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>60</schedule>
+        <appliesTo>billing_api.id &#38;&#38; billing_api.pass &#38;&#38; billing_api.account</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>/*******************************************************************************
+ * © 2007-2020 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+import org.apache.commons.codec.binary.Hex
+import groovy.json.JsonSlurper
+
+boolean ad = true
+boolean info = false
+
+Map credentials = [
+  &#34;id&#34;   : hostProps.get(&#34;billing_api.id&#34;),
+  &#34;key&#34;  : hostProps.get(&#34;billing_api.pass&#34;),
+  &#34;account&#34;: hostProps.get(&#34;billing_api.account&#34;)
+]
+
+Map resources = [
+  &#34;devices&#34;: [&#34;path&#34;: &#34;/device/groups&#34;, &#34;details&#34;: [&#34;fields&#34;: &#34;id,fullPath,groupType,parentId&#34;, &#34;sort&#34;:&#34;+fullPath&#34;]],
+]
+
+if (credentials.account &#38;&#38; credentials.id &#38;&#38; credentials.key) {
+  resources.each() { k, v -&#62;
+    Map headers = generate_headers(credentials.id, credentials.key, v.path)
+    if (headers) {
+      Map response = get_response(k, v, credentials.account, headers)
+      if (response?.success) {resources[k][&#34;data&#34;] = response.response}
+    }
+  }
+} else {
+  println(&#34;&#34;&#34;Device is not configured with the necessary portal credentials to proceed with API queries.
+Please ensure that \&#34;billing_api.id\&#34;, \&#34;billing_api.pass\&#34;, and \&#34;billing_api.account\&#34; are set in the collector properties section!
+Exiting Program...&#34;&#34;&#34;)
+  return 1
+}
+
+Map groups = [:]
+resources.devices.data.each(){
+  groups[it.id] = [&#34;id&#34;:it.id, &#34;fullPath&#34;:it.fullPath, &#34;groupType&#34;:it.groupType, &#34;parentId&#34;:it.parentId]
+}
+
+groups.each(){k, v -&#62;
+  if (ad){
+    path = v.fullPath.tokenize(&#34;/&#34;)
+    println(&#34;${v.id}##${(v.fullPath ?: &#34;(root)&#34;).replaceAll(&#34;/&#34;,&#34;-&#34;)}######groupType=${v.groupType}&#38;fullPath=${v.fullPath}&#38;depth=${path.size()}&#34;)
+  } else {
+    println(&#34;${v.id}.alarmCount: ${v.alarmCount}&#34;)
+  }
+}
+
+return 0
+
+def generate_headers(id, key, path) {
+  try {
+    // Create encryption signature for authorization request
+    Long epoch_time = System.currentTimeMillis()  // Get current system time (epoch time)
+    Mac hmac = Mac.getInstance(&#34;HmacSHA256&#34;)
+    hmac.init(new SecretKeySpec(key.getBytes(), &#34;HmacSHA256&#34;))
+    signature = Hex.encodeHexString(hmac.doFinal(&#34;GET${epoch_time}${path}&#34;.getBytes())).bytes.encodeBase64()
+    // return headers to main function
+    return [&#34;Authorization&#34;: &#34;LMv1 $id:$signature:$epoch_time&#34;, &#34;Content-Type&#34;: &#34;application/json&#34;]
+  } catch (Exception err) {
+    // If error occurred, print the error message
+    println(&#34;ERROR: Unable to establish encryption for $path. Attempting next resource...\n${err.message}&#34;)
+  }
+}
+
+def get_response(resource, parameters, account, headers) {
+  try {
+    boolean proceed = true  // Boolean used to determine if additional pagination is required
+    // Map to store query results for each endpoint.  Contains a list to store actual returned values and a boolean to determine if successful
+    Map results = [&#34;response&#34;: [],
+             &#34;success&#34; : true]
+    add_query_parameters(resource, parameters)
+    // Add initial offset and size values to appropriate categories (skips metrics category since it&#39;s stagnate)
+    while (proceed) {
+      // Used for paginating through all availabe results.  Grabs 1000 at a time and moves offset if another query is required.
+      Map query = query_resource(account, parameters, headers)
+      // Query each API endpoint for a response (Should receive as Map)
+      // If the response was successful (including status and error messages), proceed to printing results
+      if (query &#38;&#38; query?.data &#38;&#38; query?.status == 200 &#38;&#38; query?.errmsg?.toUpperCase() == &#34;OK&#34;) {
+        if (resource != &#34;metrics&#34;) {
+          results.response.addAll(query.data.items)   // Add all the data items found to our results map data list
+          if (query?.data?.items?.size() &#60; parameters.details.size) {
+            // If we received less than 1000 results
+            proceed = false   // There is no need to execute another API query with a shifted offset
+          } else {    // Otherwise
+            parameters.details.offset += parameters.details.size
+            // Shift the offset to start 1000 numbers from current position
+          }
+        } else {
+          results.response = query.data   // Add all the data items found to our results map data list
+          proceed = false   // We&#39;ve successfully queried all values.  End while loop
+        }
+      } else {
+        // If response was not successful, print eror message for each category that failed and continue to next endpoint
+        // If response error and status can be determined, print them.  Otherwise, use UNKNOWN
+        println(&#34;ERROR: Failed to query $resource API Endpoint...\n&#34; +
+            &#34;${query?.errmsg?.toUpperCase() ?: &#39;UNKNOWN&#39;} (STATUS: ${query?.status ?: &#39;UNKNOWN&#39;})&#34;)
+        results.success = false   // Set success value to false since we failed our API query
+        proceed = false   // End while loop because of failure and proceed to next endpoint
+      }
+    }
+    return results  // Return results to main function
+  } catch (Exception err) {
+    println(&#34;ERROR: Script failed while attempting to query $resource API endpoint...\n${err?.message}&#34;)
+  }
+}
+
+def add_query_parameters(category, parameters) {
+  // Add size and offset field to map (only if collectors or admins category)
+  if (category != &#34;metrics&#34;) {
+    Map query_details = [&#34;size&#34;  : 1000, &#34;offset&#34;: 0]
+    // If there&#39;s already a details key in the details map
+    if (parameters.details) {
+      parameters.details &#60;&#60; query_details
+      // Append the query details information to the pre-existing details map
+    } else {  // Otherwise, create a details key and assign it the query details map as a value
+      parameters.put(&#34;details&#34;, query_details)
+    }
+  }
+}
+
+def query_resource(account, details, headers) {
+  try {
+    // Configure request url from account, path, and authorization headers
+    String url = &#34;https://${account}.logicmonitor.com/santaba/rest${details.path}?${pack_parameters(details.details)}&#34;
+    // Return query response, converted from JSON to usable map
+    return new JsonSlurper().parseText(url.toURL().getText(useCaches: true, allowUserInteraction: false, requestProperties: headers))
+  } catch (Exception err) { // If error occurred, print the error message
+    println(&#34;ERROR: Unable to query ${details.path} for details.\n${err.message}&#34;)
+  }
+}
+
+def pack_parameters(query_details) { // If additional query details are located in map, include them in url string
+  List pairs = []
+  query_details?.each { k, v -&#62; pairs.add(&#34;${k}=${v}&#34;)}
+  return pairs.join(&#34;&#38;&#34;)
+}
+</wildcardgroovyscript>
+        <wildcardschedule>15</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare Billing</group>
+        <tags></tags>
+        <technology>Set Auto Discovery filter &#34;auto.depth &#60;= 1&#34; to determine which group levels are included. Auto.depth represents the number of levels below the root the group resides.
+To calculate valid costs, set billing_api.[aws|azure|gcp|resource]_cost properties on the collector where the billing api id, pass, and account are defined or on the instances themselves (if you wanted a different value per instance).
+Supporting documentation can be found at https://stuart.weenig.com/2019/11/counting-resources-per-group.html</technology>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[{"attribute":"auto.fullPath","operation":"RegexNotMatch","value":"type|Minimal|My Devices"},{"attribute":"auto.groupType","operation":"Equal","value":"Normal"},{"attribute":"auto.depth","operation":"LessEqual","value":"2"}],"params":{"type":"embeded","groovyscript":"/*******************************************************************************\n * © 2007-2020 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\n\nimport javax.crypto.Mac\nimport javax.crypto.spec.SecretKeySpec\nimport org.apache.commons.codec.binary.Hex\nimport groovy.json.JsonSlurper\n\nboolean ad = true\nboolean info = false\n\nMap credentials = [\n  \"id\"   : hostProps.get(\"billing_api.id\"),\n  \"key\"  : hostProps.get(\"billing_api.pass\"),\n  \"account\": hostProps.get(\"billing_api.account\")\n]\n\nMap resources = [\n  \"devices\": [\"path\": \"/device/groups\", \"details\": [\"fields\": \"id,fullPath,groupType,parentId\", \"sort\":\"+fullPath\"]],\n]\n\nif (credentials.account && credentials.id && credentials.key) {\n  resources.each() { k, v ->\n    Map headers = generate_headers(credentials.id, credentials.key, v.path)\n    if (headers) {\n      Map response = get_response(k, v, credentials.account, headers)\n      if (response?.success) {resources[k][\"data\"] = response.response}\n    }\n  }\n} else {\n  println(\"\"\"Device is not configured with the necessary portal credentials to proceed with API queries.\nPlease ensure that \\\"billing_api.id\\\", \\\"billing_api.pass\\\", and \\\"billing_api.account\\\" are set in the collector properties section!\nExiting Program...\"\"\")\n  return 1\n}\n\nMap groups = [:]\nresources.devices.data.each(){\n  groups[it.id] = [\"id\":it.id, \"fullPath\":it.fullPath, \"groupType\":it.groupType, \"parentId\":it.parentId]\n}\n\ngroups.each(){k, v ->\n  if (ad){\n    path = v.fullPath.tokenize(\"/\")\n    println(\"${v.id}##${(v.fullPath ?: \"(root)\").replaceAll(\"/\",\"-\")}######groupType=${v.groupType}&fullPath=${v.fullPath}&depth=${path.size()}\")\n  } else {\n    println(\"${v.id}.alarmCount: ${v.alarmCount}\")\n  }\n}\n\nreturn 0\n\ndef generate_headers(id, key, path) {\n  try {\n    // Create encryption signature for authorization request\n    Long epoch_time = System.currentTimeMillis()  // Get current system time (epoch time)\n    Mac hmac = Mac.getInstance(\"HmacSHA256\")\n    hmac.init(new SecretKeySpec(key.getBytes(), \"HmacSHA256\"))\n    signature = Hex.encodeHexString(hmac.doFinal(\"GET${epoch_time}${path}\".getBytes())).bytes.encodeBase64()\n    // return headers to main function\n    return [\"Authorization\": \"LMv1 $id:$signature:$epoch_time\", \"Content-Type\": \"application/json\"]\n  } catch (Exception err) {\n    // If error occurred, print the error message\n    println(\"ERROR: Unable to establish encryption for $path. Attempting next resource...\\n${err.message}\")\n  }\n}\n\ndef get_response(resource, parameters, account, headers) {\n  try {\n    boolean proceed = true  // Boolean used to determine if additional pagination is required\n    // Map to store query results for each endpoint.  Contains a list to store actual returned values and a boolean to determine if successful\n    Map results = [\"response\": [],\n             \"success\" : true]\n    add_query_parameters(resource, parameters)\n    // Add initial offset and size values to appropriate categories (skips metrics category since it's stagnate)\n    while (proceed) {\n      // Used for paginating through all availabe results.  Grabs 1000 at a time and moves offset if another query is required.\n      Map query = query_resource(account, parameters, headers)\n      // Query each API endpoint for a response (Should receive as Map)\n      // If the response was successful (including status and error messages), proceed to printing results\n      if (query && query?.data && query?.status == 200 && query?.errmsg?.toUpperCase() == \"OK\") {\n        if (resource != \"metrics\") {\n          results.response.addAll(query.data.items)   // Add all the data items found to our results map data list\n          if (query?.data?.items?.size() < parameters.details.size) {\n            // If we received less than 1000 results\n            proceed = false   // There is no need to execute another API query with a shifted offset\n          } else {    // Otherwise\n            parameters.details.offset += parameters.details.size\n            // Shift the offset to start 1000 numbers from current position\n          }\n        } else {\n          results.response = query.data   // Add all the data items found to our results map data list\n          proceed = false   // We've successfully queried all values.  End while loop\n        }\n      } else {\n        // If response was not successful, print eror message for each category that failed and continue to next endpoint\n        // If response error and status can be determined, print them.  Otherwise, use UNKNOWN\n        println(\"ERROR: Failed to query $resource API Endpoint...\\n\" +\n            \"${query?.errmsg?.toUpperCase() ?: 'UNKNOWN'} (STATUS: ${query?.status ?: 'UNKNOWN'})\")\n        results.success = false   // Set success value to false since we failed our API query\n        proceed = false   // End while loop because of failure and proceed to next endpoint\n      }\n    }\n    return results  // Return results to main function\n  } catch (Exception err) {\n    println(\"ERROR: Script failed while attempting to query $resource API endpoint...\\n${err?.message}\")\n  }\n}\n\ndef add_query_parameters(category, parameters) {\n  // Add size and offset field to map (only if collectors or admins category)\n  if (category != \"metrics\") {\n    Map query_details = [\"size\"  : 1000, \"offset\": 0]\n    // If there's already a details key in the details map\n    if (parameters.details) {\n      parameters.details << query_details\n      // Append the query details information to the pre-existing details map\n    } else {  // Otherwise, create a details key and assign it the query details map as a value\n      parameters.put(\"details\", query_details)\n    }\n  }\n}\n\ndef query_resource(account, details, headers) {\n  try {\n    // Configure request url from account, path, and authorization headers\n    String url = \"https://${account}.logicmonitor.com/santaba/rest${details.path}?${pack_parameters(details.details)}\"\n    // Return query response, converted from JSON to usable map\n    return new JsonSlurper().parseText(url.toURL().getText(useCaches: true, allowUserInteraction: false, requestProperties: headers))\n  } catch (Exception err) { // If error occurred, print the error message\n    println(\"ERROR: Unable to query ${details.path} for details.\\n${err.message}\")\n  }\n}\n\ndef pack_parameters(query_details) { // If additional query details are located in map, include them in url string\n  List pairs = []\n  query_details?.each { k, v -> pairs.add(\"${k}=${v}\")}\n  return pairs.join(\"&\")\n}\n"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>/*******************************************************************************
+ *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+import org.apache.commons.codec.binary.Hex
+import groovy.json.JsonSlurper
+
+CLIENTS_FOLDER_NAME = hostProps.get(&#34;billing_api.client_path&#34;) ?: &#34;Fred Hutchinson Devices by Location&#34;
+BILLING_TYPES_PARENT_FOLDER_NAME = hostProps.get(&#34;billing_api.types_parent_path&#34;) ?: &#34;Devices by Billing Type&#34;
+
+accessId = hostProps.get(&#34;billing_api.id&#34;)
+accessKey = hostProps.get(&#34;billing_api.pass&#34;)
+account = hostProps.get(&#34;billing_api.account&#34;)
+queryLimit = hostProps.get(&#34;billing_api.query_limit&#34;) ? hostProps.get(&#34;billing_api.query_limit&#34;).toInteger() : 1000
+
+s = new JsonSlurper()
+
+def LMAPI(_verb, _accessId, _accessKey, _account, _resourcePath, _queryParameters = [:], _data = &#39;&#39;) {
+    url = &#39;https://&#39; + _account + &#39;.logicmonitor.com&#39; + &#39;/santaba/rest/&#39; + _resourcePath
+    if (_queryParameters.size() &#62; 0) {
+        _encodedQueryParameters = []
+        _queryParameters.each{k,v -&#62;
+            _encodedQueryParameters += &#34;${k}=${java.net.URLEncoder.encode(v)}&#34;
+        }
+        url += &#34;?&#34; + _encodedQueryParameters.join(&#34;&#38;&#34;)
+    } else {url += &#34;/&#34;}
+    epoch = System.currentTimeMillis()
+    requestVars = _verb + epoch + &#34;/&#34; + _resourcePath
+    hmac = Mac.getInstance(&#39;HmacSHA256&#39;)
+    secret = new SecretKeySpec(_accessKey.getBytes(), &#39;HmacSHA256&#39;)
+    hmac.init(secret)
+    hmac_signed = Hex.encodeHexString(hmac.doFinal(requestVars.getBytes()))
+    signature = hmac_signed.bytes.encodeBase64()
+    CloseableHttpClient myHttpClient = HttpClients.createDefault()
+    http_request = new HttpGet(url)
+    http_request.addHeader(&#34;Authorization&#34; , &#34;LMv1 &#34; + _accessId + &#34;:&#34; + signature + &#34;:&#34; + epoch)
+    http_request.setHeader(&#34;X-Version&#34;, &#34;2&#34;)
+    response = myHttpClient.execute(http_request)
+    responseBody = EntityUtils.toString(response.getEntity())
+    code = response.getStatusLine().getStatusCode()
+    myHttpClient.close()
+    responseDict = [:]
+    responseDict[&#39;code&#39;] = code ?: null
+    responseDict[&#39;body&#39;] = responseBody ?: null
+    return responseDict
+}
+
+def LmGet(String _resourcePath, Map _queryParameters = [:]){return LMAPI(&#34;GET&#34;, accessId, accessKey, account, _resourcePath, _queryParameters)}
+
+queryParameters = [
+&#39;fields&#39;:&#39;groupType,fullPath,id,numOfHosts,parentId,numOfAWSDevices,numOfAzureDevices,numOfDirectDevices,numOfDirectSubGroups,numOfGcpDevices&#39;,
+&#39;sort&#39;:&#39;+fullPath&#39;,
+&#39;size&#39;:queryLimit.toString()
+]
+data_json = LmGet(&#34;device/groups&#34;,queryParameters)
+data = s.parseText(data_json.body).items
+data.each{
+  path = it.fullPath.tokenize(&#34;/&#34;)
+  println(&#34;${it.id}.numOfHosts: ${it.numOfHosts}&#34;)
+  println(&#34;${it.id}.numOfAWSDevices: ${it.numOfAWSDevices}&#34;)
+  println(&#34;${it.id}.numOfAzureDevices: ${it.numOfAzureDevices}&#34;)
+  println(&#34;${it.id}.numOfDirectDevices: ${it.numOfDirectDevices}&#34;)
+  println(&#34;${it.id}.numOfDirectSubGroups: ${it.numOfDirectSubGroups}&#34;)
+  println(&#34;${it.id}.numOfGcpDevices: ${it.numOfGcpDevices}&#34;)
+}
+
+return 0</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_0</name>
+            <value>auto.fullPath	RegexNotMatch	type|Minimal|My Devices</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_1</name>
+            <value>auto.groupType	Equal	Normal</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_2</name>
+            <value>auto.depth	LessEqual	2</value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>Total_Cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>aws_total_cost + azure_total_cost + gcp_total_cost + host_total_cost</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>collection_time</name>
+            <dataType>4</dataType>
+            <type>2</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam></postprocessorparam>
+            <usevalue>responseTime</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Measures the amount of time spent fetching data from the LM API.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>aws_count</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.numOfAWSDevices</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Total count of all AWS descendant instances.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>aws_total_cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>aws_count * if(un(aws_unit_cost),0,aws_unit_cost)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>azure_count</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.numOfAzureDevices</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>azure_total_cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>azure_count * if(un(azure_unit_cost),0,azure_unit_cost)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>gcp_total_cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>gcp_count * if(un(gcp_unit_cost),0,gcp_unit_cost)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>gcp_count</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.numOfGcpDevices</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>Total_Count</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.numOfHosts</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Count of all descendants under the group.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>host_total_cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>host_count * if(un(host_unit_cost),0,host_unit_cost)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>aws_unit_cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>##billing_api.aws_cost##</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>azure_unit_cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>##billing_api.azure_cost##</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>gcp_unit_cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>##billing_api.gcp_cost##</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>host_unit_cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>##billing_api.resource_cost##</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>host_count</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>Total_Count - aws_count - azure_count - gcp_count</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>aws_unit_cost_display</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>if(un(aws_unit_cost),0,aws_unit_cost)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>azure_unit_cost_display</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>if(un(azure_unit_cost),0,azure_unit_cost)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>gcp_cost_display</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>if(un(gcp_unit_cost),0,gcp_unit_cost)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>host_cost_display</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>if(un(host_unit_cost),0,host_unit_cost)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Device Cost</name>
+            <title>Device Cost</title>
+            <verticallabel>$</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1month</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>numOfAWSDevices</name>
+            <datapointname>aws_total_cost</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>numOfAzureDevices</name>
+            <datapointname>azure_total_cost</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>numOfGcpDevices</name>
+            <datapointname>gcp_total_cost</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>numOfHosts</name>
+            <datapointname>host_total_cost</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>Total_Count</name>
+            <datapointname>Total_Cost</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Total Cost</legend>
+                <color>red</color>
+                <datapointname>Total_Count</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>AWS Cost</legend>
+                <color>blue</color>
+                <datapointname>numOfAWSDevices</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Azure Cost</legend>
+                <color>olive</color>
+                <datapointname>numOfAzureDevices</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>GCP Cost</legend>
+                <color>fuchsia</color>
+                <datapointname>numOfGcpDevices</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Resource Cost</legend>
+                <color>silver</color>
+                <datapointname>numOfHosts</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Device Count (All descendants)</name>
+            <title>Device Count (All descendants)</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1month</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>aws_count</name>
+            <datapointname>aws_count</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>azure_count</name>
+            <datapointname>azure_count</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>gcp_count</name>
+            <datapointname>gcp_count</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>host_count</name>
+            <datapointname>host_count</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>total_count</name>
+            <datapointname>Total_Count</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>3</type>
+                <legend>AWS</legend>
+                <color>blue</color>
+                <datapointname>aws_count</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Azure</legend>
+                <color>olive</color>
+                <datapointname>azure_count</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>GCP</legend>
+                <color>fuchsia</color>
+                <datapointname>gcp_count</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Resources</legend>
+                <color>silver</color>
+                <datapointname>host_count</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>1</type>
+                <legend>Total</legend>
+                <color>red</color>
+                <datapointname>total_count</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>

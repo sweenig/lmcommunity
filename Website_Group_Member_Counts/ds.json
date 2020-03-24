@@ -1,0 +1,294 @@
+{
+    "LMApiVersion": "3",
+    "appliesTo": "billing_api.id && billing_api.pass && billing_api.account",
+    "auditVersion": 0,
+    "autoDiscoveryConfig": {
+        "deleteInactiveInstance": false,
+        "disableInstance": false,
+        "filters": [
+            {
+                "attribute": "auto.fullPath",
+                "comment": "",
+                "operation": "RegexNotMatch",
+                "value": "Action"
+            },
+            {
+                "attribute": "auto.depth",
+                "comment": "",
+                "operation": "RegexMatch",
+                "value": "2|0"
+            }
+        ],
+        "instanceAutoGroupMethod": "none",
+        "instanceAutoGroupMethodParams": "",
+        "method": {
+            "groovyScript": "ad",
+            "linuxCmdline": null,
+            "linuxScript": null,
+            "name": "ad_script",
+            "type": "embeded",
+            "winCmdline": null,
+            "winScript": null
+        },
+        "persistentInstance": false,
+        "scheduleInterval": 15
+    },
+    "checksum": "c100a779329c504d83fb356482e4dc5b",
+    "collectInterval": 60,
+    "collectMethod": "batchscript",
+    "collectorAttribute": {
+        "groovyScript": "collect",
+        "linuxCmdline": "",
+        "linuxScript": "",
+        "name": "batchscript",
+        "scriptType": "embed",
+        "windowsCmdline": "",
+        "windowsScript": ""
+    },
+    "coretools_format": "ds meV1",
+    "dataPoints": [
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 4,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "collection_time",
+            "postProcessorMethod": "none",
+            "postProcessorParam": "",
+            "rawDataFieldName": "responseTime",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "numOfDirectWebsites",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "##WILDVALUE##.numOfDirectWebsites",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "Count of all descendants under the group.",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "numOfWebsites",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "##WILDVALUE##.numOfWebsites",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "numOfWebsites_Cost",
+            "postProcessorMethod": "expression",
+            "postProcessorParam": "numOfWebsites * if(un(website_cost),0,website_cost)",
+            "rawDataFieldName": "",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "website_cost",
+            "postProcessorMethod": "expression",
+            "postProcessorParam": "##billing_api.website_cost##",
+            "rawDataFieldName": "",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "website_cost_display",
+            "postProcessorMethod": "expression",
+            "postProcessorParam": "if(un(website_cost),0,website_cost)",
+            "rawDataFieldName": "",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        }
+    ],
+    "description": "Gives group level count statistics: number of websites",
+    "displayName": "Website_Group_Member_Counts",
+    "enableAutoDiscovery": true,
+    "enableEriDiscovery": false,
+    "eriDiscoveryConfig": null,
+    "eriDiscoveryInterval": -1,
+    "graphs": [
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "numOfWebsites_Cost",
+                    "name": "numOfWebsites_Cost"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "silver",
+                    "dataPointName": "numOfWebsites_Cost",
+                    "isVirtualDataPoint": false,
+                    "legend": "Websites Cost",
+                    "type": 3
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": 0.0,
+            "name": "Website Cost",
+            "rigid": false,
+            "timeScale": "1month",
+            "title": "Website Cost",
+            "verticalLabel": "$",
+            "virtualDataPoints": [],
+            "width": 360
+        },
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "numOfDirectWebsites",
+                    "name": "numOfDirectWebsites"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "silver",
+                    "dataPointName": "numOfDirectWebsites",
+                    "isVirtualDataPoint": false,
+                    "legend": "Websites",
+                    "type": 2
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": 0.0,
+            "name": "Website Count",
+            "rigid": false,
+            "timeScale": "1month",
+            "title": "Website Count",
+            "verticalLabel": "count",
+            "virtualDataPoints": [],
+            "width": 360
+        },
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "numOfWebsites",
+                    "name": "numOfWebsites"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "silver",
+                    "dataPointName": "numOfWebsites",
+                    "isVirtualDataPoint": false,
+                    "legend": "Websites",
+                    "type": 2
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": 0.0,
+            "name": "Website Count (Including Subgroups)",
+            "rigid": false,
+            "timeScale": "1month",
+            "title": "Website Count (Including Subgroups)",
+            "verticalLabel": "count",
+            "virtualDataPoints": [],
+            "width": 360
+        }
+    ],
+    "group": "_WeenigWare Billing",
+    "hasMultiInstances": true,
+    "lineageId": "cVY_0Pv8Qt6VZLxVzCnkDg",
+    "name": "Website_Group_Member_Counts",
+    "overviewgraphs": [],
+    "tags": "",
+    "technology": "Set Auto Discovery filter \"auto.depth <= 1\" to determine which group levels are included. Auto.depth represents the number of levels below the root the group resides.\nTo calculate valid costs, set billing_api.[aws|azure|gcp|resource]_cost properties on the collector where the billing api id, pass, and account are defined or on the instances themselves (if you wanted a different value per instance).\nSupporting documentation can be found at https://stuart.weenig.com/2019/11/counting-resources-per-group.html"
+}

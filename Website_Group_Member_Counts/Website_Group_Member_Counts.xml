@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1579193400</version>
+        <name>Website_Group_Member_Counts</name>
+        <displayedas>Website_Group_Member_Counts</displayedas>
+        <description>Gives group level count statistics: number of websites</description>
+        <collector>batchscript</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>60</schedule>
+        <appliesTo>billing_api.id &#38;&#38; billing_api.pass &#38;&#38; billing_api.account</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>/*******************************************************************************
+ *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+import org.apache.commons.codec.binary.Hex
+import groovy.json.JsonSlurper
+
+accessId = hostProps.get(&#34;billing_api.id&#34;)
+accessKey = hostProps.get(&#34;billing_api.pass&#34;)
+account = hostProps.get(&#34;billing_api.account&#34;)
+queryLimit = hostProps.get(&#34;billing_api.query_limit&#34;) ? hostProps.get(&#34;billing_api.query_limit&#34;).toInteger() : 1000
+
+s = new JsonSlurper()
+
+def LMAPI(_verb, _accessId, _accessKey, _account, _resourcePath, _queryParameters = [:], _data = &#39;&#39;) {
+    url = &#39;https://&#39; + _account + &#39;.logicmonitor.com&#39; + &#39;/santaba/rest/&#39; + _resourcePath
+    if (_queryParameters.size() &#62; 0) {
+        _encodedQueryParameters = []
+        _queryParameters.each{k,v -&#62;
+            _encodedQueryParameters += &#34;${k}=${java.net.URLEncoder.encode(v)}&#34;
+        }
+        url += &#34;?&#34; + _encodedQueryParameters.join(&#34;&#38;&#34;)
+    } else {url += &#34;/&#34;}
+    epoch = System.currentTimeMillis()
+    requestVars = _verb + epoch + &#34;/&#34; + _resourcePath
+    hmac = Mac.getInstance(&#39;HmacSHA256&#39;)
+    secret = new SecretKeySpec(_accessKey.getBytes(), &#39;HmacSHA256&#39;)
+    hmac.init(secret)
+    hmac_signed = Hex.encodeHexString(hmac.doFinal(requestVars.getBytes()))
+    signature = hmac_signed.bytes.encodeBase64()
+    CloseableHttpClient myHttpClient = HttpClients.createDefault()
+    http_request = new HttpGet(url)
+    http_request.addHeader(&#34;Authorization&#34; , &#34;LMv1 &#34; + _accessId + &#34;:&#34; + signature + &#34;:&#34; + epoch)
+    http_request.setHeader(&#34;X-Version&#34;, &#34;2&#34;)
+    response = myHttpClient.execute(http_request)
+    responseBody = EntityUtils.toString(response.getEntity())
+    code = response.getStatusLine().getStatusCode()
+    myHttpClient.close()
+    responseDict = [:]
+    responseDict[&#39;code&#39;] = code ?: null
+    responseDict[&#39;body&#39;] = responseBody ?: null
+    return responseDict
+}
+
+def LmGet(String _resourcePath, Map _queryParameters = [:]){
+  return LMAPI(&#34;GET&#34;, accessId, accessKey, account, _resourcePath, _queryParameters)
+}
+
+//GET WEBSITE GROUP COUNTS
+queryParameters = [
+  &#39;fields&#39;:&#39;id,fullPath,numOfWebsites,numOfDirectWebsites&#39;,
+  &#39;sort&#39;:&#39;+fullPath&#39;,
+  &#39;size&#39;:queryLimit.toString()
+]
+services_json = LmGet(&#34;website/groups&#34;,queryParameters)
+services = s.parseText(services_json.body).items
+services.each{
+    path = it.fullPath.tokenize(&#34;/&#34;)
+    println(&#34;website_${it.id}##${(it.fullPath ?: &#34;(root)&#34;).replaceAll(&#34;/&#34;,&#34;-&#34;)}######fullPath=${it.fullPath}&#38;depth=${path.size()}&#34;)
+}
+
+return 0
+</wildcardgroovyscript>
+        <wildcardschedule>15</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare Billing</group>
+        <tags></tags>
+        <technology>Set Auto Discovery filter &#34;auto.depth &#60;= 1&#34; to determine which group levels are included. Auto.depth represents the number of levels below the root the group resides.
+To calculate valid costs, set billing_api.[aws|azure|gcp|resource]_cost properties on the collector where the billing api id, pass, and account are defined or on the instances themselves (if you wanted a different value per instance).
+Supporting documentation can be found at https://stuart.weenig.com/2019/11/counting-resources-per-group.html</technology>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[{"attribute":"auto.fullPath","operation":"RegexNotMatch","value":"Action"},{"attribute":"auto.depth","operation":"RegexMatch","value":"2|0"}],"params":{"type":"embeded","groovyscript":"/*******************************************************************************\n *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\nimport org.apache.http.client.methods.HttpGet\nimport org.apache.http.impl.client.CloseableHttpClient\nimport org.apache.http.impl.client.HttpClients\nimport org.apache.http.util.EntityUtils\nimport javax.crypto.Mac\nimport javax.crypto.spec.SecretKeySpec\nimport org.apache.commons.codec.binary.Hex\nimport groovy.json.JsonSlurper\n\naccessId = hostProps.get(\"billing_api.id\")\naccessKey = hostProps.get(\"billing_api.pass\")\naccount = hostProps.get(\"billing_api.account\")\nqueryLimit = hostProps.get(\"billing_api.query_limit\") ? hostProps.get(\"billing_api.query_limit\").toInteger() : 1000\n\ns = new JsonSlurper()\n\ndef LMAPI(_verb, _accessId, _accessKey, _account, _resourcePath, _queryParameters = [:], _data = '') {\n    url = 'https://' + _account + '.logicmonitor.com' + '/santaba/rest/' + _resourcePath\n    if (_queryParameters.size() > 0) {\n        _encodedQueryParameters = []\n        _queryParameters.each{k,v ->\n            _encodedQueryParameters += \"${k}=${java.net.URLEncoder.encode(v)}\"\n        }\n        url += \"?\" + _encodedQueryParameters.join(\"&\")\n    } else {url += \"/\"}\n    epoch = System.currentTimeMillis()\n    requestVars = _verb + epoch + \"/\" + _resourcePath\n    hmac = Mac.getInstance('HmacSHA256')\n    secret = new SecretKeySpec(_accessKey.getBytes(), 'HmacSHA256')\n    hmac.init(secret)\n    hmac_signed = Hex.encodeHexString(hmac.doFinal(requestVars.getBytes()))\n    signature = hmac_signed.bytes.encodeBase64()\n    CloseableHttpClient myHttpClient = HttpClients.createDefault()\n    http_request = new HttpGet(url)\n    http_request.addHeader(\"Authorization\" , \"LMv1 \" + _accessId + \":\" + signature + \":\" + epoch)\n    http_request.setHeader(\"X-Version\", \"2\")\n    response = myHttpClient.execute(http_request)\n    responseBody = EntityUtils.toString(response.getEntity())\n    code = response.getStatusLine().getStatusCode()\n    myHttpClient.close()\n    responseDict = [:]\n    responseDict['code'] = code ?: null\n    responseDict['body'] = responseBody ?: null\n    return responseDict\n}\n\ndef LmGet(String _resourcePath, Map _queryParameters = [:]){\n  return LMAPI(\"GET\", accessId, accessKey, account, _resourcePath, _queryParameters)\n}\n\n//GET WEBSITE GROUP COUNTS\nqueryParameters = [\n  'fields':'id,fullPath,numOfWebsites,numOfDirectWebsites',\n  'sort':'+fullPath',\n  'size':queryLimit.toString()\n]\nservices_json = LmGet(\"website/groups\",queryParameters)\nservices = s.parseText(services_json.body).items\nservices.each{\n    path = it.fullPath.tokenize(\"/\")\n    println(\"website_${it.id}##${(it.fullPath ?: \"(root)\").replaceAll(\"/\",\"-\")}######fullPath=${it.fullPath}&depth=${path.size()}\")\n}\n\nreturn 0\n"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>/*******************************************************************************
+ *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+import org.apache.commons.codec.binary.Hex
+import groovy.json.JsonSlurper
+
+CLIENTS_FOLDER_NAME = hostProps.get(&#34;billing_api.client_path&#34;) ?: &#34;Fred Hutchinson Devices by Location&#34;
+BILLING_TYPES_PARENT_FOLDER_NAME = hostProps.get(&#34;billing_api.types_parent_path&#34;) ?: &#34;Devices by Billing Type&#34;
+
+accessId = hostProps.get(&#34;billing_api.id&#34;)
+accessKey = hostProps.get(&#34;billing_api.pass&#34;)
+account = hostProps.get(&#34;billing_api.account&#34;)
+queryLimit = hostProps.get(&#34;billing_api.query_limit&#34;) ? hostProps.get(&#34;billing_api.query_limit&#34;).toInteger() : 1000
+
+s = new JsonSlurper()
+
+def LMAPI(_verb, _accessId, _accessKey, _account, _resourcePath, _queryParameters = [:], _data = &#39;&#39;) {
+    url = &#39;https://&#39; + _account + &#39;.logicmonitor.com&#39; + &#39;/santaba/rest/&#39; + _resourcePath
+    if (_queryParameters.size() &#62; 0) {
+        _encodedQueryParameters = []
+        _queryParameters.each{k,v -&#62;
+            _encodedQueryParameters += &#34;${k}=${java.net.URLEncoder.encode(v)}&#34;
+        }
+        url += &#34;?&#34; + _encodedQueryParameters.join(&#34;&#38;&#34;)
+    } else {url += &#34;/&#34;}
+    epoch = System.currentTimeMillis()
+    requestVars = _verb + epoch + &#34;/&#34; + _resourcePath
+    hmac = Mac.getInstance(&#39;HmacSHA256&#39;)
+    secret = new SecretKeySpec(_accessKey.getBytes(), &#39;HmacSHA256&#39;)
+    hmac.init(secret)
+    hmac_signed = Hex.encodeHexString(hmac.doFinal(requestVars.getBytes()))
+    signature = hmac_signed.bytes.encodeBase64()
+    CloseableHttpClient myHttpClient = HttpClients.createDefault()
+    http_request = new HttpGet(url)
+    http_request.addHeader(&#34;Authorization&#34; , &#34;LMv1 &#34; + _accessId + &#34;:&#34; + signature + &#34;:&#34; + epoch)
+    http_request.setHeader(&#34;X-Version&#34;, &#34;2&#34;)
+    response = myHttpClient.execute(http_request)
+    responseBody = EntityUtils.toString(response.getEntity())
+    code = response.getStatusLine().getStatusCode()
+    myHttpClient.close()
+    responseDict = [:]
+    responseDict[&#39;code&#39;] = code ?: null
+    responseDict[&#39;body&#39;] = responseBody ?: null
+    return responseDict
+}
+
+def LmGet(String _resourcePath, Map _queryParameters = [:]){return LMAPI(&#34;GET&#34;, accessId, accessKey, account, _resourcePath, _queryParameters)}
+
+//GET WEBSITE GROUP COUNTS
+queryParameters = [
+&#39;fields&#39;:&#39;id,fullPath,numOfWebsites,numOfDirectWebsites&#39;,
+&#39;sort&#39;:&#39;+fullPath&#39;,
+&#39;size&#39;:queryLimit.toString()
+]
+services_json = LmGet(&#34;website/groups&#34;,queryParameters)
+services = s.parseText(services_json.body).items
+services.each{
+    path = it.fullPath.tokenize(&#34;/&#34;)
+    println(&#34;website_${it.id}.numOfWebsites: ${it.numOfWebsites}&#34;)
+    println(&#34;website_${it.id}.numOfDirectWebsites: ${it.numOfDirectWebsites}&#34;)
+}
+
+
+return 0</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_0</name>
+            <value>auto.fullPath	RegexNotMatch	Action</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_1</name>
+            <value>auto.depth	RegexMatch	2|0</value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>collection_time</name>
+            <dataType>4</dataType>
+            <type>2</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam></postprocessorparam>
+            <usevalue>responseTime</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>numOfDirectWebsites</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.numOfDirectWebsites</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>numOfWebsites</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.numOfWebsites</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Count of all descendants under the group.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>numOfWebsites_Cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>numOfWebsites * if(un(website_cost),0,website_cost)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>website_cost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>##billing_api.website_cost##</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>website_cost_display</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>if(un(website_cost),0,website_cost)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Website Cost</name>
+            <title>Website Cost</title>
+            <verticallabel>$</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1month</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>numOfWebsites_Cost</name>
+            <datapointname>numOfWebsites_Cost</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>3</type>
+                <legend>Websites Cost</legend>
+                <color>silver</color>
+                <datapointname>numOfWebsites_Cost</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Website Count</name>
+            <title>Website Count</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1month</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>numOfDirectWebsites</name>
+            <datapointname>numOfDirectWebsites</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>2</type>
+                <legend>Websites</legend>
+                <color>silver</color>
+                <datapointname>numOfDirectWebsites</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Website Count (Including Subgroups)</name>
+            <title>Website Count (Including Subgroups)</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1month</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>numOfWebsites</name>
+            <datapointname>numOfWebsites</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>2</type>
+                <legend>Websites</legend>
+                <color>silver</color>
+                <datapointname>numOfWebsites</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
