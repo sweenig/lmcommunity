@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1580400820</version>
+        <name>Linux_SSH_Processes_Select</name>
+        <displayedas>Processes</displayedas>
+        <description>Captures process details (CPU, Memory, status) for Linux via SSH.</description>
+        <collector>batchscript</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>180</schedule>
+        <appliesTo>hasCategory(&#34;Linux_SSH&#34;) &#38;&#38; Linux_SSH_Processes_Select.includeRegEx &#38;&#38; Linux_SSH_Processes_Select.excludeRegEx</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>/*******************************************************************************
+ *  © 2007-2020 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+import com.jcraft.jsch.JSch
+import com.santaba.agent.util.Settings
+host = hostProps.get(&#34;system.hostname&#34;)
+user = hostProps.get(&#34;ssh.user&#34;)
+pass = hostProps.get(&#34;ssh.pass&#34;)
+port = hostProps.get(&#34;ssh.port&#34;) ?: 22
+cert = hostProps.get(&#34;ssh.cert&#34;) ?: &#39;~/.ssh/id_rsa&#39;
+timeout = 15000 // timeout in milliseconds
+try {
+  def userCmd = getCommandOutput(&#39;ps ax -o pid,user,tty&#39;)
+  users = userCmd.readLines().collectEntries{[it.tokenize(&#34; &#34;)[0], [it.tokenize(&#34; &#34;)[1],it.tokenize(&#34; &#34;)[2]]]}
+  def processes = getCommandOutput(&#39;ps ax -o pid,command&#39;).readLines()
+  processes.subList(2,processes.size()-2).each{
+    e = it.tokenize(&#34; &#34;)
+    pid = e[0]
+    command = e[1..e.size()-1].join(&#34; &#34;)
+    print(&#34;${pid}##[${pid}]${command}######&#34;)
+    print(&#34;pid=${pid}&#34;)
+    if (users[pid]){
+      print(&#34;&#38;tty=${users[pid][1]}&#34;)
+      print(&#34;&#38;user=${users[pid][0]}&#34;)
+    } else {
+      print(&#34;&#38;user=UnknownUser&#34;)
+    }
+    print(&#34;\n&#34;)
+  }
+  return 0
+}
+catch (Exception e) {println &#34;Unexpected Exception : &#34; + e; return 1}
+
+def getCommandOutput(String input_command) {
+  try {
+    jsch = new JSch()
+    if (user &#38;&#38; !pass) {jsch.addIdentity(cert)}
+    session = jsch.getSession(user, host, port)
+    session.setConfig(&#34;StrictHostKeyChecking&#34;, &#34;no&#34;)
+    String authMethod = Settings.getSetting(Settings.SSH_PREFEREDAUTHENTICATION, Settings.DEFAULT_SSH_PREFEREDAUTHENTICATION)
+    session.setConfig(&#34;PreferredAuthentications&#34;, authMethod)
+    session.setTimeout(timeout)
+    if (pass) {session.setPassword(pass)}
+    session.connect()
+    channel = session.openChannel(&#34;exec&#34;)
+    channel.setCommand(input_command)
+    def commandOutput = channel.getInputStream()
+    channel.connect()
+    def output = commandOutput.text
+    channel.disconnect()
+    return output
+  }
+  catch (Exception e) {e.printStackTrace()}
+  finally {session.disconnect()}
+}
+</wildcardgroovyscript>
+        <wildcardschedule>15</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>ilp</agdmethod>
+        <agdparams>auto.user</agdparams>
+        <group>_WeenigWare</group>
+        <tags></tags>
+        <technology>ssh.user &#38;&#38; ssh.pass need to contain valid credentials.
+ssh.prompt can contain a regex that will match on the prompt. If this property doesn&#39;t exist, it will look for the &#34;#&#34;. If &#34;#&#34; is contained in the output of &#34;ps aux&#34;, this will fail and a different prompt should be entered.
+Written by Stuart Weenig</technology>
+        <adlist><![CDATA[{"agdmethod":"ilp","method":"ad_script","agdparams":"auto.user","id":0,"filters":[{"attribute":"##WILDALIAS##","operation":"RegexNotMatch","value":"##Linux_SSH_Processes_Select.excludeRegEx##"},{"attribute":"##WILDALIAS##","operation":"RegexMatch","value":"##LinuxSSHProcesses.includeRegEx##"}],"params":{"type":"embeded","groovyscript":"/*******************************************************************************\n *  © 2007-2020 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\nimport com.jcraft.jsch.JSch\nimport com.santaba.agent.util.Settings\nhost = hostProps.get(\"system.hostname\")\nuser = hostProps.get(\"ssh.user\")\npass = hostProps.get(\"ssh.pass\")\nport = hostProps.get(\"ssh.port\") ?: 22\ncert = hostProps.get(\"ssh.cert\") ?: '~/.ssh/id_rsa'\ntimeout = 15000 // timeout in milliseconds\ntry {\n  def userCmd = getCommandOutput('ps ax -o pid,user,tty')\n  users = userCmd.readLines().collectEntries{[it.tokenize(\" \")[0], [it.tokenize(\" \")[1],it.tokenize(\" \")[2]]]}\n  def processes = getCommandOutput('ps ax -o pid,command').readLines()\n  processes.subList(2,processes.size()-2).each{\n    e = it.tokenize(\" \")\n    pid = e[0]\n    command = e[1..e.size()-1].join(\" \")\n    print(\"${pid}##[${pid}]${command}######\")\n    print(\"pid=${pid}\")\n    if (users[pid]){\n      print(\"&tty=${users[pid][1]}\")\n      print(\"&user=${users[pid][0]}\")\n    } else {\n      print(\"&user=UnknownUser\")\n    }\n    print(\"\\n\")\n  }\n  return 0\n}\ncatch (Exception e) {println \"Unexpected Exception : \" + e; return 1}\n\ndef getCommandOutput(String input_command) {\n  try {\n    jsch = new JSch()\n    if (user && !pass) {jsch.addIdentity(cert)}\n    session = jsch.getSession(user, host, port)\n    session.setConfig(\"StrictHostKeyChecking\", \"no\")\n    String authMethod = Settings.getSetting(Settings.SSH_PREFEREDAUTHENTICATION, Settings.DEFAULT_SSH_PREFEREDAUTHENTICATION)\n    session.setConfig(\"PreferredAuthentications\", authMethod)\n    session.setTimeout(timeout)\n    if (pass) {session.setPassword(pass)}\n    session.connect()\n    channel = session.openChannel(\"exec\")\n    channel.setCommand(input_command)\n    def commandOutput = channel.getInputStream()\n    channel.connect()\n    def output = commandOutput.text\n    channel.disconnect()\n    return output\n  }\n  catch (Exception e) {e.printStackTrace()}\n  finally {session.disconnect()}\n}\n"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>/*******************************************************************************
+ *  © 2007-2020 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+import com.jcraft.jsch.JSch
+import com.santaba.agent.util.Settings
+host = hostProps.get(&#34;system.hostname&#34;)
+user = hostProps.get(&#34;ssh.user&#34;)
+pass = hostProps.get(&#34;ssh.pass&#34;)
+port = hostProps.get(&#34;ssh.port&#34;) ?: 22
+cert = hostProps.get(&#34;ssh.cert&#34;) ?: &#39;~/.ssh/id_rsa&#39;
+timeout = 15000 // timeout in milliseconds
+try {
+  def output = getCommandOutput(&#39;ps aux&#39;).readLines()
+  output.subList(2,output.size()-2).each{line -&#62;
+    e = line.tokenize(&#34; &#34;)
+    println(&#34;${e[1]}.cpu: ${e[2]}&#34;)
+    println(&#34;${e[1]}.mem: ${e[3]}&#34;)
+    println(&#34;${e[1]}.vsz: ${e[4]}&#34;)
+    println(&#34;${e[1]}.rss: ${e[5]}&#34;)
+  }
+  return 0
+}
+catch (Exception e) {println &#34;Unexpected Exception : &#34; + e; return 1}
+
+def getCommandOutput(String input_command) {
+  try {
+    jsch = new JSch()
+    if (user &#38;&#38; !pass) {jsch.addIdentity(cert)}
+    session = jsch.getSession(user, host, port)
+    session.setConfig(&#34;StrictHostKeyChecking&#34;, &#34;no&#34;)
+    String authMethod = Settings.getSetting(Settings.SSH_PREFEREDAUTHENTICATION, Settings.DEFAULT_SSH_PREFEREDAUTHENTICATION)
+    session.setConfig(&#34;PreferredAuthentications&#34;, authMethod)
+    session.setTimeout(timeout)
+    if (pass) {session.setPassword(pass)}
+    session.connect()
+    channel = session.openChannel(&#34;exec&#34;)
+    channel.setCommand(input_command)
+    def commandOutput = channel.getInputStream()
+    channel.connect()
+    def output = commandOutput.text
+    channel.disconnect()
+    return output
+  }
+  catch (Exception e) {e.printStackTrace()}
+  finally {session.disconnect()}
+}</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_0</name>
+            <value>##WILDALIAS##	RegexNotMatch	##Linux_SSH_Processes_Select.excludeRegEx##</value>
+            <comment>Processes to exclude, set as property on device.</comment>
+        </attribute>
+        <attribute>
+            <name>__filter_1</name>
+            <value>##WILDALIAS##	RegexMatch	##LinuxSSHProcesses.includeRegEx##</value>
+            <comment>Processes to include, set as property on device.</comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>cpu</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.cpu</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>ExecutionTime</name>
+            <dataType>4</dataType>
+            <type>2</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam></postprocessorparam>
+            <usevalue>responseTime</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>memory</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.mem</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>status</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>if (un(cpu),0,1)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>rss</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.rss</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Resident set size in bytes</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>vsz</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.vsz</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Virtual Set Size in bytes</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>CPU Utilization</name>
+            <title>CPU Utilization</title>
+            <verticallabel>%</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>cpu</name>
+            <datapointname>cpu</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>CPU</legend>
+                <color>silver</color>
+                <datapointname>cpu</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Memory Utilization</name>
+            <title>Memory Utilization</title>
+            <verticallabel>%</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>memory</name>
+            <datapointname>memory</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Memory Utilization</legend>
+                <color>silver</color>
+                <datapointname>memory</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Process Status</name>
+            <title>Process Status</title>
+            <verticallabel>0=not running, 1=running</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>2.0</maxvalue>
+            <minvalue>-1.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>status</name>
+            <datapointname>status</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Status</legend>
+                <color>silver</color>
+                <datapointname>status</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Resident Set Size</name>
+            <title>Resident Set Size</title>
+            <verticallabel>bytes</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>true</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>rss</name>
+            <datapointname>rss</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Resident Set Size</legend>
+                <color>silver</color>
+                <datapointname>rss</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Virtual Set Size</name>
+            <title>Virtual Set Size</title>
+            <verticallabel>bytes</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>true</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>vsz</name>
+            <datapointname>vsz</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Virtual Set Size</legend>
+                <color>silver</color>
+                <datapointname>vsz</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        <overviewgraph>
+            <name>Process Status</name>
+            <title>Process Status</title>
+            <verticallabel>0=not running, 1=running</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>2.0</maxvalue>
+            <minvalue>-1.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <aggregated>false</aggregated>
+            <datapoints>
+        <overviewgraphdatapoint>
+            <name>status</name>
+            <datapointname>status</datapointname>
+            <cf>1</cf>
+            <aggregateMethod>sum</aggregateMethod>
+        </overviewgraphdatapoint>
+            </datapoints>
+            <virtualdatapoints>
+            </virtualdatapoints>
+            <lines>
+            <overviewgraphline>
+                <type>1</type>
+                <legend>##INSTANCE##</legend>
+                <datapointname>status</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>silver</color>
+            </overviewgraphline>
+            </lines>
+        </overviewgraph>
+        <overviewgraph>
+            <name>Top CPU</name>
+            <title>Top CPU</title>
+            <verticallabel>%</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <aggregated>false</aggregated>
+            <datapoints>
+        <overviewgraphdatapoint>
+            <name>cpu</name>
+            <datapointname>cpu</datapointname>
+            <cf>1</cf>
+            <aggregateMethod>sum</aggregateMethod>
+        </overviewgraphdatapoint>
+            </datapoints>
+            <virtualdatapoints>
+            </virtualdatapoints>
+            <lines>
+            <overviewgraphline>
+                <type>3</type>
+                <legend>##INSTANCE##</legend>
+                <datapointname>cpu</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>silver</color>
+            </overviewgraphline>
+            </lines>
+        </overviewgraph>
+        <overviewgraph>
+            <name>Top Memory</name>
+            <title>Top Memory</title>
+            <verticallabel>%</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <aggregated>false</aggregated>
+            <datapoints>
+        <overviewgraphdatapoint>
+            <name>memory</name>
+            <datapointname>memory</datapointname>
+            <cf>1</cf>
+            <aggregateMethod>sum</aggregateMethod>
+        </overviewgraphdatapoint>
+            </datapoints>
+            <virtualdatapoints>
+            </virtualdatapoints>
+            <lines>
+            <overviewgraphline>
+                <type>3</type>
+                <legend>##INSTANCE##</legend>
+                <datapointname>memory</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>silver</color>
+            </overviewgraphline>
+            </lines>
+        </overviewgraph>
+        <overviewgraph>
+            <name>Top Memory Resident Set Size</name>
+            <title>Top Memory Resident Set Size</title>
+            <verticallabel>bytes</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>true</base1024>
+            <aggregated>false</aggregated>
+            <datapoints>
+        <overviewgraphdatapoint>
+            <name>rss</name>
+            <datapointname>rss</datapointname>
+            <cf>1</cf>
+            <aggregateMethod>sum</aggregateMethod>
+        </overviewgraphdatapoint>
+            </datapoints>
+            <virtualdatapoints>
+            </virtualdatapoints>
+            <lines>
+            <overviewgraphline>
+                <type>3</type>
+                <legend>##INSTANCE##</legend>
+                <datapointname>rss</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>silver</color>
+            </overviewgraphline>
+            </lines>
+        </overviewgraph>
+        <overviewgraph>
+            <name>Top Memory Virtual Set Size</name>
+            <title>Top Memory Virtual Set Size</title>
+            <verticallabel>bytes</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>true</base1024>
+            <aggregated>false</aggregated>
+            <datapoints>
+        <overviewgraphdatapoint>
+            <name>vsz</name>
+            <datapointname>vsz</datapointname>
+            <cf>1</cf>
+            <aggregateMethod>sum</aggregateMethod>
+        </overviewgraphdatapoint>
+            </datapoints>
+            <virtualdatapoints>
+            </virtualdatapoints>
+            <lines>
+            <overviewgraphline>
+                <type>3</type>
+                <legend>##INSTANCE##</legend>
+                <datapointname>vsz</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>silver</color>
+            </overviewgraphline>
+            </lines>
+        </overviewgraph>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
