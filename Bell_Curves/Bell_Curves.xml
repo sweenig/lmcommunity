@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1580331917</version>
+        <name>Bell_Curves</name>
+        <displayedas>Bell Curves</displayedas>
+        <description>Generates fake data using Gaussian (bell) curves and sinusoids to generate noise.</description>
+        <collector>script</collector>
+        <hasMultiInstances>false</hasMultiInstances>
+        <schedule>60</schedule>
+        <appliesTo>hascategory(&#34;collector&#34;)</appliesTo>
+        <wildcardauto>false</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript></wildcardlinuxscript>
+        <wildcardlinuxcmdline></wildcardlinuxcmdline>
+        <wildcardwinscript></wildcardwinscript>
+        <wildcardwincmdline></wildcardwincmdline>
+        <wildcardgroovyscript></wildcardgroovyscript>
+        <wildcardschedule>1440</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare Fake Data</group>
+        <tags></tags>
+        <technology></technology>
+        <adlist><![CDATA[{"agdmethod":"none","agdparams":"","id":0,"filters":[],"params":{}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>bell_center = 719.5
+bell_narrowness = 200
+bell_height = 10000
+noise_level = 3
+noisiness = 0.1
+y_shift = 2
+currtime = new Date().format(&#39;HH:mm&#39;).tokenize(&#34;:&#34;)
+minutes_since_midnight = currtime[0].toInteger()*60 + currtime[1].toInteger()
+x = minutes_since_midnight
+
+bell_curve = ((bell_height/(bell_narrowness * Math.sqrt(2*Math.PI))* Math.exp(-1*((x-bell_center)**2)/(2*bell_narrowness**2)))+y_shift)**2
+
+high_freq_noise = Math.sin(x * noisiness * 2)
+low_freq_noise = Math.sin(x * noisiness / 4)
+noise_component = noise_level * (high_freq_noise + low_freq_noise) * bell_curve
+//=($K$2/($I$2*(SQRT(2*pi())))*exp(-1*((B4-$J$2)^2)/(2*$I$2^2))+$O$2)
+bell_component = (bell_height/(bell_narrowness*(Math.sqrt(2*Math.PI)))*Math.exp(-1*((x-bell_center)**2)/(2*bell_narrowness**2))+y_shift)
+
+println(&#34;&#34;&#34;bell_curve: ${bell_curve}
+lm_logo: ${noise_component + bell_component}
+&#34;&#34;&#34;)
+return 0</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>lmlogo</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>lm_logo</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr>&#62; 4500 5000</alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression>1,1,1</enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>bell</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>bell_curve</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Attenuation</name>
+            <title>Attenuation</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>NaN</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>lmlogo</name>
+            <datapointname>lmlogo</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+        <graphvirtualdatapoint>
+            <name>value</name>
+            <rpn>abs(lmlogo)</rpn>
+        </graphvirtualdatapoint>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Value</legend>
+                <color>silver</color>
+                <datapointname>value</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Bell Curve</name>
+            <title>Bell Curve</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>NaN</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>bell</name>
+            <datapointname>bell</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>bell</legend>
+                <color>silver</color>
+                <datapointname>bell</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>LogicMonitor Logo (Legacy)</name>
+            <title>LogicMonitor Logo (Legacy)</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>NaN</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>lmlogo</name>
+            <datapointname>lmlogo</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+        <graphvirtualdatapoint>
+            <name>lmlogo_raised</name>
+            <rpn>lmlogo+4000</rpn>
+        </graphvirtualdatapoint>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>lmlogo</legend>
+                <color>silver</color>
+                <datapointname>lmlogo_raised</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>

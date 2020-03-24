@@ -1,0 +1,712 @@
+{
+    "LMApiVersion": "3",
+    "appliesTo": "hasCategory(\"Collector\")",
+    "auditVersion": 0,
+    "autoDiscoveryConfig": null,
+    "checksum": "2f668bc0bfc1a536c650fc6f2c5b9a27",
+    "collectInterval": 60,
+    "collectMethod": "script",
+    "collectorAttribute": {
+        "groovyScript": "collect",
+        "linuxCmdline": "",
+        "linuxScript": "",
+        "name": "script",
+        "scriptType": "embed",
+        "windowsCmdline": "",
+        "windowsScript": ""
+    },
+    "coretools_format": "ds meV1",
+    "dataPoints": [
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y0",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y0",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y1",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y1",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y2",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y2",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y3",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y3",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y4",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y4",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y5",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y5",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y6",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y6",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y7",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y7",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y8",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y8",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y9",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y9",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        }
+    ],
+    "description": "Generates any number of instances with up to 11 datapoints each. Create instances by manually adding. After creating the instance add the following properties to customize the resulting data:\nsine.timeshift --> move the data left or right along the time (x) axis\nsine.scale --> scale the data larger or smaller along the y-axis\nsine.period --> number of minutes for the data to repeat (warning, setting too low could cause aliasing)\nsine.addlpoints --> number of additional datapoints to generate. Each additional datapoint will be based on the main curve, scaled randomly along the y-axis",
+    "displayName": "Sinusoids v2",
+    "enableAutoDiscovery": false,
+    "enableEriDiscovery": false,
+    "eriDiscoveryConfig": null,
+    "eriDiscoveryInterval": -1,
+    "graphs": [
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y",
+                    "name": "y"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y0",
+                    "name": "y0"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y1",
+                    "name": "y1"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y2",
+                    "name": "y2"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y3",
+                    "name": "y3"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y4",
+                    "name": "y4"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y5",
+                    "name": "y5"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y6",
+                    "name": "y6"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y7",
+                    "name": "y7"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y8",
+                    "name": "y8"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y9",
+                    "name": "y9"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "blue",
+                    "dataPointName": "abs_y",
+                    "isVirtualDataPoint": true,
+                    "legend": "y",
+                    "type": 1
+                },
+                {
+                    "colorName": "teal",
+                    "dataPointName": "abs_y0",
+                    "isVirtualDataPoint": true,
+                    "legend": "y0",
+                    "type": 1
+                },
+                {
+                    "colorName": "aqua",
+                    "dataPointName": "abs_y1",
+                    "isVirtualDataPoint": true,
+                    "legend": "y1",
+                    "type": 1
+                },
+                {
+                    "colorName": "silver",
+                    "dataPointName": "abs_y2",
+                    "isVirtualDataPoint": true,
+                    "legend": "y2",
+                    "type": 1
+                },
+                {
+                    "colorName": "navy",
+                    "dataPointName": "abs_y3",
+                    "isVirtualDataPoint": true,
+                    "legend": "y3",
+                    "type": 1
+                },
+                {
+                    "colorName": "green",
+                    "dataPointName": "abs_y4",
+                    "isVirtualDataPoint": true,
+                    "legend": "y4",
+                    "type": 1
+                },
+                {
+                    "colorName": "olive",
+                    "dataPointName": "abs_y5",
+                    "isVirtualDataPoint": true,
+                    "legend": "y5",
+                    "type": 1
+                },
+                {
+                    "colorName": "lime",
+                    "dataPointName": "abs_y6",
+                    "isVirtualDataPoint": true,
+                    "legend": "y6",
+                    "type": 1
+                },
+                {
+                    "colorName": "red1",
+                    "dataPointName": "abs_y7",
+                    "isVirtualDataPoint": true,
+                    "legend": "y7",
+                    "type": 1
+                },
+                {
+                    "colorName": "red2",
+                    "dataPointName": "abs_y8",
+                    "isVirtualDataPoint": true,
+                    "legend": "y8",
+                    "type": 1
+                },
+                {
+                    "colorName": "red",
+                    "dataPointName": "abs_y9",
+                    "isVirtualDataPoint": true,
+                    "legend": "y9",
+                    "type": 1
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": "NaN",
+            "name": "Line Graph",
+            "rigid": false,
+            "timeScale": "1hour",
+            "title": "Line Graph",
+            "verticalLabel": "count",
+            "virtualDataPoints": [
+                {
+                    "name": "abs_y",
+                    "rpn": "abs(y)"
+                },
+                {
+                    "name": "abs_y0",
+                    "rpn": "abs(y0)"
+                },
+                {
+                    "name": "abs_y1",
+                    "rpn": "abs(y1)"
+                },
+                {
+                    "name": "abs_y2",
+                    "rpn": "abs(y2)"
+                },
+                {
+                    "name": "abs_y3",
+                    "rpn": "abs(y3)"
+                },
+                {
+                    "name": "abs_y4",
+                    "rpn": "abs(y4)"
+                },
+                {
+                    "name": "abs_y5",
+                    "rpn": "abs(y5)"
+                },
+                {
+                    "name": "abs_y6",
+                    "rpn": "abs(y6)"
+                },
+                {
+                    "name": "abs_y7",
+                    "rpn": "abs(y7)"
+                },
+                {
+                    "name": "abs_y8",
+                    "rpn": "abs(y8)"
+                },
+                {
+                    "name": "abs_y9",
+                    "rpn": "abs(y9)"
+                }
+            ],
+            "width": 360
+        },
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y",
+                    "name": "y"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y0",
+                    "name": "y0"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y1",
+                    "name": "y1"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y2",
+                    "name": "y2"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y3",
+                    "name": "y3"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y4",
+                    "name": "y4"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y5",
+                    "name": "y5"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y6",
+                    "name": "y6"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y7",
+                    "name": "y7"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y8",
+                    "name": "y8"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y9",
+                    "name": "y9"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "blue",
+                    "dataPointName": "abs_y",
+                    "isVirtualDataPoint": true,
+                    "legend": "y",
+                    "type": 3
+                },
+                {
+                    "colorName": "teal",
+                    "dataPointName": "abs_y0",
+                    "isVirtualDataPoint": true,
+                    "legend": "y0",
+                    "type": 3
+                },
+                {
+                    "colorName": "aqua",
+                    "dataPointName": "abs_y1",
+                    "isVirtualDataPoint": true,
+                    "legend": "y1",
+                    "type": 3
+                },
+                {
+                    "colorName": "silver",
+                    "dataPointName": "abs_y2",
+                    "isVirtualDataPoint": true,
+                    "legend": "y2",
+                    "type": 3
+                },
+                {
+                    "colorName": "navy",
+                    "dataPointName": "abs_y3",
+                    "isVirtualDataPoint": true,
+                    "legend": "y3",
+                    "type": 3
+                },
+                {
+                    "colorName": "green",
+                    "dataPointName": "abs_y4",
+                    "isVirtualDataPoint": true,
+                    "legend": "y4",
+                    "type": 3
+                },
+                {
+                    "colorName": "olive",
+                    "dataPointName": "abs_y5",
+                    "isVirtualDataPoint": true,
+                    "legend": "y5",
+                    "type": 3
+                },
+                {
+                    "colorName": "lime",
+                    "dataPointName": "abs_y6",
+                    "isVirtualDataPoint": true,
+                    "legend": "y6",
+                    "type": 3
+                },
+                {
+                    "colorName": "red1",
+                    "dataPointName": "abs_y7",
+                    "isVirtualDataPoint": true,
+                    "legend": "y7",
+                    "type": 3
+                },
+                {
+                    "colorName": "red2",
+                    "dataPointName": "abs_y8",
+                    "isVirtualDataPoint": true,
+                    "legend": "y8",
+                    "type": 3
+                },
+                {
+                    "colorName": "red",
+                    "dataPointName": "abs_y9",
+                    "isVirtualDataPoint": true,
+                    "legend": "y9",
+                    "type": 3
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": "NaN",
+            "name": "Staked Graph",
+            "rigid": false,
+            "timeScale": "1hour",
+            "title": "Stacked Graph",
+            "verticalLabel": "count",
+            "virtualDataPoints": [
+                {
+                    "name": "abs_y",
+                    "rpn": "abs(y)"
+                },
+                {
+                    "name": "abs_y0",
+                    "rpn": "abs(y0)"
+                },
+                {
+                    "name": "abs_y1",
+                    "rpn": "abs(y1)"
+                },
+                {
+                    "name": "abs_y2",
+                    "rpn": "abs(y2)"
+                },
+                {
+                    "name": "abs_y3",
+                    "rpn": "abs(y3)"
+                },
+                {
+                    "name": "abs_y4",
+                    "rpn": "abs(y4)"
+                },
+                {
+                    "name": "abs_y5",
+                    "rpn": "abs(y5)"
+                },
+                {
+                    "name": "abs_y6",
+                    "rpn": "abs(y6)"
+                },
+                {
+                    "name": "abs_y7",
+                    "rpn": "abs(y7)"
+                },
+                {
+                    "name": "abs_y8",
+                    "rpn": "abs(y8)"
+                },
+                {
+                    "name": "abs_y9",
+                    "rpn": "abs(y9)"
+                }
+            ],
+            "width": 360
+        }
+    ],
+    "group": "_WeenigWare Fake Data",
+    "hasMultiInstances": true,
+    "lineageId": "mAZXB6v7SmOwSoeu-r1GQA",
+    "name": "Sinusoids v2",
+    "overviewgraphs": [
+        {
+            "aggregated": false,
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "aggregateMethod": "sum",
+                    "consolidateFunc": 1,
+                    "dataPointName": "y",
+                    "dpName": "y"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "silver",
+                    "dataPointName": "y",
+                    "isVirtualDataPoint": false,
+                    "legend": "##INSTANCE##",
+                    "type": 1
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": "NaN",
+            "name": "Graph",
+            "rigid": false,
+            "timeScale": "1day",
+            "title": "Graph",
+            "verticalLabel": "count",
+            "virtualDataPoints": [],
+            "width": 360
+        }
+    ],
+    "tags": "",
+    "technology": ""
+}

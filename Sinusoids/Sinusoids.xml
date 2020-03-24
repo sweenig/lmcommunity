@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1580331894</version>
+        <name>Sinusoids</name>
+        <displayedas>Sinusoids</displayedas>
+        <description>Generates fake data for a single data series for a single instance Euler&#39;s formula and some Sine curves</description>
+        <collector>script</collector>
+        <hasMultiInstances>false</hasMultiInstances>
+        <schedule>60</schedule>
+        <appliesTo>hascategory(&#34;collector&#34;)</appliesTo>
+        <wildcardauto>false</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript></wildcardlinuxscript>
+        <wildcardlinuxcmdline></wildcardlinuxcmdline>
+        <wildcardwinscript></wildcardwinscript>
+        <wildcardwincmdline></wildcardwincmdline>
+        <wildcardgroovyscript></wildcardgroovyscript>
+        <wildcardschedule>1440</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare Fake Data</group>
+        <tags></tags>
+        <technology>Change the following after cloning:
+- name of the datasource
+- apply to the fake device
+- datapoint name and description
+- graph name and at least legend name</technology>
+        <adlist><![CDATA[{"agdmethod":"none","agdparams":"","id":0,"filters":[],"params":{}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>timeshift = hostProps.get(&#34;sine.timeshift&#34;) ?: -450
+scale = hostProps.get(&#34;sine.scale&#34;) ?: 1
+period = hostProps.get(&#34;sine.period&#34;) ?: 1440
+sinusoids = [
+    [0.5,1,0],
+    [1,1/2,0],
+    [2,1/4,0],
+    [4,1/8,0],
+    [8,1/16,0],
+    [16,1/32,0],
+    [1,1/2,Math.PI/2]
+]
+origin_date = new Date(119,0,0,0,0,0) //01JAN2019 00:00:00 doesn&#39;t matter the date as long as it&#39;s midnight
+current_date = new Date()
+use(groovy.time.TimeCategory) {
+    def duration = current_date - origin_date
+    x = duration.hours * 60 + duration.minutes
+    θ = (x + timeshift)/period*2*Math.PI
+}
+y = 0
+sinusoids.each {harmonic, impact, phase_shift -&#62;
+    y += impact * Math.sin(harmonic*(θ+phase_shift))
+}
+println(&#34;&#34;&#34;y: ${scale * y}
+Timeshift: ${timeshift}
+Scale: ${scale}
+Period: ${period}&#34;&#34;&#34;)
+return 0</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>y</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>y</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Graph</name>
+            <title>Graph</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>NaN</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>y</name>
+            <datapointname>y</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Value</legend>
+                <color>silver</color>
+                <datapointname>y</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>

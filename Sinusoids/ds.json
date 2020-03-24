@@ -1,0 +1,89 @@
+{
+    "LMApiVersion": "3",
+    "appliesTo": "hascategory(\"collector\")",
+    "auditVersion": 0,
+    "autoDiscoveryConfig": null,
+    "checksum": "51d9cd1a115447f7432e2e18542afc54",
+    "collectInterval": 60,
+    "collectMethod": "script",
+    "collectorAttribute": {
+        "groovyScript": "collect",
+        "linuxCmdline": "",
+        "linuxScript": "",
+        "name": "script",
+        "scriptType": "embed",
+        "windowsCmdline": "",
+        "windowsScript": ""
+    },
+    "coretools_format": "ds meV1",
+    "dataPoints": [
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "y",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "y",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        }
+    ],
+    "description": "Generates fake data for a single data series for a single instance Euler's formula and some Sine curves",
+    "displayName": "Sinusoids",
+    "enableAutoDiscovery": false,
+    "enableEriDiscovery": false,
+    "eriDiscoveryConfig": null,
+    "eriDiscoveryInterval": -1,
+    "graphs": [
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "y",
+                    "name": "y"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "silver",
+                    "dataPointName": "y",
+                    "isVirtualDataPoint": false,
+                    "legend": "Value",
+                    "type": 1
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": "NaN",
+            "name": "Graph",
+            "rigid": false,
+            "timeScale": "1day",
+            "title": "Graph",
+            "verticalLabel": "count",
+            "virtualDataPoints": [],
+            "width": 360
+        }
+    ],
+    "group": "_WeenigWare Fake Data",
+    "hasMultiInstances": false,
+    "lineageId": "SY-ITDG5SRiYT9jYP6vG0g",
+    "name": "Sinusoids",
+    "overviewgraphs": [],
+    "tags": "",
+    "technology": "Change the following after cloning:\n- name of the datasource\n- apply to the fake device\n- datapoint name and description\n- graph name and at least legend name"
+}
