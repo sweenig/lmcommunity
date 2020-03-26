@@ -20,7 +20,7 @@
         "persistentInstance": false,
         "scheduleInterval": 60
     },
-    "checksum": "40d194a9011b90b0d6a988b04ea8f6dc",
+    "checksum": "84b5b994ae48cb65fb95a780cb9b925b",
     "collectInterval": 300,
     "collectMethod": "batchscript",
     "collectorAttribute": {
@@ -37,7 +37,7 @@
         {
             "alertBody": "",
             "alertClearTransitionInterval": 1,
-            "alertExpr": "",
+            "alertExpr": ">= 1 2 3",
             "alertExprNote": "",
             "alertForNoData": 1,
             "alertSubject": "",
@@ -109,7 +109,7 @@
                     "colorName": "lime",
                     "dataPointName": "none",
                     "isVirtualDataPoint": true,
-                    "legend": "None",
+                    "legend": "OK",
                     "type": 3
                 }
             ],
@@ -123,7 +123,7 @@
             "virtualDataPoints": [
                 {
                     "name": "none",
-                    "rpn": "1.5"
+                    "rpn": "0.5"
                 },
                 {
                     "name": "minor",
@@ -189,7 +189,7 @@
                 }
             ],
             "maxValue": 3.5,
-            "minValue": -0.5,
+            "minValue": 0.0,
             "name": "Status Alternate",
             "rigid": false,
             "timeScale": "1day",
@@ -218,7 +218,7 @@
     ],
     "group": "",
     "hasMultiInstances": true,
-    "lineageId": "oFBUdKvUTwCM8oAyyv5wrg",
+    "lineageId": "tP1h7MptQjeqIzedFX7C6g",
     "name": "StatusIOServiceStatus",
     "overviewgraphs": [
         {

@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1584980306</version>
+        <version>1585243986</version>
         <name>StatusIOServiceStatus</name>
         <displayedas>Service Status</displayedas>
         <description>Monitor status of services.</description>
@@ -112,7 +112,7 @@ return 0</value>
             <postprocessormethod>namevalue</postprocessormethod>
             <postprocessorparam>##WILDVALUE##.status</postprocessorparam>
             <usevalue>output</usevalue>
-            <alertexpr></alertexpr>
+            <alertexpr>&#62;= 1 2 3</alertexpr>
             <alertmissing>1</alertmissing>
             <alertsubject></alertsubject>
             <alertbody></alertbody>
@@ -156,7 +156,7 @@ Status codes:
             <graphvirtualdatapoints>
         <graphvirtualdatapoint>
             <name>none</name>
-            <rpn>1.5</rpn>
+            <rpn>0.5</rpn>
         </graphvirtualdatapoint>
         <graphvirtualdatapoint>
             <name>minor</name>
@@ -202,7 +202,7 @@ Status codes:
             </graphdata>
             <graphdata>
                 <type>3</type>
-                <legend>None</legend>
+                <legend>OK</legend>
                 <color>lime</color>
                 <datapointname>none</datapointname>
                 <isvirtualdatapoint>true</isvirtualdatapoint>
@@ -215,7 +215,7 @@ Status codes:
             <verticallabel>0=OK, 1=Minor, 2=Major, 3=Critical</verticallabel>
             <rigid>false</rigid>
             <maxvalue>3.5</maxvalue>
-            <minvalue>-0.5</minvalue>
+            <minvalue>0.0</minvalue>
             <displayprio>1</displayprio>
             <timescale>1day</timescale>
             <base1024>false</base1024>
