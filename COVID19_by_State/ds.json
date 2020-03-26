@@ -5,7 +5,20 @@
     "autoDiscoveryConfig": {
         "deleteInactiveInstance": true,
         "disableInstance": false,
-        "filters": [],
+        "filters": [
+            {
+                "attribute": "##WILDALIAS##",
+                "comment": "",
+                "operation": "RegexNotMatch",
+                "value": "##COVID19_by_State.excludeRegex##"
+            },
+            {
+                "attribute": "##WILDALIAS##",
+                "comment": "",
+                "operation": "RegexMatch",
+                "value": "##COVID19_by_State.includeRegex##"
+            }
+        ],
         "instanceAutoGroupMethod": "ilp",
         "instanceAutoGroupMethodParams": "auto.country",
         "method": {
@@ -20,8 +33,8 @@
         "persistentInstance": false,
         "scheduleInterval": 1440
     },
-    "checksum": "28536ab67a17c93333728bfd51aa9f84",
-    "collectInterval": 60,
+    "checksum": "e5b6342645091132ef77f462fd651638",
+    "collectInterval": 180,
     "collectMethod": "batchscript",
     "collectorAttribute": {
         "groovyScript": "collect",

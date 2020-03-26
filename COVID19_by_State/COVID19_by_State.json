@@ -5,14 +5,14 @@
   "appliesTo" : "finnhub.api.key",
   "technology" : "Created by Matt Kerfoot\n\nMust have an API key for Finnhub.io. The API key must be saved as a new custom property under the device you want to run this datasource on called, \"finnhub.api.key\" with the value being the API Key.",
   "tags" : "",
-  "checksum" : "28536ab67a17c93333728bfd51aa9f84",
+  "checksum" : "e5b6342645091132ef77f462fd651638",
   "lineageId" : "WMuZp-IkQ0irQXC6XqZM1A",
   "name" : "COVID19_by_State",
   "displayName" : "COVID 19 by State",
-  "version" : 1584976521,
+  "version" : 1585233907,
   "auditVersion" : 0,
   "hasMultiInstances" : true,
-  "collectInterval" : 60,
+  "collectInterval" : 180,
   "collectMethod" : "batchscript",
   "collectorAttribute" : {
     "name" : "batchscript",
@@ -40,7 +40,17 @@
       "linuxScript" : null,
       "groovyScript" : "import groovy.json.JsonSlurper\njsondata = new URL(\"https://finnhub.io/api/v1/covid19/us?token=${hostProps.get('finnhub.api.key')}\").getText()\nobjectdata = new JsonSlurper().parseText(jsondata)\ncountries = [\n    canada: [\"Alberta\",\"British Columbia\",\"Manitoba\",\"New Brunswick\",\"Newfoundland and Labrador\",\"Northwest Territories\",\"Nova Scotia\",\"Nunavut\",\"Ontario\",\"Prince Edward Island\",\"Quebec\",\"Saskatchewan\",\"Yukon\"],\n    ships: [\"Diamond Princess\", \"Grand Princess\",\"Wuhan Evacuee\"]\n]\n\nobjectdata.each{\n  state = it.state.trim()\n  if (countries.canada.contains(state)) {country = \"Canada\"}\n  else if (countries.ships.contains(state)) {country = \"Other\"}\n  else country = \"US\"\n  if (state.size() > 0){println(\"${state.replaceAll(/[\\s,\\.]/,\"\")}##${state}######country=${country}\")}\n}\nreturn 0\n"
     },
-    "filters" : [ ]
+    "filters" : [ {
+      "attribute" : "##WILDALIAS##",
+      "operation" : "RegexNotMatch",
+      "value" : "##COVID19_by_State.excludeRegex##",
+      "comment" : ""
+    }, {
+      "attribute" : "##WILDALIAS##",
+      "operation" : "RegexMatch",
+      "value" : "##COVID19_by_State.includeRegex##",
+      "comment" : ""
+    } ]
   },
   "dataPoints" : [ {
     "id" : 17649,
