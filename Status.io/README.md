@@ -1,4 +1,17 @@
 # Status Page Monitoring (if it's hosted by StatusPage.io)
+
+## To add monitoring
+1. Import [the DataSource definition](StatusIOServiceStatus/StatusIOServiceStatus.xml) into your portal
+2. From the status page:
+  * append "/api/v2"
+  * Grab the id/key from the url in the summary section (look for Endpoint followed by a URL that ends in "summary.json", the id/key is the part after "https://" and before ".statuspage.io/api/v2/summary.json")
+3. Add the status page as a resource into your portal:
+  * Add the FQDN of the status page as the IP/DNS
+  * Make the name something friendly
+  * Add a property called "statusio_key" with the id/key fetched earlier as the value
+  
+That should get the device in and discovery started. Wait a few minutes and you should see the component services discovered and data should start flowing in.
+
 We've identified the following sites that use StatusPage.io to host their status page. We've looked up the key for you so you don't have to. This isn't an exhaustive list. If you think a status page is hosted by StatusPage.io, simpliy append "/api/v2#summary" to the status page. If that loads, you should be able to find the key. If you do find a new key, please send it our way so we can add it to our list here. If you manually enter the key, the PropertySource "StatusIOKey" isn't needed.
 ### Discovered Keys
 |Name|URL|Key|
