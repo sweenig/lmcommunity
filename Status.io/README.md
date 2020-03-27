@@ -9,7 +9,7 @@
   * Add the FQDN of the status page as the IP/DNS
   * Make the name something friendly
   * Add a property called "statusio_key" with the id/key fetched earlier as the value
-  
+
 That should get the device in and discovery started. Wait a few minutes and you should see the component services discovered and data should start flowing in.
 
 We've identified the following sites that use StatusPage.io to host their status page. We've looked up the key for you so you don't have to. This isn't an exhaustive list. If you think a status page is hosted by StatusPage.io, simpliy append "/api/v2#summary" to the status page. If that loads, you should be able to find the key. If you do find a new key, please send it our way so we can add it to our list here. If you manually enter the key, the PropertySource "StatusIOKey" isn't needed.
@@ -23,6 +23,9 @@ We've identified the following sites that use StatusPage.io to host their status
 |Canva|https://www.canvastatus.com|3hg3yf1shl9k|
 |Canvas|https://status.instructure.com|nlxv32btr6v7|
 |CloudFlare|https://www.cloudflarestatus.com|yh6f0r4529hb|
+|DataDog|https://status.datadoghq.com|1k6wzpspjf99|
+|DataDog Integrations|https://datadogintegrations.statuspage.io/|tbc0zy2gb6bf|
+|DataDog EU|https://status.datadoghq.eu/|5by3sysm209d|
 |Datto|https://status.datto.com|9wpk4y80vt4s|
 |DialPad|https://status.dialpad.com|80trk830s0hg|
 |DrChrono|https://status.drchrono.com|ftd21120x69r|
