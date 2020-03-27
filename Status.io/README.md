@@ -21,6 +21,7 @@ We've identified the following sites that use StatusPage.io to host their status
 |GoToMeeting|https://status.gotomeeting.com|kwzln7bn4hg8|
 |Hubspot|https://status.hubspot.com|8b9w1wwq3g7d|
 |Jamf|https://status.jamf.com|5z7bmx2nb2yj|
+|JumpCloud|https://status.jumpcloud.com|nflr6k3n1c0h|
 |Keen IO|https://status.keen.io|z3mvdbpvy7yh|
 |Liberato|https://status.librato.com|636574ls1dpd|
 |Logicmonitor|https://status.logicmonitor.com|vgvrd21p58vb|
@@ -30,6 +31,7 @@ We've identified the following sites that use StatusPage.io to host their status
 |MuleSoft|https://status.mulesoft.com|rl5vblzz3gbw|
 |OkCupid|https://status.okcupid.com|pqtr9kytt07d|
 |PagerDuty|https://status.pagerduty.com|33yy6hwxnwr3|
+|Peloton|https://status.onepeloton.com|mp8rwtf7yt9p|
 |Postman|https://status.postman.com|ms1frkqnsp7r|
 |ProCore|https://status.procore.com|jxb4w0vdl2tv|
 |Reddit|https://www.redditstatus.com|2kbc0d48tv3j|
