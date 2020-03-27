@@ -15,7 +15,7 @@ That should get the device in and discovery started. Wait a few minutes and you 
 ## Sample Dashboard
 If you need some help getting started building a dashboard, you can import [this tokenized dashboard](Sample Tokenized Dashboard.json) into your portal. You'll need to change the ##defaultResource## token by editing the dashboard. Set the value to the friendly name of the resource you added above.
 
-We've identified the following sites that use StatusPage.io to host their status page. We've looked up the key for you so you don't have to. This isn't an exhaustive list. If you think a status page is hosted by StatusPage.io, simpliy append "/api/v2#summary" to the status page. If that loads, you should be able to find the key. If you do find a new key, please send it our way so we can add it to our list here. If you manually enter the key, the PropertySource "StatusIOKey" isn't needed.
+We've identified the following sites that use StatusPage.io to host their status page. We've looked up the key for you so you don't have to. This isn't an exhaustive list. If you think a status page is hosted by StatusPage.io, simpliy append "/api/v2/status.json" to the status page. If that loads, you should be able to find the id. If you do find a new id, please send it our way so we can add it to our list here. If you manually enter the id, the PropertySource "StatusIOKey" isn't needed.
 ### Discovered Keys
 |Name|URL|Key|
 |---|---|---|
