@@ -47,6 +47,7 @@ We've identified the following sites that use StatusPage.io to host their status
 |MuleSoft|https://status.mulesoft.com|rl5vblzz3gbw|
 |OkCupid|https://status.okcupid.com|pqtr9kytt07d|
 |PagerDuty|https://status.pagerduty.com|33yy6hwxnwr3|
+|Pendo.io|https://status.pendo.io|qxvy69hcwh22|
 |Peloton|https://status.onepeloton.com|mp8rwtf7yt9p|
 |Postman|https://status.postman.com|ms1frkqnsp7r|
 |ProCore|https://status.procore.com|jxb4w0vdl2tv|
@@ -54,6 +55,7 @@ We've identified the following sites that use StatusPage.io to host their status
 |Shopify|https://status.shopify.com|d33g96wd23dd|
 |Showpad|https://status.showpad.com|z87gt5b68cql|
 |Skilljar|https://status.skilljar.com|by5hq8p4g556|
+|Smartsheet|https://status.smartsheet.com|tvv76p250rdk|
 |Sumo Logic|https://status.sumologic.com|8 keys|
 |Tableau|https://trust.tableau.com|g7fqbfflg42q|
 |Trello|https://trello.status.atlassian.com|h5frqhb041yq|
