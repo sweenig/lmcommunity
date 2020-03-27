@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1585341117</version>
+        <name>Service_restart</name>
+        <displayedas>Services Monitored and Restarted if Needed</displayedas>
+        <description>restart service if needed. 1=already running, 2=first restart succeeded, 3=second try succeeded, 4=second try failed</description>
+        <collector>script</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>60</schedule>
+        <appliesTo>isWindows() &#38;&#38; Service_restart.services</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>hostProps.get(&#34;Service_restart.services&#34;).tokenize(&#34;,|&#34;).each{
+    println(&#34;${it}##${it}&#34;)
+}
+return 0</wildcardgroovyscript>
+        <wildcardschedule>0</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>true</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare</group>
+        <tags>suding</tags>
+        <technology>Written by M. Suding. Updated by S. Weenig</technology>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"hostProps.get(\"Service_restart.services\").tokenize(\",|\").each{\n    println(\"${it}##${it}\")\n}\nreturn 0"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>powerShell</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>$hostname = &#34;##HOSTNAME##&#34;
+$service = &#34;##WILDVALUE##&#34;
+$wait = 5 # seconds to wait
+
+#Stop-Service -InputObject $(Get-Service -Computer $hostname -Name $service)  # testing only
+#Start-Sleep 4  # testing only
+
+$service_status = (Get-Service -Name $service -ComputerName $hostname).Status
+Write-Host &#34;$service is $service_status on $hostname&#34;
+
+if ((get-service -name $service -ComputerName $hostname).Status -eq &#34;Running&#34;) {
+  write-host &#34;result_code: 1 (running)&#34;
+} else {
+  Write-Host &#34;not running so i will start then wait $wait seconds and test&#34;
+  Start-Service -InputObject $(Get-Service -Computer $hostname -Name $service)
+  Start-Sleep $wait
+
+  #Stop-Service -InputObject $(Get-Service -Computer $hostname -Name $service) # testing only
+  #Start-Sleep 4 # testing only
+
+  if ((get-service -name $service -ComputerName $hostname).Status  -eq &#34;Running&#34;) {
+        write-host &#34;result_code: 2 (first restart worked)&#34;
+    } else {
+        Write-Host &#34;first restart failed so i will start second time&#34;
+        Start-Service -InputObject $(Get-Service -Computer $hostname -Name $service)
+        Start-Sleep $wait
+
+        #Stop-Service -InputObject $(Get-Service -Computer $hostname -Name $service) # testing only
+        #Start-Sleep 3 # testing only
+
+        if ((get-service -name $service -ComputerName $hostname).Status  -eq &#34;Running&#34;) {
+            Write-Host &#34;result_code: 3 (second restart worked)&#34;
+        } else {
+            Write-Host &#34;result_code: 4 (second restart failed so probably trigger alert)&#34;
+        } # end of else line 21
+    } # end of else line 15
+} # end of line 9</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>result_code</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>regex</postprocessormethod>
+            <postprocessorparam>result_code: (\d+)</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr>&#62;= 2 3 4</alertexpr>
+            <alertmissing>3</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>1=ok, 2=first restart worked, 3=second worked, 4=second failed so probably alert</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>runtime_ms</name>
+            <dataType>4</dataType>
+            <type>2</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam></postprocessorparam>
+            <usevalue>responseTime</usevalue>
+            <alertexpr>&#62; 11222</alertexpr>
+            <alertmissing>3</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>1</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Service restart</name>
+            <title>Service restart</title>
+            <verticallabel>status 1=ok, 2=restart, 3=two restarts, 4=two restarts failed</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>NaN</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1hour</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>result_code</name>
+            <datapointname>result_code</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>2</type>
+                <legend>result_code</legend>
+                <color>blue</color>
+                <datapointname>result_code</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Service restart runtime</name>
+            <title>service restart runtime</title>
+            <verticallabel>milliseconds</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>NaN</minvalue>
+            <displayprio>2</displayprio>
+            <timescale>1hour</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>runtime_ms</name>
+            <datapointname>runtime_ms</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>2</type>
+                <legend>runtime_ms</legend>
+                <color>blue</color>
+                <datapointname>runtime_ms</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
