@@ -56,14 +56,16 @@ This gets us halfway to where we want to be. It included the main client folders
 ### Depth
 Depth refers to the distance from the root of each folder. Setting a filter like this:
 
-auto.depth == 2
+`auto.depth == 2`
 
 would get the following folders:
 
+```
 Clients/Acme
 Clients/NetQoS
 My Devices/Office A
 My Devices/Office B
+```
 
 Combining the two folders would get only the main client folders (Acme & NetQoS).  At any rate, any combination of these two filters should allow the user to filter down to just the folders for which we want counts.  If no filters were applied, it would give data on each and every group.
 
