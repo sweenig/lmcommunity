@@ -78,6 +78,7 @@ Once you've identified which resource with which the data will be associated, yo
 |billing_api.account|This is the account name for your portal. In my case, since my portal address is lmstuartweenig.logicmonitor.com, I'll store "lmstuartweenig" in this property.|
 |billing_api.id|[Generate an API](https://www.logicmonitor.com/support/settings/users-and-roles/api-tokens/) token and store the ID here.|
 |billing_api.pass|Store the API Key here.|
+
 Once this is done, you can wait 15 minutes and the datasource should have discovered the groups and started collecting data. At this point, you may want to go to the datasource definition and tweak the filters for your purposes.
 
 ### Datapoints
