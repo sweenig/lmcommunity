@@ -3,8 +3,8 @@
 ## To add monitoring
 1. Import [the DataSource definition](StatusIOServiceStatus/StatusIOServiceStatus.xml) into your portal
 2. From the status page:
-  * append "/api/v2"
-  * Grab the id/key from the url in the summary section (look for Endpoint followed by a URL that ends in "summary.json", the id/key is the part after "https://" and before ".statuspage.io/api/v2/summary.json")
+  * append "/api/v2/status.json" to the status page URL
+  * Grab the id from the resulting json (For {"page":{"id":"14qjgk812kgk","name"... the id is 14qjgk812kgk)
 3. Add the status page as a resource into your portal:
   * Add the FQDN of the status page as the IP/DNS
   * Make the name something friendly
