@@ -5,8 +5,8 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1580923797</version>
-        <name>alarmbygroup</name>
+        <version>1585261320</version>
+        <name>AlarmByGroup</name>
         <displayedas>Alert Counts By Group</displayedas>
         <description></description>
         <collector>batchscript</collector>

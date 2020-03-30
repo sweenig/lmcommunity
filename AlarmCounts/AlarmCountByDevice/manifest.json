@@ -2,8 +2,8 @@
     "account": "lmstuartweenig",
     "id": 10583903,
     "module_type": "ds",
-    "name": "alarmCountByDevice",
+    "name": "AlarmCountByDevice",
     "rest_api": "3",
-    "timestamp": 1585057220.331842,
-    "version": 1584723079
+    "timestamp": 1585587613.149167,
+    "version": 1585586891
 }

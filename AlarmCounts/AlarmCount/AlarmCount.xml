@@ -5,8 +5,8 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1578518366</version>
-        <name>alarmCount</name>
+        <version>1585261462</version>
+        <name>AlarmCount</name>
         <displayedas>Alarm Counts by LogicModule</displayedas>
         <description></description>
         <collector>batchscript</collector>

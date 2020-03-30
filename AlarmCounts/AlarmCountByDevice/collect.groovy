@@ -101,15 +101,16 @@ def pack_parameters(query_details) {
 }
 
 Map credentials = [
-  "id"   : hostProps.get("alarmCount2.id"),
-  "key"  : hostProps.get("alarmCount2.key"),
-  "account": hostProps.get("alarmCount2.company")
+  "id"   : hostProps.get("AlarmCountByDevice.id"),
+  "key"  : hostProps.get("AlarmCountByDevice.key"),
+  "account": hostProps.get("AlarmCountByDevice.company")
 ]
 
 deviceId = hostProps.get("system.deviceid")
 
 Map resources = [
   "devices": ["path": "/device/devices/${deviceId}/devicedatasources", "details": ["fields":"dataSourceId,dataSourceDisplayName,dataSourceType,instanceNumber"]],
+  "alerts": ["path": "/device/devices/${deviceId}/alerts", "details": ["fields": "severity,resourceTemplateId,resourceTemplateName"]],
 ]
 
 if (credentials.account && credentials.id && credentials.key) {
@@ -120,11 +121,15 @@ if (credentials.account && credentials.id && credentials.key) {
       if (response?.success) {resources[k]["data"] = response.response}
     }
   }
-  resources.devices.data.each{
-    if(it.instanceNumber > 0){
-      println("${it.dataSourceId}##${it.dataSourceDisplayName}######logicmodule.type=${it.dataSourceType}")
+  returnData = [:]
+  resources.devices.data.each { //loop through all devices in the response data (should be only one)
+    if(it.instanceNumber > 0){ //include only logicmodules that have valid instances
+      returnData[it.dataSourceId] = ["name":it.dataSourceDisplayName, "type":it.dataSourceType, "alarmCount":0] //setup a map entry for the device
     }
   }
+  resources.alerts.data.each{returnData[it.resourceTemplateId].alarmCount += 1}
+  returnData.each{ k, v ->
+    println("${k}.alarmCount: ${v.alarmCount}")}
   return 0
 } else {
   println("Device is not configured with the necessary portal credentials to proceed with API queries.\nPlease ensure that \"lmaccount\", \"lmaccess.id\", and \"lmaccess.key\" are set in the collector properties section!\nExiting Program...")

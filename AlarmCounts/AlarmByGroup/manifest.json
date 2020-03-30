@@ -2,8 +2,8 @@
     "account": "lmstuartweenig",
     "id": 11276318,
     "module_type": "ds",
-    "name": "alarmbygroup",
+    "name": "AlarmByGroup",
     "rest_api": "3",
-    "timestamp": 1585057196.130761,
-    "version": 1580923797
+    "timestamp": 1585587103.014369,
+    "version": 1585261320
 }

@@ -2,8 +2,8 @@
     "account": "lmstuartweenig",
     "id": 10383886,
     "module_type": "ds",
-    "name": "alarmCount",
+    "name": "AlarmCount",
     "rest_api": "3",
-    "timestamp": 1585057207.4830122,
-    "version": 1578518366
+    "timestamp": 1585587125.696457,
+    "version": 1585261462
 }

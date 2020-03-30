@@ -33,7 +33,7 @@
         "persistentInstance": false,
         "scheduleInterval": 0
     },
-    "checksum": "93cdf0eb1e1fc8b34edf9f1b5af66ee0",
+    "checksum": "49240b3abc2faa700e57cf1a60342041",
     "collectInterval": 60,
     "collectMethod": "batchscript",
     "collectorAttribute": {
@@ -217,7 +217,7 @@
     "group": "_WeenigWare",
     "hasMultiInstances": true,
     "lineageId": "njAPV16HQH259QXgHZwHbA",
-    "name": "alarmbygroup",
+    "name": "AlarmByGroup",
     "overviewgraphs": [
         {
             "aggregated": true,

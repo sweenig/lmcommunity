@@ -1,13 +1,20 @@
 {
     "LMApiVersion": "3",
-    "appliesTo": "alarmCount.id && alarmCount.key && alarmCount.company",
+    "appliesTo": "AlarmCountByDevice.id && AlarmCountByDevice.key && AlarmCountByDevice.company",
     "auditVersion": 0,
     "autoDiscoveryConfig": {
         "deleteInactiveInstance": false,
         "disableInstance": false,
-        "filters": [],
+        "filters": [
+            {
+                "attribute": "##WILDALIAS##",
+                "comment": "",
+                "operation": "NotEqual",
+                "value": "Alarm Counts by Device and LogicModule"
+            }
+        ],
         "instanceAutoGroupMethod": "ilp",
-        "instanceAutoGroupMethodParams": "auto.logicmodule.type",
+        "instanceAutoGroupMethodParams": "logicmodule.type",
         "method": {
             "groovyScript": "ad",
             "linuxCmdline": null,
@@ -20,8 +27,8 @@
         "persistentInstance": false,
         "scheduleInterval": 1440
     },
-    "checksum": "f212c8842c7931f9469883cd61d4d19a",
-    "collectInterval": 180,
+    "checksum": "3d572d8487aec0ef0b8e556f4f2ef800",
+    "collectInterval": 60,
     "collectMethod": "batchscript",
     "collectorAttribute": {
         "groovyScript": "collect",
@@ -34,6 +41,29 @@
     },
     "coretools_format": "ds meV1",
     "dataPoints": [
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 4,
+            "description": "The amount of time it takes for the data to be collected.",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "ExecutionTime",
+            "postProcessorMethod": "none",
+            "postProcessorParam": "",
+            "rawDataFieldName": "responseTime",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
         {
             "alertBody": "",
             "alertClearTransitionInterval": 0,
@@ -56,33 +86,10 @@
             "userParam1": "",
             "userParam2": "",
             "userParam3": ""
-        },
-        {
-            "alertBody": "",
-            "alertClearTransitionInterval": 0,
-            "alertExpr": "",
-            "alertExprNote": "",
-            "alertForNoData": 1,
-            "alertSubject": "",
-            "alertTransitionInterval": 0,
-            "dataType": 4,
-            "description": "",
-            "enableAnomalyAlertSuppression": "",
-            "maxDigits": 4,
-            "maxValue": "",
-            "minValue": "",
-            "name": "executionTime",
-            "postProcessorMethod": "none",
-            "postProcessorParam": "",
-            "rawDataFieldName": "responseTime",
-            "type": 2,
-            "userParam1": "",
-            "userParam2": "",
-            "userParam3": ""
         }
     ],
     "description": "",
-    "displayName": "Alarm Counts by LogicModule",
+    "displayName": "Alarm Counts for this Device by LogicModule",
     "enableAutoDiscovery": true,
     "enableEriDiscovery": false,
     "eriDiscoveryConfig": null,
@@ -104,7 +111,7 @@
                     "colorName": "silver",
                     "dataPointName": "alarmCount",
                     "isVirtualDataPoint": false,
-                    "legend": "Alarms",
+                    "legend": "Alarm Count",
                     "type": 1
                 }
             ],
@@ -117,42 +124,12 @@
             "verticalLabel": "count",
             "virtualDataPoints": [],
             "width": 360
-        },
-        {
-            "base1024": false,
-            "dataPoints": [
-                {
-                    "consolidateFunc": 1,
-                    "dpName": "executionTime",
-                    "name": "executionTime"
-                }
-            ],
-            "displayPrio": 2,
-            "height": 120,
-            "lines": [
-                {
-                    "colorName": "silver",
-                    "dataPointName": "executionTime",
-                    "isVirtualDataPoint": false,
-                    "legend": "Duration",
-                    "type": 1
-                }
-            ],
-            "maxValue": "NaN",
-            "minValue": 0.0,
-            "name": "Collection Time",
-            "rigid": false,
-            "timeScale": "1day",
-            "title": "Collection Time",
-            "verticalLabel": "milliseconds",
-            "virtualDataPoints": [],
-            "width": 360
         }
     ],
     "group": "_WeenigWare",
     "hasMultiInstances": true,
-    "lineageId": "MqFZ3htfQwmkSX8RqKDViA",
-    "name": "alarmCount",
+    "lineageId": "n6CVnC2fQGWrDYFrls-tbw",
+    "name": "AlarmCountByDevice",
     "overviewgraphs": [
         {
             "aggregated": false,
