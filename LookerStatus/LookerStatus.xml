@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1585584956</version>
+        <version>1585606111</version>
         <name>LookerStatus</name>
         <displayedas>Looker Status</displayedas>
         <description></description>
@@ -102,7 +102,7 @@ if ((page =~ pattern).size() &#62; 0){ //this might be doable with elvis, but th
             <postprocessormethod>none</postprocessormethod>
             <postprocessorparam></postprocessorparam>
             <usevalue>exitCode</usevalue>
-            <alertexpr>!= 1</alertexpr>
+            <alertexpr>!= 0</alertexpr>
             <alertmissing>1</alertmissing>
             <alertsubject></alertsubject>
             <alertbody></alertbody>

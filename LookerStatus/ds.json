@@ -3,7 +3,7 @@
     "appliesTo": "system.hostname =~ \".looker.com\"",
     "auditVersion": 0,
     "autoDiscoveryConfig": null,
-    "checksum": "cbac76ebf7a84fd6572695e6258be203",
+    "checksum": "26a5cfa0674a4811168658ff4920d6a3",
     "collectInterval": 180,
     "collectMethod": "script",
     "collectorAttribute": {
@@ -43,7 +43,7 @@
         {
             "alertBody": "",
             "alertClearTransitionInterval": 0,
-            "alertExpr": "!= 1",
+            "alertExpr": "!= 0",
             "alertExprNote": "",
             "alertForNoData": 1,
             "alertSubject": "",
