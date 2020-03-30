@@ -29,14 +29,14 @@ This one allows you to add as many instances as you want. Each instance can have
 This time, set the properties on the instances after you add them through "Add additional monitoring". One additional property, `sine.addlpoints` allows you to specify the number of datapoints to return per instance (up to 10). Semi-random values will be generated for the other points.
 This is what some instances could be:
 
-![Instances](Sinusoids v2/instances.png)
+![Instances](Sinusoids%20v2/instances.png)
 
-![Standard](Sinusoids v2/standard.png)
+![Standard](Sinusoids%20v2/standard.png)
 
-![Time Shifted](Sinusoids v2/time_shifted.png)
+![Time Shifted](Sinusoids%20v2/time_shifted.png)
 
-![Shorter Period](Sinusoids v2/shorter_period.png)
+![Shorter Period](Sinusoids%20v2/shorter_period.png)
 
-![Scaled Height](Sinusoids v2/scaledheight.png)
+![Scaled Height](Sinusoids%20v2/scaledheight.png)
 
-![Multiple Points per Instances](Sinusoids v2/multiplepoints.png)
+![Multiple Points per Instances](Sinusoids%20v2/multiplepoints.png)
