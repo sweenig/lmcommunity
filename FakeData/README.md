@@ -31,12 +31,26 @@ This is what some instances could be:
 
 ![Instances](Sinusoids%20v2/instances.png)
 
+This is what it would look like if you just added one instance:
+
 ![Standard](Sinusoids%20v2/standard.png)
+
+This is what it would look like if you added an instance and only time shifted it.
 
 ![Time Shifted](Sinusoids%20v2/time_shifted.png)
 
+This is what it would look like if you added an instance and adjusted the period.
+
 ![Shorter Period](Sinusoids%20v2/shorter_period.png)
+
+This is what it would look like if you added an instance and adjusted the hight scale.
 
 ![Scaled Height](Sinusoids%20v2/scaledheight.png)
 
+This is what it would look like if you added an instance and gave it more datapoints to output.
+
 ![Multiple Points per Instances](Sinusoids%20v2/multiplepoints.png)
+
+This is what it would look like if you added an instances and modified all the parameters from the defaults:
+
+![Everything customized}(Sinusoids%20v2/all_custom.png)]
