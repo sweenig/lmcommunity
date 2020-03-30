@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1585584466</version>
+        <version>1585584956</version>
         <name>LookerStatus</name>
         <displayedas>Looker Status</displayedas>
         <description></description>
@@ -39,8 +39,7 @@
         </attribute>
         <attribute>
             <name>scriptgroovy</name>
-            <value>page = new URL(&#39;https://logicmonitor.looker.com/availability&#39;).getText()
-// println(page + &#34;\n&#34; + &#34;=&#34;.multiply(80))
+            <value>page = new URL(&#34;https://${hostProps.get(&#34;system.hostname&#34;)}/availability&#34;).getText()
 pattern = /&#60;h2 class=&#34;lk-simple-title&#34;&#62;Looker is (.*)&#60;\/h2&#62;/
 if ((page =~ pattern).size() &#62; 0){ //this might be doable with elvis, but this works
   if ((page =~ pattern)[0][1].toLowerCase() == &#34;up&#34;) {

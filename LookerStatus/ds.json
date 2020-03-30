@@ -3,7 +3,7 @@
     "appliesTo": "system.hostname =~ \".looker.com\"",
     "auditVersion": 0,
     "autoDiscoveryConfig": null,
-    "checksum": "",
+    "checksum": "cbac76ebf7a84fd6572695e6258be203",
     "collectInterval": 180,
     "collectMethod": "script",
     "collectorAttribute": {
