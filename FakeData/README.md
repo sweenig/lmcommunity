@@ -53,4 +53,4 @@ This is what it would look like if you added an instance and gave it more datapo
 
 This is what it would look like if you added an instances and modified all the parameters from the defaults:
 
-![Everything customized](Sinusoids%20v2/all_custom.png)]
+![Everything customized](Sinusoids%20v2/all_custom.png)
