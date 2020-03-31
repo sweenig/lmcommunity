@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1585674121</version>
+        <name>PriceofOil</name>
+        <displayedas>Price of Oil</displayedas>
+        <description>Price of oil as obtained from oilprice.com. Uses raw screen scrape, so changes in the webpage could break the collection and require rewrite of the RegEx expression used to extract the price.</description>
+        <collector>batchscript</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>60</schedule>
+        <appliesTo>system.hostname == &#34;oilprice.com&#34;</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>page = new URL(&#34;https://oilprice.com/oil-price-charts&#34;).getText()
+// println(page + &#34;\n&#34; + &#34;=&#34;.multiply(80))
+ad = true
+instances = [
+  &#34;WTI Crude&#34;:    /&#60;td&#62;WTI Crude.*\s*&#60;td class=&#39;last_price&#39; data-price=&#39;(.*?)&#39;&#62;.*&#60;.td&#62;&#60;td dir=&#39;ltr&#39; class=&#39;change_up/,
+  &#34;Brent Crude&#34;:/&#60;td&#62;Brent Crude.*\s*&#60;td class=&#39;last_price&#39; data-price=&#39;(.*?)&#39;&#62;.*&#60;.td&#62;&#60;td dir=&#39;ltr&#39; class=&#39;change_up/,
+]
+instances.each {k,v -&#62;
+  if (ad){
+    println(&#34;${k.replaceAll(&#34; &#34;,&#34;&#34;)}##${k}&#34;)
+  } else {
+    if ((page =~ v).size() &#62; 0){ //this might be doable with elvis, but this works
+      println(&#34;${k.replaceAll(&#34; &#34;,&#34;&#34;)}.price: ${(page =~ v)[0][1]}&#34;)
+    }
+  }
+}
+
+return 0
+</wildcardgroovyscript>
+        <wildcardschedule>0</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>true</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare Community</group>
+        <tags></tags>
+        <technology></technology>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"page = new URL(\"https://oilprice.com/oil-price-charts\").getText()\n// println(page + \"\\n\" + \"=\".multiply(80))\nad = true\ninstances = [\n  \"WTI Crude\":    /<td>WTI Crude.*\\s*<td class='last_price' data-price='(.*?)'>.*<.td><td dir='ltr' class='change_up/,\n  \"Brent Crude\":/<td>Brent Crude.*\\s*<td class='last_price' data-price='(.*?)'>.*<.td><td dir='ltr' class='change_up/,\n]\ninstances.each {k,v ->\n  if (ad){\n    println(\"${k.replaceAll(\" \",\"\")}##${k}\")\n  } else {\n    if ((page =~ v).size() > 0){ //this might be doable with elvis, but this works\n      println(\"${k.replaceAll(\" \",\"\")}.price: ${(page =~ v)[0][1]}\")\n    }\n  }\n}\n\nreturn 0\n"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>page = new URL(&#34;https://oilprice.com/oil-price-charts&#34;).getText()
+// println(page + &#34;\n&#34; + &#34;=&#34;.multiply(80))
+ad = false
+instances = [
+  &#34;WTI Crude&#34;:    /&#60;td&#62;WTI Crude.*\s*&#60;td class=&#39;last_price&#39; data-price=&#39;(.*?)&#39;&#62;.*&#60;.td&#62;&#60;td dir=&#39;ltr&#39; class=&#39;change_/,
+  &#34;Brent Crude&#34;:/&#60;td&#62;Brent Crude.*\s*&#60;td class=&#39;last_price&#39; data-price=&#39;(.*?)&#39;&#62;.*&#60;.td&#62;&#60;td dir=&#39;ltr&#39; class=&#39;change_/,
+]
+instances.each {k,v -&#62;
+  if (ad){
+    println(&#34;${k.replaceAll(&#34; &#34;,&#34;&#34;)}##${k}&#34;)
+  } else {
+    if ((page =~ v).size() &#62; 0){ //this might be doable with elvis, but this works
+      println(&#34;${k.replaceAll(&#34; &#34;,&#34;&#34;)}.price: ${(page =~ v)[0][1]}&#34;)
+    }
+  }
+}
+
+return 0</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>price</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.price</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Price per Barrel</name>
+            <title>Price per Barrel</title>
+            <verticallabel>$</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>price</name>
+            <datapointname>price</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>$/BBL</legend>
+                <color>silver</color>
+                <datapointname>price</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        <overviewgraph>
+            <name>Price per Barrel</name>
+            <title>Price per Barrel</title>
+            <verticallabel>$</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <aggregated>false</aggregated>
+            <datapoints>
+        <overviewgraphdatapoint>
+            <name>price</name>
+            <datapointname>price</datapointname>
+            <cf>1</cf>
+            <aggregateMethod>sum</aggregateMethod>
+        </overviewgraphdatapoint>
+            </datapoints>
+            <virtualdatapoints>
+            </virtualdatapoints>
+            <lines>
+            <overviewgraphline>
+                <type>1</type>
+                <legend>##INSTANCE##</legend>
+                <datapointname>price</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>silver</color>
+            </overviewgraphline>
+            </lines>
+        </overviewgraph>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
