@@ -1,0 +1,452 @@
+{
+  "santabaRelease": 133,
+  "widgetTokens": [
+    {
+      "name": "city",
+      "value": "Leander"
+    },
+    {
+      "name": "latitude",
+      "value": "30.5788"
+    },
+    {
+      "name": "longitude",
+      "value": "-97.8531"
+    }
+  ],
+  "name": "Weather - Leander",
+  "description": "Overview of LogicMonitor alerts presented in three different widget formats.",
+  "widgetsConfigVersion": 2,
+  "type": "dashboard",
+  "widgets": [
+    {
+      "position": {
+        "col": 1,
+        "sizex": 6,
+        "row": 1,
+        "sizey": 3
+      },
+      "config": {
+        "bigNumberInfo": {
+          "virtualDataPoints": [],
+          "counters": [],
+          "dataPoints": [
+            {
+              "dataPointName": "feels_likeF",
+              "instanceName": "OpenWeatherMap-##city##",
+              "dataSourceFullName": "OpenWeatherMap",
+              "name": "TempF",
+              "aggregateFunction": "SUM",
+              "deviceGroupFullPath": "*",
+              "deviceDisplayName": "WeatherCam"
+            },
+            {
+              "dataPointName": "humidity",
+              "instanceName": "OpenWeatherMap-##city##",
+              "dataSourceFullName": "OpenWeatherMap",
+              "name": "Humidity",
+              "aggregateFunction": "SUM",
+              "deviceGroupFullPath": "*",
+              "deviceDisplayName": "WeatherCam"
+            },
+            {
+              "dataPointName": "pressure",
+              "instanceName": "OpenWeatherMap-##city##",
+              "dataSourceFullName": "OpenWeatherMap",
+              "name": "Pressure",
+              "aggregateFunction": "SUM",
+              "deviceGroupFullPath": "*",
+              "deviceDisplayName": "WeatherCam"
+            }
+          ],
+          "bigNumberItems": [
+            {
+              "dataPointName": "TempF",
+              "useCommaSeparators": false,
+              "bottomLabel": "",
+              "rounding": 0,
+              "position": 1,
+              "rightLabel": "°F",
+              "colorThresholds": [
+                {
+                  "level": 2,
+                  "threshold": 72,
+                  "relation": ">"
+                },
+                {
+                  "level": 3,
+                  "threshold": 85,
+                  "relation": ">"
+                },
+                {
+                  "level": 4,
+                  "threshold": 95,
+                  "relation": ">"
+                }
+              ]
+            },
+            {
+              "dataPointName": "Humidity",
+              "useCommaSeparators": false,
+              "bottomLabel": "",
+              "rounding": 0,
+              "position": 2,
+              "rightLabel": "%",
+              "colorThresholds": null
+            },
+            {
+              "dataPointName": "Pressure",
+              "useCommaSeparators": false,
+              "bottomLabel": "",
+              "rounding": 0,
+              "position": 3,
+              "rightLabel": "mbar",
+              "colorThresholds": [
+                {
+                  "level": 2,
+                  "threshold": 1000,
+                  "relation": "<="
+                },
+                {
+                  "level": 3,
+                  "threshold": 980,
+                  "relation": "<="
+                },
+                {
+                  "level": 4,
+                  "threshold": 950,
+                  "relation": "<="
+                }
+              ]
+            }
+          ]
+        },
+        "displaySettings": {},
+        "name": "WeatherSense",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "type": "bigNumber",
+        "timescale": "day",
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 7,
+        "sizex": 6,
+        "row": 1,
+        "sizey": 9
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "Weather Map",
+        "isCustom": false,
+        "description": "",
+        "resources": [{
+          "type": "html",
+          "URL": "https://embed.windy.com/embed2.html?lat=##latitude##&lon=##longitude##&zoom=5&level=surface&overlay=temp&menu=&message=&marker=true&calendar=&pressure=&type=map&location=coordinates&detail=true&detailLat=##latitude##&detailLon=##longitude##&metricWind=default&metricTemp=default&radarRange=-1"
+        }],
+        "theme": "newBorderGray",
+        "interval": 15,
+        "type": "html",
+        "timescale": "day",
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 1,
+        "sizex": 6,
+        "row": 4,
+        "sizey": 4
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "##city##-Temperature (F)",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "graphInfo": {
+          "virtualDataPoints": [],
+          "minValue": "NaN",
+          "topX": 0,
+          "maxValue": "NaN",
+          "dataPoints": [
+            {
+              "dataPointName": "tempF",
+              "instanceName": {
+                "isGlob": false,
+                "value": "##city##"
+              },
+              "dataSourceFullName": "OpenWeatherMap",
+              "consolidateFunction": "average",
+              "display": {
+                "color": "aqua",
+                "legend": "Temperature",
+                "type": "line",
+                "option": "custom"
+              },
+              "name": "tempF",
+              "aggregateFunction": "SUM",
+              "deviceDisplayName": {
+                "isGlob": false,
+                "value": "WeatherCam"
+              },
+              "deviceGroupFullPath": {
+                "isGlob": true,
+                "value": "*"
+              }
+            },
+            {
+              "dataPointName": "feels_likeF",
+              "instanceName": {
+                "isGlob": false,
+                "value": "##city##"
+              },
+              "dataSourceFullName": "OpenWeatherMap",
+              "consolidateFunction": "average",
+              "display": {
+                "color": "green",
+                "legend": "Feels Like",
+                "type": "line",
+                "option": "custom"
+              },
+              "name": "feels_likeF",
+              "aggregateFunction": "SUM",
+              "deviceDisplayName": {
+                "isGlob": false,
+                "value": "WeatherCam"
+              },
+              "deviceGroupFullPath": {
+                "isGlob": true,
+                "value": "*"
+              }
+            },
+            {
+              "dataPointName": "temp_maxF",
+              "instanceName": {
+                "isGlob": false,
+                "value": "##city##"
+              },
+              "dataSourceFullName": "OpenWeatherMap",
+              "consolidateFunction": "average",
+              "display": {
+                "color": "red",
+                "legend": "High",
+                "type": "line",
+                "option": "custom"
+              },
+              "name": "temp_maxF",
+              "aggregateFunction": "SUM",
+              "deviceDisplayName": {
+                "isGlob": false,
+                "value": "WeatherCam"
+              },
+              "deviceGroupFullPath": {
+                "isGlob": true,
+                "value": "*"
+              }
+            },
+            {
+              "dataPointName": "temp_minF",
+              "instanceName": {
+                "isGlob": false,
+                "value": "##city##"
+              },
+              "dataSourceFullName": "OpenWeatherMap",
+              "consolidateFunction": "average",
+              "display": {
+                "color": "silver",
+                "legend": "Low",
+                "type": "line",
+                "option": "custom"
+              },
+              "name": "temp_minF",
+              "aggregateFunction": "SUM",
+              "deviceDisplayName": {
+                "isGlob": false,
+                "value": "WeatherCam"
+              },
+              "deviceGroupFullPath": {
+                "isGlob": true,
+                "value": "*"
+              }
+            }
+          ],
+          "verticalLabel": "°F",
+          "aggregate": true,
+          "desc": true,
+          "scaleUnit": 1000,
+          "globalConsolidateFunction": "default"
+        },
+        "type": "cgraph",
+        "timescale": "2days",
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 1,
+        "sizex": 6,
+        "row": 12,
+        "sizey": 4
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "##city##-Pressure",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "graphInfo": {
+          "virtualDataPoints": [],
+          "minValue": "NaN",
+          "topX": 0,
+          "maxValue": "NaN",
+          "dataPoints": [{
+            "dataPointName": "pressure",
+            "instanceName": {
+              "isGlob": false,
+              "value": "##city##"
+            },
+            "dataSourceFullName": "OpenWeatherMap",
+            "consolidateFunction": "average",
+            "display": {
+              "color": "silver",
+              "legend": "Pressure",
+              "type": "line",
+              "option": "custom"
+            },
+            "name": "pressure",
+            "aggregateFunction": "SUM",
+            "deviceDisplayName": {
+              "isGlob": false,
+              "value": "WeatherCam"
+            },
+            "deviceGroupFullPath": {
+              "isGlob": true,
+              "value": "*"
+            }
+          }],
+          "verticalLabel": "mbar",
+          "aggregate": true,
+          "desc": true,
+          "scaleUnit": 1000,
+          "globalConsolidateFunction": "default"
+        },
+        "type": "cgraph",
+        "timescale": "2days",
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 1,
+        "sizex": 6,
+        "row": 8,
+        "sizey": 4
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "##city##-Humidity",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "graphInfo": {
+          "virtualDataPoints": [],
+          "minValue": 0,
+          "topX": 0,
+          "maxValue": 100,
+          "dataPoints": [{
+            "dataPointName": "humidity",
+            "instanceName": {
+              "isGlob": false,
+              "value": "##city##"
+            },
+            "dataSourceFullName": "OpenWeatherMap",
+            "consolidateFunction": "average",
+            "display": {
+              "color": "silver",
+              "legend": "Humidity",
+              "type": "line",
+              "option": "custom"
+            },
+            "name": "humidity",
+            "aggregateFunction": "SUM",
+            "deviceDisplayName": {
+              "isGlob": false,
+              "value": "WeatherCam"
+            },
+            "deviceGroupFullPath": {
+              "isGlob": true,
+              "value": "*"
+            }
+          }],
+          "verticalLabel": "%",
+          "aggregate": true,
+          "desc": true,
+          "scaleUnit": 1000,
+          "globalConsolidateFunction": "default"
+        },
+        "type": "cgraph",
+        "timescale": "2days",
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 7,
+        "sizex": 6,
+        "row": 10,
+        "sizey": 6
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "##city##-Wind",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "graphInfo": {
+          "virtualDataPoints": [],
+          "minValue": 0,
+          "topX": 0,
+          "maxValue": "NaN",
+          "dataPoints": [{
+            "dataPointName": "wind_speedMPH",
+            "instanceName": {
+              "isGlob": false,
+              "value": "##city##"
+            },
+            "dataSourceFullName": "OpenWeatherMap",
+            "consolidateFunction": "average",
+            "display": {
+              "color": "silver",
+              "legend": "Speed",
+              "type": "line",
+              "option": "custom"
+            },
+            "name": "wind_speedMPH",
+            "aggregateFunction": "SUM",
+            "deviceDisplayName": {
+              "isGlob": false,
+              "value": "WeatherCam"
+            },
+            "deviceGroupFullPath": {
+              "isGlob": true,
+              "value": "*"
+            }
+          }],
+          "verticalLabel": "mph",
+          "aggregate": true,
+          "desc": true,
+          "scaleUnit": 1000,
+          "globalConsolidateFunction": "default"
+        },
+        "type": "cgraph",
+        "timescale": "2days",
+        "version": 2
+      }
+    }
+  ],
+  "version": 2
+}

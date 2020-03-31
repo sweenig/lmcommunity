@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1585169939</version>
+        <version>1585234236</version>
         <name>OpenWeatherMap</name>
         <displayedas>OpenWeatherMap</displayedas>
         <description>Instances are created based hon the property &#34;weather.locations&#34; which is a pipe separated list of entries. 
@@ -34,7 +34,7 @@ return 0</wildcardgroovyscript>
         <wildcarddeleteinactive>true</wildcarddeleteinactive>
         <agdmethod>none</agdmethod>
         <agdparams></agdparams>
-        <group>_WeenigWare</group>
+        <group>_WeenigWare Community</group>
         <tags></tags>
         <technology></technology>
         <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"hostProps.get(\"weather.locations\").tokenize(\"|\").each{\n    location = it.tokenize(\"!\")\n    println(\"${location[1].trim()}${(location[2] ?: \"us\").trim()}##${location[0].trim()}\")\n}\nreturn 0"}}]]></adlist>

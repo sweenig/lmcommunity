@@ -20,7 +20,7 @@
         "persistentInstance": false,
         "scheduleInterval": 0
     },
-    "checksum": "0691a3d2cdb8ccc89907833b71d96cb6",
+    "checksum": "b2f36b0ab24742891463456d6da92c28",
     "collectInterval": 180,
     "collectMethod": "batchscript",
     "collectorAttribute": {
@@ -666,7 +666,7 @@
             "width": 360
         }
     ],
-    "group": "_WeenigWare",
+    "group": "_WeenigWare Community",
     "hasMultiInstances": true,
     "lineageId": "uSgp6-KlRNOTycI55ORXpg",
     "name": "OpenWeatherMap",
