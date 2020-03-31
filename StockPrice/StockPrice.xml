@@ -5,10 +5,10 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1585665371</version>
+        <version>1585667449</version>
         <name>StockPrice</name>
         <displayedas>Stock Price</displayedas>
-        <description></description>
+        <description>Tracks stock prices for symbols defined in the &#34;stocks&#34; property. Data from finnhub.io.</description>
         <collector>batchscript</collector>
         <hasMultiInstances>true</hasMultiInstances>
         <schedule>120</schedule>
@@ -39,9 +39,10 @@ return 0
         <wildcarddeleteinactive>true</wildcarddeleteinactive>
         <agdmethod>none</agdmethod>
         <agdparams></agdparams>
-        <group>_WeenigWare</group>
+        <group>_WeenigWare Community</group>
         <tags></tags>
-        <technology></technology>
+        <technology>Must have an API key for Finnhub.io. The API key must be saved as a new custom property under the device you want to run this datasource on called, &#34;finnhub.api.key&#34; with the value being the API Key.
+Create a comma, space, or pipe separated list of ticker symbols as a property called &#34;stocks&#34;.</technology>
         <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"import groovy.json.JsonSlurper\nstocks = hostProps.get(\"stocks\").tokenize(\",| \")\ntoken = hostProps.get(\"finnhub.api.key\")\nstocks.each{\n  try {\n    url = \"https://finnhub.io/api/v1/stock/profile?token=${token}&symbol=${it}\"\n    // println(url)\n    jsondata = url.toURL().getText()\n    data = new JsonSlurper().parseText(jsondata)\n    // println(data)\n    println(\"${it}##${data.name}##${data.weburl}####address=${data.address} ${data.city} ${data.state}&phone=${data.phone}&exchange=${data.exchange}&currency=${data.currency}\")\n  } catch (Exception e) {println(e);return 1}\n}\nreturn 0\n"}}]]></adlist>
         <schemaVersion>2</schemaVersion>
         <dataSourceType>1</dataSourceType>

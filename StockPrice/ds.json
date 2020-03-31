@@ -20,7 +20,7 @@
         "persistentInstance": false,
         "scheduleInterval": 0
     },
-    "checksum": "d01b32ce25e9d7c0077578f342b396e8",
+    "checksum": "a86ed260118f6211e5ef2a4d38fbf128",
     "collectInterval": 120,
     "collectMethod": "batchscript",
     "collectorAttribute": {
@@ -173,7 +173,7 @@
             "userParam3": ""
         }
     ],
-    "description": "",
+    "description": "Tracks stock prices for symbols defined in the \"stocks\" property. Data from finnhub.io.",
     "displayName": "Stock Price",
     "enableAutoDiscovery": true,
     "enableEriDiscovery": false,
@@ -259,7 +259,7 @@
             "width": 360
         }
     ],
-    "group": "_WeenigWare",
+    "group": "_WeenigWare Community",
     "hasMultiInstances": true,
     "lineageId": "pkXb2Fe5QICG-XFQb-k2_g",
     "name": "StockPrice",
@@ -298,5 +298,5 @@
         }
     ],
     "tags": "",
-    "technology": ""
+    "technology": "Must have an API key for Finnhub.io. The API key must be saved as a new custom property under the device you want to run this datasource on called, \"finnhub.api.key\" with the value being the API Key.\nCreate a comma, space, or pipe separated list of ticker symbols as a property called \"stocks\"."
 }
