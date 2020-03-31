@@ -1,0 +1,302 @@
+{
+    "LMApiVersion": "3",
+    "appliesTo": "finnhub.api.key\t&& stocks",
+    "auditVersion": 0,
+    "autoDiscoveryConfig": {
+        "deleteInactiveInstance": true,
+        "disableInstance": false,
+        "filters": [],
+        "instanceAutoGroupMethod": "none",
+        "instanceAutoGroupMethodParams": "",
+        "method": {
+            "groovyScript": "ad",
+            "linuxCmdline": null,
+            "linuxScript": null,
+            "name": "ad_script",
+            "type": "embeded",
+            "winCmdline": null,
+            "winScript": null
+        },
+        "persistentInstance": false,
+        "scheduleInterval": 0
+    },
+    "checksum": "d01b32ce25e9d7c0077578f342b396e8",
+    "collectInterval": 120,
+    "collectMethod": "batchscript",
+    "collectorAttribute": {
+        "groovyScript": "collect",
+        "linuxCmdline": "",
+        "linuxScript": "",
+        "name": "batchscript",
+        "scriptType": "embed",
+        "windowsCmdline": "",
+        "windowsScript": ""
+    },
+    "coretools_format": "ds meV1",
+    "dataPoints": [
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 4,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "ExecutionTime",
+            "postProcessorMethod": "none",
+            "postProcessorParam": "",
+            "rawDataFieldName": "responseTime",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "Current price",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "currentPrice",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "##WILDVALUE##.c",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "High price of the day",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "highPrice",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "##WILDVALUE##.h",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "Low price of the day",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "lowPrice",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "##WILDVALUE##.l",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "Open price of the day",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "openPrice",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "##WILDVALUE##.o",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 0,
+            "dataType": 7,
+            "description": "Previous close price",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "",
+            "name": "previousClose",
+            "postProcessorMethod": "namevalue",
+            "postProcessorParam": "##WILDVALUE##.pc",
+            "rawDataFieldName": "output",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        }
+    ],
+    "description": "",
+    "displayName": "Stock Price",
+    "enableAutoDiscovery": true,
+    "enableEriDiscovery": false,
+    "eriDiscoveryConfig": null,
+    "eriDiscoveryInterval": -1,
+    "graphs": [
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "currentPrice",
+                    "name": "currentPrice"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "highPrice",
+                    "name": "highPrice"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "lowPrice",
+                    "name": "lowPrice"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "openPrice",
+                    "name": "openPrice"
+                },
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "previousClose",
+                    "name": "previousClose"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "silver",
+                    "dataPointName": "currentPrice",
+                    "isVirtualDataPoint": false,
+                    "legend": "Current Price",
+                    "type": 1
+                },
+                {
+                    "colorName": "fuchsia",
+                    "dataPointName": "highPrice",
+                    "isVirtualDataPoint": false,
+                    "legend": "High Price",
+                    "type": 1
+                },
+                {
+                    "colorName": "yellow",
+                    "dataPointName": "lowPrice",
+                    "isVirtualDataPoint": false,
+                    "legend": "Low Price",
+                    "type": 1
+                },
+                {
+                    "colorName": "aqua",
+                    "dataPointName": "openPrice",
+                    "isVirtualDataPoint": false,
+                    "legend": "Open Price",
+                    "type": 1
+                },
+                {
+                    "colorName": "lime",
+                    "dataPointName": "previousClose",
+                    "isVirtualDataPoint": false,
+                    "legend": "Previous Close",
+                    "type": 1
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": "NaN",
+            "name": "Stock Price",
+            "rigid": false,
+            "timeScale": "1day",
+            "title": "Stock Price",
+            "verticalLabel": "$",
+            "virtualDataPoints": [],
+            "width": 360
+        }
+    ],
+    "group": "_WeenigWare",
+    "hasMultiInstances": true,
+    "lineageId": "pkXb2Fe5QICG-XFQb-k2_g",
+    "name": "StockPrice",
+    "overviewgraphs": [
+        {
+            "aggregated": false,
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "aggregateMethod": "sum",
+                    "consolidateFunc": 1,
+                    "dataPointName": "currentPrice",
+                    "dpName": "currentPrice"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "silver",
+                    "dataPointName": "currentPrice",
+                    "isVirtualDataPoint": false,
+                    "legend": "##INSTANCE##",
+                    "type": 1
+                }
+            ],
+            "maxValue": "NaN",
+            "minValue": "NaN",
+            "name": "Currently Trading",
+            "rigid": false,
+            "timeScale": "1day",
+            "title": "Currently Trading",
+            "verticalLabel": "$",
+            "virtualDataPoints": [],
+            "width": 360
+        }
+    ],
+    "tags": "",
+    "technology": ""
+}

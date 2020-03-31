@@ -1,6 +1,8 @@
 # Simple COVID-19 By State DS
 Simple DS to track COVID-19 cases and deaths broken out by state. It started out [written by mkerfoot on the communities](https://communities.logicmonitor.com/topic/5378-covid-19/). I adapted it to run in Groovy so it can be collected by any collector.
 
+An API key from Finnhub.io is required to run this DataSource. Just sign up for a free account and grab the API key from your account page. Store it as a property on whichever resource you want the data applied to with property name `finnhub.api.key`.
+
 In addition to allowing it to run on non-Windows collectors, I also converted it into BATCHSCRIPT instead of SCRIPT. This has the added benefit that the collection happens only once per poll interval vs. once per instance per poll interval.
 
 This groups by country, but it is a manual thing, looking up the states in a hard coded country to state map. If an entry is not found to be either in Canada or one of the other "states", it's assumed to be a state in the U.S.
