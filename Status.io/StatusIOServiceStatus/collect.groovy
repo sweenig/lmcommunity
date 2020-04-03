@@ -5,7 +5,7 @@
 
 import groovy.json.JsonSlurper
 
-def statusIoKey = hostProps.get("statusio_key")
+def statusIoKey = hostProps.get("statusio_key") ?: hostProps.get("auto.statusio_key")
 def statusIoDomain = hostProps.get("statusio_domain") ?: "statuspage.io"
 
 url = "https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json"

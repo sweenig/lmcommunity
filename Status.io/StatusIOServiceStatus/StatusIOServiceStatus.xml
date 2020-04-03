@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1585243986</version>
+        <version>1585928311</version>
         <name>StatusIOServiceStatus</name>
         <displayedas>Service Status</displayedas>
         <description>Monitor status of services.</description>
@@ -66,7 +66,7 @@ If the FQDN is not key.statuspage.io, this version of the DS will not work.</tec
 
 import groovy.json.JsonSlurper
 
-def statusIoKey = hostProps.get(&#34;statusio_key&#34;)
+def statusIoKey = hostProps.get(&#34;statusio_key&#34;) ?: hostProps.get(&#34;auto.statusio_key&#34;)
 def statusIoDomain = hostProps.get(&#34;statusio_domain&#34;) ?: &#34;statuspage.io&#34;
 
 url = &#34;https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json&#34;
