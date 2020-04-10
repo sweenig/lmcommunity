@@ -5,11 +5,11 @@
   "appliesTo" : "finnhub.api.key\t&& stocks",
   "technology" : "Must have an API key for Finnhub.io. The API key must be saved as a new custom property under the device you want to run this datasource on called, \"finnhub.api.key\" with the value being the API Key.\nCreate a comma, space, or pipe separated list of ticker symbols as a property called \"stocks\".",
   "tags" : "",
-  "checksum" : "a86ed260118f6211e5ef2a4d38fbf128",
+  "checksum" : "6af9ab95350e2d37a09f991e02c92484",
   "lineageId" : "pkXb2Fe5QICG-XFQb-k2_g",
   "name" : "StockPrice",
   "displayName" : "Stock Price",
-  "version" : 1585667449,
+  "version" : 1586526561,
   "auditVersion" : 0,
   "hasMultiInstances" : true,
   "collectInterval" : 120,
@@ -38,7 +38,7 @@
       "winCmdline" : null,
       "linuxCmdline" : null,
       "linuxScript" : null,
-      "groovyScript" : "import groovy.json.JsonSlurper\nstocks = hostProps.get(\"stocks\").tokenize(\",| \")\ntoken = hostProps.get(\"finnhub.api.key\")\nstocks.each{\n  try {\n    url = \"https://finnhub.io/api/v1/stock/profile?token=${token}&symbol=${it}\"\n    // println(url)\n    jsondata = url.toURL().getText()\n    data = new JsonSlurper().parseText(jsondata)\n    // println(data)\n    println(\"${it}##${data.name}##${data.weburl}####address=${data.address} ${data.city} ${data.state}&phone=${data.phone}&exchange=${data.exchange}&currency=${data.currency}\")\n  } catch (Exception e) {println(e);return 1}\n}\nreturn 0\n"
+      "groovyScript" : "import groovy.json.JsonSlurper\nstocks = hostProps.get(\"stocks\").tokenize(\",| \")\ntoken = hostProps.get(\"finnhub.api.key\")\ntry {\n  url = \"https://finnhub.io/api/v1/stock/symbol?exchange=US&token=${token}\"\n  jsondata = url.toURL().getText()\n  // println(jsondata)\n  data = new JsonSlurper().parseText(jsondata)\n  data.each{\n     if (stocks.contains(it.symbol)) {\n       println(\"${it.symbol}##${it.description}\")\n     }\n  }\n} catch (Exception e) {println(e);return 1}\nreturn 0\n"
     },
     "filters" : [ ]
   },
