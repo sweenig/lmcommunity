@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1585677247</version>
+        <name>ZoomOverallDailyStatistics</name>
+        <displayedas>Zoom Overall Daily Statistics</displayedas>
+        <description>By Stefan Wuensch, 2020-03-12. Zoom API collection of daily total usage metrics: New Users, Number of Meetings, Total Participants, and Total Number of Meeting Minutes.</description>
+        <collector>script</collector>
+        <hasMultiInstances>false</hasMultiInstances>
+        <schedule>60</schedule>
+        <appliesTo>zoom_api.key &#38;&#38; zoom_api.pass</appliesTo>
+        <wildcardauto>false</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript></wildcardlinuxscript>
+        <wildcardlinuxcmdline></wildcardlinuxcmdline>
+        <wildcardwinscript></wildcardwinscript>
+        <wildcardwincmdline></wildcardwincmdline>
+        <wildcardgroovyscript></wildcardgroovyscript>
+        <wildcardschedule>1440</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare</group>
+        <tags></tags>
+        <technology>API endpoint docs: https://marketplace.zoom.us/docs/api-reference/zoom-api/reports/reportdaily
+API endpoint: https://api.zoom.us/v2/report/daily</technology>
+        <adlist><![CDATA[{"agdmethod":"none","agdparams":"","id":0,"filters":[],"params":{}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>import java.util.Base64
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+import com.santaba.agent.groovyapi.http.*
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+
+zoom_api_key = hostProps.get(&#34;zoom_api.key&#34;)
+
+myKey = generateJWTToken(hostProps.get(&#34;zoom_api.pass&#34;))
+
+httpClient = HTTP.open(&#34;https://api.zoom.us&#34;, 443)
+
+def url = &#34;https://api.zoom.us/v2/report/daily&#34;
+
+def headers = [:]
+headers.put(&#34;Authorization&#34;, &#34;Bearer &#34; + myKey)
+headers.put(&#34;Content-Type&#34;,&#34;application/json&#34;)
+headers.put(&#34;User-Agent&#34;, &#34;Zoom-Jwt-Request&#34;)
+
+def getResponse = httpClient.get(url,headers)
+def report = new JsonSlurper().parseText(httpClient.getResponseBody())
+
+println(JsonOutput.toJson(report.dates[-1]))
+return 0
+
+
+public String generateJWTToken(String secretKey) throws RuntimeException {
+  /**
+   * Generates a JWT Token as accepted by a service like Zoom. Adjust the header and payload to fit the
+   * service you are interacting with. Be sure to account for all spaces in header/payload! Also token string
+   * is without padding. If you need padding, be sure to remove &#34;withoutPadding()&#34; calls.
+   * @param  secretKey  Secret key used during encoding.
+   * @return returns JWT token string based on header, payload and secretKey
+   */
+   String header = &#34;{\&#34;typ\&#34;:\&#34;JWT\&#34;,\&#34;alg\&#34;:\&#34;HS256\&#34;}&#34;
+   String base64UrlHeader = Base64.getUrlEncoder().withoutPadding().encodeToString(header.getBytes())
+
+   // JWT token expires 60 seconds from now
+   long timeSecs = (System.currentTimeMillis() / 1000) + 60
+
+   String payload = &#34;{\&#34;iss\&#34;:\&#34;${zoom_api_key}\&#34;,\&#34;exp\&#34;:&#34; + String.valueOf(timeSecs) + &#34;}&#34;
+   String base64UrlPayload = Base64.getUrlEncoder().withoutPadding().encodeToString(payload.getBytes())
+
+   try {
+      String base64UrlSignature = hmacEncode(base64UrlHeader + &#34;.&#34; + base64UrlPayload, secretKey)
+
+      return base64UrlHeader + &#34;.&#34; + base64UrlPayload + &#34;.&#34; + base64UrlSignature
+   } catch (Exception e) {
+      throw new RuntimeException(&#34;Unable to generate a JWT token.&#34;)
+   }
+}
+
+private String hmacEncode(String data, String key) throws Exception {
+  /**
+   * Helper method that encodes data using HmacSHA256 and key.
+   * @param  data data to encode
+   * @param  key  Secret key used during encoding.
+   * @return Base64UrlEncoded string without padding
+   */
+   Mac sha256_HMAC = Mac.getInstance(&#34;HmacSHA256&#34;)
+   SecretKeySpec secret_key = new SecretKeySpec(key.getBytes(), &#34;HmacSHA256&#34;)
+   sha256_HMAC.init(secret_key)
+
+   return Base64.getUrlEncoder().withoutPadding().encodeToString(sha256_HMAC.doFinal(data.getBytes()))
+}</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>meeting_minutes</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>json</postprocessormethod>
+            <postprocessorparam>meeting_minutes</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>3</alertTransitionIval>
+            <alertClearTransitionIval>2</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>meetings</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>json</postprocessormethod>
+            <postprocessorparam>meetings</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>3</alertTransitionIval>
+            <alertClearTransitionIval>2</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>new_users</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>json</postprocessormethod>
+            <postprocessorparam>new_users</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>3</alertTransitionIval>
+            <alertClearTransitionIval>2</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>participants</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>json</postprocessormethod>
+            <postprocessorparam>participants</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>3</alertTransitionIval>
+            <alertClearTransitionIval>2</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Zoom Daily Meeting Minutes</name>
+            <title>Zoom Daily Meeting Minutes</title>
+            <verticallabel>Count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>2</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>meeting_minutes</name>
+            <datapointname>meeting_minutes</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Total Meeting Minutes Today</legend>
+                <color>teal</color>
+                <datapointname>meeting_minutes</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Zoom Daily Meetings</name>
+            <title>Zoom Daily Meetings</title>
+            <verticallabel>Count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>meetings</name>
+            <datapointname>meetings</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Meetings Today</legend>
+                <color>green</color>
+                <datapointname>meetings</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Zoom Daily New Users</name>
+            <title>Zoom Daily New Users</title>
+            <verticallabel>Count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>new_users</name>
+            <datapointname>new_users</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>New Users Today</legend>
+                <color>silver</color>
+                <datapointname>new_users</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Zoom Daily Participants</name>
+            <title>Zoom Daily Participants</title>
+            <verticallabel>Count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>2</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>participants</name>
+            <datapointname>participants</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Participants Today</legend>
+                <color>fuchsia</color>
+                <datapointname>participants</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
