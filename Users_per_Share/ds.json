@@ -39,7 +39,7 @@
         "persistentInstance": false,
         "scheduleInterval": 0
     },
-    "checksum": "a3ba65479367c414cad211eac28a3cde",
+    "checksum": "95ecc824d9883ce31f319926580e3bc6",
     "collectInterval": 60,
     "collectMethod": "batchscript",
     "collectorAttribute": {
@@ -138,9 +138,9 @@
             "width": 360
         }
     ],
-    "group": "z_In Development",
+    "group": "_WeenigWare",
     "hasMultiInstances": true,
-    "lineageId": "xhmegerKRB-mM3X4dqWy1A",
+    "lineageId": "eKOsQYp1T7muWK48eSkaHA",
     "name": "Users_per_Share",
     "overviewgraphs": [
         {

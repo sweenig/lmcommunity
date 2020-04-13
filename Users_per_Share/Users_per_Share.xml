@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1585933174</version>
+        <version>1586294984</version>
         <name>Users_per_Share</name>
         <displayedas>Users per Share</displayedas>
         <description></description>
@@ -25,7 +25,7 @@
         <wildcarddeleteinactive>true</wildcarddeleteinactive>
         <agdmethod>none</agdmethod>
         <agdparams></agdparams>
-        <group>z_In Development</group>
+        <group>_WeenigWare</group>
         <tags></tags>
         <technology></technology>
         <adlist><![CDATA[{"agdmethod":"none","method":"ad_wmi","agdparams":"","id":0,"filters":[{"attribute":"name","operation":"NotContain","value":"$"}],"params":{"linkedClasses":"[]","ad_param_externalresourceid":"","namespace":"CIMv2","property":"Name","ILP":"[{\"wmiName\":\"path\",\"lmName\":\"auto.path\"},{\"wmiName\":\"type\",\"lmName\":\"auto.type\"}]","ad_param_externalresourcetype":"","class":"Win32_Share"}}]]></adlist>
@@ -39,27 +39,16 @@
         </attribute>
         <attribute>
             <name>scriptgroovy</name>
-            <value>import com.santaba.agent.groovyapi.expect.Expect;
-import com.santaba.agent.groovyapi.snmp.Snmp;
-import com.santaba.agent.groovyapi.http.*;
-import com.santaba.agent.groovyapi.jmx.*;
-import org.xbill.DNS.*;/*******************************************************************************
- *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
+            <value>import com.santaba.agent.groovyapi.win32.WMI
 
-import com.santaba.agent.groovyapi.win32.WMI
-
-def hostname = hostProps.get(&#34;system.hostname&#34;);
+def hostname = hostProps.get(&#34;system.hostname&#34;)
 
 try {
   def namespace = &#34;CIMv2&#34;;
   def timeout = 30;
   def wmi_query = &#39;select * from win32_serverconnection&#39;;
-
   def wmi_output_all = WMI.queryAll(hostname, namespace, wmi_query, timeout);
-
   def shareCounts = [:]
-
   wmi_output_all.each {
     if (shareCounts.containsKey(it[&#34;SHARENAME&#34;])) {
       shareCounts[it[&#34;SHARENAME&#34;]] += it[&#34;NUMBEROFUSERS&#34;].toInteger()
@@ -68,11 +57,9 @@ try {
     }
   }
 
-shareCounts.each{k,v -&#62;
-  println(&#34;${k}.numofusers: ${v}&#34;)
-}
+shareCounts.each{k,v -&#62; println(&#34;${k}.numofusers: ${v}&#34;)}
 
-  return 0;
+return 0
 } catch (Exception e) {println e;return 1}</value>
             <comment></comment>
         </attribute>
@@ -104,12 +91,12 @@ shareCounts.each{k,v -&#62;
         </attributes>
         <datapoints>
         <datapoint>
-            <name>ConnectedUsers_raw</name>
+            <name>ConnectedUsers</name>
             <dataType>7</dataType>
             <type>2</type>
-            <postprocessormethod>namevalue</postprocessormethod>
-            <postprocessorparam>##WILDVALUE##.numofusers</postprocessorparam>
-            <usevalue>output</usevalue>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>if(un(ConnectedUsers_raw),0,ConnectedUsers_raw)</postprocessorparam>
+            <usevalue></usevalue>
             <alertexpr></alertexpr>
             <alertmissing>1</alertmissing>
             <alertsubject></alertsubject>
@@ -127,12 +114,12 @@ shareCounts.each{k,v -&#62;
             <alertClearTransitionIval>0</alertClearTransitionIval>
         </datapoint>
         <datapoint>
-            <name>ConnectedUsers</name>
+            <name>ConnectedUsers_raw</name>
             <dataType>7</dataType>
             <type>2</type>
-            <postprocessormethod>expression</postprocessormethod>
-            <postprocessorparam>if(un(ConnectedUsers_raw),0,ConnectedUsers_raw)</postprocessorparam>
-            <usevalue></usevalue>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.numofusers</postprocessorparam>
+            <usevalue>output</usevalue>
             <alertexpr></alertexpr>
             <alertmissing>1</alertmissing>
             <alertsubject></alertsubject>
