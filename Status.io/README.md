@@ -1,6 +1,6 @@
 # Status Page Monitoring (if it's hosted by StatusPage.io)
 
-## To add monitoring
+## To add monitoring (Short manual instructions)
 1. Import [the DataSource definition](StatusIOServiceStatus/StatusIOServiceStatus.xml) into your portal
 2. From the status page:
   * append "/api/v2/status.json" to the status page URL
@@ -11,6 +11,23 @@
   * Add a property called "statusio_key" with the id/key fetched earlier as the value
 
 That should get the device in and discovery started. Wait a few minutes and you should see the component services discovered and data should start flowing in.
+
+## Still, it can be easier
+Once you have both the [DataSource](StatusIOServiceStatus/StatusIOServiceStatus.xml) and the [PropertySource](StatusIOKey/StatusIOKey.json) added to your portal, add the status page to your LogicMonitor portal as a resource. Start by going to the Resources page and clicking Add >> One Device >> Expert. For the IP Address/DNS name, put the status page address. For example, if you wanted to monitor GoToMeeting, you’d use “status.gotomeeting.com.”  For the name, put a nice friendly name for the App (like “GoToMeeting”). LogicMonitor needs at least the HTTPS DataSource to apply and collect data in order to consider the device “not dead”. If the device is considered “dead”, you won’t get any alarms. You can disable any other DataSources you might not find necessary for this device.
+
+The PropertySource should go find the key for you and load it in as a property, which will trigger the DataSource to discover the services. Once they are discovered, LogicMonitor will start monitoring the services and open alarms whenever the status is not “operational.”
+
+It is possible that the PropertySource won’t automatically find the key for the status page you’re trying to monitor. If this is the case, you’ll need to grab the key manually and add it as statusio_key. To find the key manually, go to the status page then append “/api/v2” to the URL. You should see the API page. On that page, there is an example found in the Summary section. You can see the key without expanding, but if you want to copy/paste, you’ll need to expand. Look for the key in the endpoint URL as shown below:
+
+![Key](images/statuspage.png "Key retrieval from the status page")
+
+Now you have the data and try not to get alarmed, but what about a dashboard? You can use the NOC widget to display the data either aggregated by service:
+
+![sample1](images/widget1.png "Example widget")
+
+Or you could also use the NOC widget to display the data of each component of a single service:
+
+![sample2](images/widget2.png "Example widget")
 
 ## Sample Dashboard
 If you need some help getting started building a dashboard, you can import [this tokenized dashboard](Sample Tokenized Dashboard.json) into your portal. You'll need to change the ##defaultResource## token by editing the dashboard. Set the value to the friendly name of the resource you added above.
