@@ -1,5 +1,14 @@
 # Status Page Monitoring (if it's hosted by StatusPage.io)
 
+From [my post](https://www.logicmonitor.com/blog/remote-monitoring-third-party-status-pages) on LogicMonitor's blog:
+
+>Are we having fun yet? The debate about whether to allow employees to work from home is now moot. The virus that causes COVID-19 has made working from home a national imperative for those functions that can be done remotely. The implications of this are pretty broad in scope and have IT shops scrambling to address the concerns of management of how to monitor the very apps that enable efficient work from home strategies.
+I started this week, at the request of a large, prestigious university, writing LogicModules that include status updates for Zoom. In the process, I discovered that Zoom, like many SaaS Apps, uses a third party to publish their status page, StatusPage.io. This is perfect since some of the power behind LogicMonitor is its extensibility. So I thought it would be useful to expand this coverage to other SaaS applications that use StatusPage.io to publish the status of their services to their customers.
+As a team, we scoured the interwebs for SaaS apps that use this same service for their status page. It turns out there are quite a few. In only an hour, we identified 36 different ones including: Atlassian, Buzzfeed, Canvas, CloudFare, Dialpad, Dropbox, Fitbit, Gong, GoToMeeting, LogMeIn, PagerDuty, Reddit, SumoLogic, Twilio, and so many more.
+How does it work? StatusPage.io offers a hosted page that shows the status of an application’s components. For Zoom, that page is status.zoom.us, and it looks like this:
+![statuspage](images/statuspageraw.png "Zoom's status page")
+StatusPage.io offers an API for those companies that wish to publish their pages in that manner. So fetching the data simply requires a little bit of scripting and a key. The key (more like an ID really), a specific string that identifies the StatusPage.io customer’s services, is relatively easy to obtain manually.
+
 ## To add monitoring (Short manual instructions)
 1. Import [the DataSource definition](StatusIOServiceStatus/StatusIOServiceStatus.xml) into your portal
 2. From the status page:
