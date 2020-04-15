@@ -5,11 +5,11 @@
   "appliesTo" : "statusio_key || auto.statusio_key",
   "technology" : "Add status.[App].io as a resource and add 'statusio_key' as a property. To find the key, go to 'https://status.[App].us/api/v2#summary', expand the example, and look for the key in the url 'https://[key].statuspage.io/api/v2/summary.json'.\nIf the FQDN is not key.statuspage.io, this version of the DS will not work.",
   "tags" : "chat,zoom,networking,video",
-  "checksum" : "78304858398ac24866343c4538bd6555",
+  "checksum" : "1f188de38a4ad0836421af14a666e796",
   "lineageId" : "oFBUdKvUTwCM8oAyyv5wrg",
   "name" : "StatusIOServiceStatus",
   "displayName" : "Service Status",
-  "version" : 1585928311,
+  "version" : 1586961152,
   "auditVersion" : 0,
   "hasMultiInstances" : true,
   "collectInterval" : 300,
@@ -18,7 +18,7 @@
     "name" : "batchscript",
     "linuxCmdline" : "",
     "linuxScript" : "",
-    "groovyScript" : "/*******************************************************************************\n * © 2007-2020 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\n\n\nimport groovy.json.JsonSlurper\n\ndef statusIoKey = hostProps.get(\"statusio_key\") ?: hostProps.get(\"auto.statusio_key\")\ndef statusIoDomain = hostProps.get(\"statusio_domain\") ?: \"statuspage.io\"\n\nurl = \"https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json\"\n\ndef STATUS_MAP = [\"operational\":0, \"degraded_performance\": 1, \"partial_outage\": 2, \"major_outage\": 3]\n\ndef payload = url.toURL().getText()\ndef status = new JsonSlurper().parseText(payload)\n\nstatus.components.each { component ->\n    println \"${component.id}.status=${STATUS_MAP.get(component.status, component.status)}\"\n}\n\nreturn 0",
+    "groovyScript" : "import groovy.json.JsonSlurper\n\ndef statusIoKey = hostProps.get(\"statusio_key\") ?: hostProps.get(\"auto.statusio_key\")\ndef statusIoDomain = hostProps.get(\"statusio_domain\") ?: \"statuspage.io\"\n\nurl = \"https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json\"\n\ndef STATUS_MAP = [\"operational\":0, \"degraded_performance\": 1, \"partial_outage\": 2, \"major_outage\": 3]\n\ndef payload = url.toURL().getText()\ndef status = new JsonSlurper().parseText(payload)\n\nstatus.components.each { component ->\n    println \"${component.id}.status=${STATUS_MAP.get(component.status, component.status)}\"\n}\n\nreturn 0",
     "scriptType" : "embed",
     "windowsCmdline" : "",
     "windowsScript" : ""
@@ -38,7 +38,7 @@
       "winCmdline" : null,
       "linuxCmdline" : null,
       "linuxScript" : null,
-      "groovyScript" : "/*******************************************************************************\n * © 2007-2020 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\n\nimport groovy.json.JsonSlurper\n\ndef statusIoKey = hostProps.get(\"statusio_key\") ?: hostProps.get(\"auto.statusio_key\")\ndef statusIoDomain = hostProps.get(\"statusio_domain\") ?: \"statuspage.io\"\n\nurl = \"https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json\"\n\ndef payload = url.toURL().getText()\ndef status = new JsonSlurper().parseText(payload)\n\nstatus.components.each { component ->\n    println \"${component.id}##${component.name}\"\n}\n\nreturn 0\n"
+      "groovyScript" : "import groovy.json.JsonSlurper\n\ndef statusIoKey = hostProps.get(\"statusio_key\") ?: hostProps.get(\"auto.statusio_key\")\ndef statusIoDomain = hostProps.get(\"statusio_domain\") ?: \"statuspage.io\"\n\nurl = \"https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json\"\n\ndef payload = url.toURL().getText()\ndef status = new JsonSlurper().parseText(payload)\n\nstatus.components.each { component ->\n    println \"${component.id}##${component.name}\"\n}\n\nreturn 0\n"
     },
     "filters" : [ ]
   },

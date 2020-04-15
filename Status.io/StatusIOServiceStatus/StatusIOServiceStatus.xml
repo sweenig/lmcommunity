@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1585928311</version>
+        <version>1586961152</version>
         <name>StatusIOServiceStatus</name>
         <displayedas>Service Status</displayedas>
         <description>Monitor status of services.</description>
@@ -19,11 +19,7 @@
         <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
         <wildcardwinscript>ad_script</wildcardwinscript>
         <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
-        <wildcardgroovyscript>/*******************************************************************************
- * © 2007-2020 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
-
-import groovy.json.JsonSlurper
+        <wildcardgroovyscript>import groovy.json.JsonSlurper
 
 def statusIoKey = hostProps.get(&#34;statusio_key&#34;) ?: hostProps.get(&#34;auto.statusio_key&#34;)
 def statusIoDomain = hostProps.get(&#34;statusio_domain&#34;) ?: &#34;statuspage.io&#34;
@@ -48,7 +44,7 @@ return 0
         <tags>chat,zoom,networking,video</tags>
         <technology>Add status.[App].io as a resource and add &#39;statusio_key&#39; as a property. To find the key, go to &#39;https://status.[App].us/api/v2#summary&#39;, expand the example, and look for the key in the url &#39;https://[key].statuspage.io/api/v2/summary.json&#39;.
 If the FQDN is not key.statuspage.io, this version of the DS will not work.</technology>
-        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"/*******************************************************************************\n * © 2007-2020 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\n\nimport groovy.json.JsonSlurper\n\ndef statusIoKey = hostProps.get(\"statusio_key\") ?: hostProps.get(\"auto.statusio_key\")\ndef statusIoDomain = hostProps.get(\"statusio_domain\") ?: \"statuspage.io\"\n\nurl = \"https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json\"\n\ndef payload = url.toURL().getText()\ndef status = new JsonSlurper().parseText(payload)\n\nstatus.components.each { component ->\n    println \"${component.id}##${component.name}\"\n}\n\nreturn 0\n"}}]]></adlist>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"import groovy.json.JsonSlurper\n\ndef statusIoKey = hostProps.get(\"statusio_key\") ?: hostProps.get(\"auto.statusio_key\")\ndef statusIoDomain = hostProps.get(\"statusio_domain\") ?: \"statuspage.io\"\n\nurl = \"https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json\"\n\ndef payload = url.toURL().getText()\ndef status = new JsonSlurper().parseText(payload)\n\nstatus.components.each { component ->\n    println \"${component.id}##${component.name}\"\n}\n\nreturn 0\n"}}]]></adlist>
         <schemaVersion>2</schemaVersion>
         <dataSourceType>1</dataSourceType>
         <attributes>
@@ -59,12 +55,7 @@ If the FQDN is not key.statuspage.io, this version of the DS will not work.</tec
         </attribute>
         <attribute>
             <name>scriptgroovy</name>
-            <value>/*******************************************************************************
- * © 2007-2020 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
-
-
-import groovy.json.JsonSlurper
+            <value>import groovy.json.JsonSlurper
 
 def statusIoKey = hostProps.get(&#34;statusio_key&#34;) ?: hostProps.get(&#34;auto.statusio_key&#34;)
 def statusIoDomain = hostProps.get(&#34;statusio_domain&#34;) ?: &#34;statuspage.io&#34;

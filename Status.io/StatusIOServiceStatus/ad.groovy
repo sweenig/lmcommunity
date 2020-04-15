@@ -1,7 +1,3 @@
-/*******************************************************************************
- * © 2007-2020 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
-
 import groovy.json.JsonSlurper
 
 def statusIoKey = hostProps.get("statusio_key") ?: hostProps.get("auto.statusio_key")
