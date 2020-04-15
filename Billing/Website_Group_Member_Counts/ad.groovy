@@ -1,6 +1,3 @@
-/*******************************************************************************
- *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.HttpClients

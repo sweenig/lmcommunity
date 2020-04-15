@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1580400820</version>
+        <version>1586961784</version>
         <name>Linux_SSH_Processes_Select</name>
         <displayedas>Processes</displayedas>
         <description>Captures process details (CPU, Memory, status) for Linux via SSH.</description>
@@ -19,10 +19,7 @@
         <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
         <wildcardwinscript>ad_script</wildcardwinscript>
         <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
-        <wildcardgroovyscript>/*******************************************************************************
- *  © 2007-2020 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
-import com.jcraft.jsch.JSch
+        <wildcardgroovyscript>import com.jcraft.jsch.JSch
 import com.santaba.agent.util.Settings
 host = hostProps.get(&#34;system.hostname&#34;)
 user = hostProps.get(&#34;ssh.user&#34;)
@@ -85,7 +82,7 @@ def getCommandOutput(String input_command) {
         <technology>ssh.user &#38;&#38; ssh.pass need to contain valid credentials.
 ssh.prompt can contain a regex that will match on the prompt. If this property doesn&#39;t exist, it will look for the &#34;#&#34;. If &#34;#&#34; is contained in the output of &#34;ps aux&#34;, this will fail and a different prompt should be entered.
 Written by Stuart Weenig</technology>
-        <adlist><![CDATA[{"agdmethod":"ilp","method":"ad_script","agdparams":"auto.user","id":0,"filters":[{"attribute":"##WILDALIAS##","operation":"RegexNotMatch","value":"##Linux_SSH_Processes_Select.excludeRegEx##"},{"attribute":"##WILDALIAS##","operation":"RegexMatch","value":"##LinuxSSHProcesses.includeRegEx##"}],"params":{"type":"embeded","groovyscript":"/*******************************************************************************\n *  © 2007-2020 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\nimport com.jcraft.jsch.JSch\nimport com.santaba.agent.util.Settings\nhost = hostProps.get(\"system.hostname\")\nuser = hostProps.get(\"ssh.user\")\npass = hostProps.get(\"ssh.pass\")\nport = hostProps.get(\"ssh.port\") ?: 22\ncert = hostProps.get(\"ssh.cert\") ?: '~/.ssh/id_rsa'\ntimeout = 15000 // timeout in milliseconds\ntry {\n  def userCmd = getCommandOutput('ps ax -o pid,user,tty')\n  users = userCmd.readLines().collectEntries{[it.tokenize(\" \")[0], [it.tokenize(\" \")[1],it.tokenize(\" \")[2]]]}\n  def processes = getCommandOutput('ps ax -o pid,command').readLines()\n  processes.subList(2,processes.size()-2).each{\n    e = it.tokenize(\" \")\n    pid = e[0]\n    command = e[1..e.size()-1].join(\" \")\n    print(\"${pid}##[${pid}]${command}######\")\n    print(\"pid=${pid}\")\n    if (users[pid]){\n      print(\"&tty=${users[pid][1]}\")\n      print(\"&user=${users[pid][0]}\")\n    } else {\n      print(\"&user=UnknownUser\")\n    }\n    print(\"\\n\")\n  }\n  return 0\n}\ncatch (Exception e) {println \"Unexpected Exception : \" + e; return 1}\n\ndef getCommandOutput(String input_command) {\n  try {\n    jsch = new JSch()\n    if (user && !pass) {jsch.addIdentity(cert)}\n    session = jsch.getSession(user, host, port)\n    session.setConfig(\"StrictHostKeyChecking\", \"no\")\n    String authMethod = Settings.getSetting(Settings.SSH_PREFEREDAUTHENTICATION, Settings.DEFAULT_SSH_PREFEREDAUTHENTICATION)\n    session.setConfig(\"PreferredAuthentications\", authMethod)\n    session.setTimeout(timeout)\n    if (pass) {session.setPassword(pass)}\n    session.connect()\n    channel = session.openChannel(\"exec\")\n    channel.setCommand(input_command)\n    def commandOutput = channel.getInputStream()\n    channel.connect()\n    def output = commandOutput.text\n    channel.disconnect()\n    return output\n  }\n  catch (Exception e) {e.printStackTrace()}\n  finally {session.disconnect()}\n}\n"}}]]></adlist>
+        <adlist><![CDATA[{"agdmethod":"ilp","method":"ad_script","agdparams":"auto.user","id":0,"filters":[{"attribute":"##WILDALIAS##","operation":"RegexNotMatch","value":"##Linux_SSH_Processes_Select.excludeRegEx##"},{"attribute":"##WILDALIAS##","operation":"RegexMatch","value":"##LinuxSSHProcesses.includeRegEx##"}],"params":{"type":"embeded","groovyscript":"import com.jcraft.jsch.JSch\nimport com.santaba.agent.util.Settings\nhost = hostProps.get(\"system.hostname\")\nuser = hostProps.get(\"ssh.user\")\npass = hostProps.get(\"ssh.pass\")\nport = hostProps.get(\"ssh.port\") ?: 22\ncert = hostProps.get(\"ssh.cert\") ?: '~/.ssh/id_rsa'\ntimeout = 15000 // timeout in milliseconds\ntry {\n  def userCmd = getCommandOutput('ps ax -o pid,user,tty')\n  users = userCmd.readLines().collectEntries{[it.tokenize(\" \")[0], [it.tokenize(\" \")[1],it.tokenize(\" \")[2]]]}\n  def processes = getCommandOutput('ps ax -o pid,command').readLines()\n  processes.subList(2,processes.size()-2).each{\n    e = it.tokenize(\" \")\n    pid = e[0]\n    command = e[1..e.size()-1].join(\" \")\n    print(\"${pid}##[${pid}]${command}######\")\n    print(\"pid=${pid}\")\n    if (users[pid]){\n      print(\"&tty=${users[pid][1]}\")\n      print(\"&user=${users[pid][0]}\")\n    } else {\n      print(\"&user=UnknownUser\")\n    }\n    print(\"\\n\")\n  }\n  return 0\n}\ncatch (Exception e) {println \"Unexpected Exception : \" + e; return 1}\n\ndef getCommandOutput(String input_command) {\n  try {\n    jsch = new JSch()\n    if (user && !pass) {jsch.addIdentity(cert)}\n    session = jsch.getSession(user, host, port)\n    session.setConfig(\"StrictHostKeyChecking\", \"no\")\n    String authMethod = Settings.getSetting(Settings.SSH_PREFEREDAUTHENTICATION, Settings.DEFAULT_SSH_PREFEREDAUTHENTICATION)\n    session.setConfig(\"PreferredAuthentications\", authMethod)\n    session.setTimeout(timeout)\n    if (pass) {session.setPassword(pass)}\n    session.connect()\n    channel = session.openChannel(\"exec\")\n    channel.setCommand(input_command)\n    def commandOutput = channel.getInputStream()\n    channel.connect()\n    def output = commandOutput.text\n    channel.disconnect()\n    return output\n  }\n  catch (Exception e) {e.printStackTrace()}\n  finally {session.disconnect()}\n}\n"}}]]></adlist>
         <schemaVersion>2</schemaVersion>
         <dataSourceType>1</dataSourceType>
         <attributes>
@@ -96,10 +93,7 @@ Written by Stuart Weenig</technology>
         </attribute>
         <attribute>
             <name>scriptgroovy</name>
-            <value>/*******************************************************************************
- *  © 2007-2020 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
-import com.jcraft.jsch.JSch
+            <value>import com.jcraft.jsch.JSch
 import com.santaba.agent.util.Settings
 host = hostProps.get(&#34;system.hostname&#34;)
 user = hostProps.get(&#34;ssh.user&#34;)

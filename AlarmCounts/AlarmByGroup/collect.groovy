@@ -1,6 +1,3 @@
-/*******************************************************************************
- * © 2007-2020 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
 //initialize
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec

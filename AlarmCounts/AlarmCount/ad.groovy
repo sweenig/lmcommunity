@@ -1,7 +1,3 @@
-/*******************************************************************************
- * © 2007-2020 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
-
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import org.apache.commons.codec.binary.Hex

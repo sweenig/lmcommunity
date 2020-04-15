@@ -1,6 +1,3 @@
-/*******************************************************************************
- *  © 2007-2020 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
 import com.jcraft.jsch.JSch
 import com.santaba.agent.util.Settings
 host = hostProps.get("system.hostname")

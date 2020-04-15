@@ -39,7 +39,7 @@
         "persistentInstance": false,
         "scheduleInterval": 15
     },
-    "checksum": "373f114099422f52806c4386999aec62",
+    "checksum": "8cf7843c840b79910a6a3e9434fa238c",
     "collectInterval": 60,
     "collectMethod": "batchscript",
     "collectorAttribute": {

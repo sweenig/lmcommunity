@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1585261320</version>
+        <version>1586961428</version>
         <name>AlarmByGroup</name>
         <displayedas>Alert Counts By Group</displayedas>
         <description></description>
@@ -19,10 +19,7 @@
         <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
         <wildcardwinscript>ad_script</wildcardwinscript>
         <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
-        <wildcardgroovyscript>/*******************************************************************************
- * © 2007-2020 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
-//initialize
+        <wildcardgroovyscript>//initialize
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import org.apache.commons.codec.binary.Hex
@@ -180,7 +177,7 @@ return 0
         <group>_WeenigWare</group>
         <tags></tags>
         <technology></technology>
-        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[{"attribute":"auto.depth","operation":"LessEqual","value":"2"},{"attribute":"auto.groupType","operation":"Equal","value":"Normal"}],"params":{"type":"embeded","groovyscript":"/*******************************************************************************\n * © 2007-2020 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\n//initialize\nimport javax.crypto.Mac\nimport javax.crypto.spec.SecretKeySpec\nimport org.apache.commons.codec.binary.Hex\nimport groovy.json.JsonSlurper\n\ndef generate_headers(id, key, path) {\n  try {\n    // Create encryption signature for authorization request\n    Long epoch_time = System.currentTimeMillis()  // Get current system time (epoch time)\n    Mac hmac = Mac.getInstance(\"HmacSHA256\")\n    hmac.init(new SecretKeySpec(key.getBytes(), \"HmacSHA256\"))\n    signature = Hex.encodeHexString(hmac.doFinal(\"GET${epoch_time}${path}\".getBytes())).bytes.encodeBase64()\n    // return headers to main function\n    return [\"Authorization\": \"LMv1 $id:$signature:$epoch_time\", \"Content-Type\": \"application/json\"]\n  } catch (Exception err) {\n    // If error occurred, print the error message\n    println(\"ERROR: Unable to establish encryption for $path. Attempting next resource...\\n${err.message}\")\n  }\n}\n\ndef get_response(resource, parameters, account, headers) {\n  try {\n    boolean proceed = true  // Boolean used to determine if additional pagination is required\n    // Map to store query results for each endpoint.  Contains a list to store actual returned values and a boolean to determine if successful\n    Map results = [\"response\": [],\n             \"success\" : true]\n    add_query_parameters(resource, parameters)\n    // Add initial offset and size values to appropriate categories (skips metrics category since it's stagnate)\n    while (proceed) {\n      // Used for paginating through all availabe results.  Grabs 1000 at a time and moves offset if another query is required.\n      Map query = query_resource(account, parameters, headers)\n      // Query each API endpoint for a response (Should receive as Map)\n      // If the response was successful (including status and error messages), proceed to printing results\n      if (query && query?.data && query?.status == 200 && query?.errmsg?.toUpperCase() == \"OK\") {\n        if (resource != \"metrics\") {\n          results.response.addAll(query.data.items)   // Add all the data items found to our results map data list\n          if (query?.data?.items?.size() < parameters.details.size) {\n            // If we received less than 1000 results\n            proceed = false   // There is no need to execute another API query with a shifted offset\n          } else {    // Otherwise\n            parameters.details.offset += parameters.details.size\n            // Shift the offset to start 1000 numbers from current position\n          }\n        } else {\n          results.response = query.data   // Add all the data items found to our results map data list\n          proceed = false   // We've successfully queried all values.  End while loop\n        }\n      } else {\n        // If response was not successful, print eror message for each category that failed and continue to next endpoint\n        // If response error and status can be determined, print them.  Otherwise, use UNKNOWN\n        println(\"ERROR: Failed to query $resource API Endpoint...\\n\" +\n            \"${query?.errmsg?.toUpperCase() ?: 'UNKNOWN'} (STATUS: ${query?.status ?: 'UNKNOWN'})\")\n        results.success = false   // Set success value to false since we failed our API query\n        proceed = false   // End while loop because of failure and proceed to next endpoint\n      }\n    }\n    return results  // Return results to main function\n  } catch (Exception err) {\n    println(\"ERROR: Script failed while attempting to query $resource API endpoint...\\n${err?.message}\")\n  }\n}\n\ndef add_query_parameters(category, parameters) {\n  // Add size and offset field to map (only if collectors or admins category)\n  if (category != \"metrics\") {\n    Map query_details = [\"size\"  : 1000, \"offset\": 0]\n    // If there's already a details key in the details map\n    if (parameters.details) {\n      parameters.details << query_details\n      // Append the query details information to the pre-existing details map\n    } else {  // Otherwise, create a details key and assign it the query details map as a value\n      parameters.put(\"details\", query_details)\n    }\n  }\n}\n\ndef query_resource(account, details, headers) {\n  try {\n    // Configure request url from account, path, and authorization headers\n    String url = \"https://${account}.logicmonitor.com/santaba/rest${details.path}?${pack_parameters(details.details)}\"\n    // Return query response, converted from JSON to usable map\n    return new JsonSlurper().parseText(url.toURL().getText(useCaches: true, allowUserInteraction: false, requestProperties: headers))\n  } catch (Exception err) { // If error occurred, print the error message\n    println(\"ERROR: Unable to query ${details.path} for details.\\n${err.message}\")\n  }\n}\n\ndef pack_parameters(query_details) { // If additional query details are located in map, include them in url string\n  List pairs = []\n  query_details?.each { k, v -> pairs.add(\"${k}=${v}\")}\n  return pairs.join(\"&\")\n}\n\n//setup\ncollect = false\nds_name = \"alarmbygroup\"\nMap credentials = [\n  \"id\"   : hostProps.get(\"${ds_name}.id\"),\n  \"key\"  : hostProps.get(\"${ds_name}.pass\"),\n  \"account\": hostProps.get(\"${ds_name}.account\")\n]\nMap resources = [:]\nresources[\"groups\"] = [\"path\": \"/device/groups\", \"details\": [\"fields\": \"id,fullPath,groupType,parentId\"]]\nif (collect) {resources[\"alerts\"] = [\"path\": \"/alert/alerts\", \"details\": [\"fields\": \"id,severity,monitorObjectGroups,monitorObjectId,monitorObjectName\"]]}\n\ndef severity_dict  = [\n  2:'warnings',\n  3:'errors',\n  4:'criticals'\n]\n\n//gather\nif (credentials.account && credentials.id && credentials.key) {\n  resources.each() { k, v ->\n    Map headers = generate_headers(credentials.id, credentials.key, v.path)\n    if (headers) {\n      Map response = get_response(k, v, credentials.account, headers)\n      if (response?.success) {resources[k][\"data\"] = response.response}\n    }\n  }\n} else {\n  println(\"\"\"Device is not configured with the necessary portal credentials to proceed with API queries.\nPlease ensure that \\\"${ds_name}.id\\\", \\\"${ds_name}.pass\\\", and \\\"${ds_name}.account\\\" are set in the collector properties section!\nExiting Program...\"\"\")\n  return 1\n}\n\n//transform\nMap groups = resources.groups.data.collectEntries {[it.id, [\"id\":it.id, \"fullPath\":it.fullPath, \"groupType\":it.groupType, \"parentId\":it.parentId, \"severityCounts\": [2:0,3:0,4:0]]]}\nif (collect) {\n  resources.alerts.data.each{ alert ->\n    alert.monitorObjectGroups.each{ group ->\n      groups[group.id].severityCounts[alert.severity] += 1\n    }\n  }\n}\n\n//output\ngroups.each(){k, v ->\n  path = v.fullPath.tokenize(\"/\")\n  if (collect) {\n    v.severityCounts.each{ severity, count -> println(\"${k}.${severity_dict[severity]}: ${count}\")}\n  } else {\n    println(\"${k}##${(v.fullPath ?: \"(root)\").replaceAll(\"/\",\"-\")}######groupType=${v.groupType}&fullPath=${v.fullPath}&depth=${path.size()}\")\n  }\n}\n\nreturn 0\n"}}]]></adlist>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[{"attribute":"auto.depth","operation":"LessEqual","value":"2"},{"attribute":"auto.groupType","operation":"Equal","value":"Normal"}],"params":{"type":"embeded","groovyscript":"//initialize\nimport javax.crypto.Mac\nimport javax.crypto.spec.SecretKeySpec\nimport org.apache.commons.codec.binary.Hex\nimport groovy.json.JsonSlurper\n\ndef generate_headers(id, key, path) {\n  try {\n    // Create encryption signature for authorization request\n    Long epoch_time = System.currentTimeMillis()  // Get current system time (epoch time)\n    Mac hmac = Mac.getInstance(\"HmacSHA256\")\n    hmac.init(new SecretKeySpec(key.getBytes(), \"HmacSHA256\"))\n    signature = Hex.encodeHexString(hmac.doFinal(\"GET${epoch_time}${path}\".getBytes())).bytes.encodeBase64()\n    // return headers to main function\n    return [\"Authorization\": \"LMv1 $id:$signature:$epoch_time\", \"Content-Type\": \"application/json\"]\n  } catch (Exception err) {\n    // If error occurred, print the error message\n    println(\"ERROR: Unable to establish encryption for $path. Attempting next resource...\\n${err.message}\")\n  }\n}\n\ndef get_response(resource, parameters, account, headers) {\n  try {\n    boolean proceed = true  // Boolean used to determine if additional pagination is required\n    // Map to store query results for each endpoint.  Contains a list to store actual returned values and a boolean to determine if successful\n    Map results = [\"response\": [],\n             \"success\" : true]\n    add_query_parameters(resource, parameters)\n    // Add initial offset and size values to appropriate categories (skips metrics category since it's stagnate)\n    while (proceed) {\n      // Used for paginating through all availabe results.  Grabs 1000 at a time and moves offset if another query is required.\n      Map query = query_resource(account, parameters, headers)\n      // Query each API endpoint for a response (Should receive as Map)\n      // If the response was successful (including status and error messages), proceed to printing results\n      if (query && query?.data && query?.status == 200 && query?.errmsg?.toUpperCase() == \"OK\") {\n        if (resource != \"metrics\") {\n          results.response.addAll(query.data.items)   // Add all the data items found to our results map data list\n          if (query?.data?.items?.size() < parameters.details.size) {\n            // If we received less than 1000 results\n            proceed = false   // There is no need to execute another API query with a shifted offset\n          } else {    // Otherwise\n            parameters.details.offset += parameters.details.size\n            // Shift the offset to start 1000 numbers from current position\n          }\n        } else {\n          results.response = query.data   // Add all the data items found to our results map data list\n          proceed = false   // We've successfully queried all values.  End while loop\n        }\n      } else {\n        // If response was not successful, print eror message for each category that failed and continue to next endpoint\n        // If response error and status can be determined, print them.  Otherwise, use UNKNOWN\n        println(\"ERROR: Failed to query $resource API Endpoint...\\n\" +\n            \"${query?.errmsg?.toUpperCase() ?: 'UNKNOWN'} (STATUS: ${query?.status ?: 'UNKNOWN'})\")\n        results.success = false   // Set success value to false since we failed our API query\n        proceed = false   // End while loop because of failure and proceed to next endpoint\n      }\n    }\n    return results  // Return results to main function\n  } catch (Exception err) {\n    println(\"ERROR: Script failed while attempting to query $resource API endpoint...\\n${err?.message}\")\n  }\n}\n\ndef add_query_parameters(category, parameters) {\n  // Add size and offset field to map (only if collectors or admins category)\n  if (category != \"metrics\") {\n    Map query_details = [\"size\"  : 1000, \"offset\": 0]\n    // If there's already a details key in the details map\n    if (parameters.details) {\n      parameters.details << query_details\n      // Append the query details information to the pre-existing details map\n    } else {  // Otherwise, create a details key and assign it the query details map as a value\n      parameters.put(\"details\", query_details)\n    }\n  }\n}\n\ndef query_resource(account, details, headers) {\n  try {\n    // Configure request url from account, path, and authorization headers\n    String url = \"https://${account}.logicmonitor.com/santaba/rest${details.path}?${pack_parameters(details.details)}\"\n    // Return query response, converted from JSON to usable map\n    return new JsonSlurper().parseText(url.toURL().getText(useCaches: true, allowUserInteraction: false, requestProperties: headers))\n  } catch (Exception err) { // If error occurred, print the error message\n    println(\"ERROR: Unable to query ${details.path} for details.\\n${err.message}\")\n  }\n}\n\ndef pack_parameters(query_details) { // If additional query details are located in map, include them in url string\n  List pairs = []\n  query_details?.each { k, v -> pairs.add(\"${k}=${v}\")}\n  return pairs.join(\"&\")\n}\n\n//setup\ncollect = false\nds_name = \"alarmbygroup\"\nMap credentials = [\n  \"id\"   : hostProps.get(\"${ds_name}.id\"),\n  \"key\"  : hostProps.get(\"${ds_name}.pass\"),\n  \"account\": hostProps.get(\"${ds_name}.account\")\n]\nMap resources = [:]\nresources[\"groups\"] = [\"path\": \"/device/groups\", \"details\": [\"fields\": \"id,fullPath,groupType,parentId\"]]\nif (collect) {resources[\"alerts\"] = [\"path\": \"/alert/alerts\", \"details\": [\"fields\": \"id,severity,monitorObjectGroups,monitorObjectId,monitorObjectName\"]]}\n\ndef severity_dict  = [\n  2:'warnings',\n  3:'errors',\n  4:'criticals'\n]\n\n//gather\nif (credentials.account && credentials.id && credentials.key) {\n  resources.each() { k, v ->\n    Map headers = generate_headers(credentials.id, credentials.key, v.path)\n    if (headers) {\n      Map response = get_response(k, v, credentials.account, headers)\n      if (response?.success) {resources[k][\"data\"] = response.response}\n    }\n  }\n} else {\n  println(\"\"\"Device is not configured with the necessary portal credentials to proceed with API queries.\nPlease ensure that \\\"${ds_name}.id\\\", \\\"${ds_name}.pass\\\", and \\\"${ds_name}.account\\\" are set in the collector properties section!\nExiting Program...\"\"\")\n  return 1\n}\n\n//transform\nMap groups = resources.groups.data.collectEntries {[it.id, [\"id\":it.id, \"fullPath\":it.fullPath, \"groupType\":it.groupType, \"parentId\":it.parentId, \"severityCounts\": [2:0,3:0,4:0]]]}\nif (collect) {\n  resources.alerts.data.each{ alert ->\n    alert.monitorObjectGroups.each{ group ->\n      groups[group.id].severityCounts[alert.severity] += 1\n    }\n  }\n}\n\n//output\ngroups.each(){k, v ->\n  path = v.fullPath.tokenize(\"/\")\n  if (collect) {\n    v.severityCounts.each{ severity, count -> println(\"${k}.${severity_dict[severity]}: ${count}\")}\n  } else {\n    println(\"${k}##${(v.fullPath ?: \"(root)\").replaceAll(\"/\",\"-\")}######groupType=${v.groupType}&fullPath=${v.fullPath}&depth=${path.size()}\")\n  }\n}\n\nreturn 0\n"}}]]></adlist>
         <schemaVersion>2</schemaVersion>
         <dataSourceType>1</dataSourceType>
         <attributes>
@@ -191,10 +188,7 @@ return 0
         </attribute>
         <attribute>
             <name>scriptgroovy</name>
-            <value>/*******************************************************************************
- * © 2007-2020 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
-//initialize
+            <value>//initialize
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import org.apache.commons.codec.binary.Hex
@@ -520,18 +514,18 @@ return 0</value>
                 <isvirtualdatapoint>false</isvirtualdatapoint>
             </graphdata>
             <graphdata>
-                <type>3</type>
-                <legend>Warnings</legend>
-                <color>yellow</color>
-                <datapointname>warnings</datapointname>
-                <isvirtualdatapoint>false</isvirtualdatapoint>
-            </graphdata>
-            <graphdata>
                 <type>1</type>
                 <legend>Total</legend>
                 <color>silver</color>
                 <datapointname>total</datapointname>
                 <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Warnings</legend>
+                <color>yellow</color>
+                <datapointname>warnings</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
             </graphdata>
             </graphdatas>
         </graph>
@@ -590,18 +584,18 @@ return 0</value>
                 <color>orange2</color>
             </overviewgraphline>
             <overviewgraphline>
-                <type>3</type>
-                <legend>Warnings</legend>
-                <datapointname>warnings</datapointname>
-                <isvirtualdatapoint>false</isvirtualdatapoint>
-                <color>yellow</color>
-            </overviewgraphline>
-            <overviewgraphline>
                 <type>1</type>
                 <legend>Total</legend>
                 <datapointname>total</datapointname>
                 <isvirtualdatapoint>true</isvirtualdatapoint>
                 <color>silver</color>
+            </overviewgraphline>
+            <overviewgraphline>
+                <type>3</type>
+                <legend>Warnings</legend>
+                <datapointname>warnings</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>yellow</color>
             </overviewgraphline>
             </lines>
         </overviewgraph>

@@ -3,7 +3,7 @@
     "appliesTo": "hasCategory(\"snmp\")",
     "auditVersion": 0,
     "autoDiscoveryConfig": null,
-    "checksum": "b7f70cf3f27103e41c111adc7807a1fb",
+    "checksum": "a74120cd8c578c0864e12bf861a98e9f",
     "collectInterval": 60,
     "collectMethod": "script",
     "collectorAttribute": {

@@ -1,6 +1,3 @@
-/*******************************************************************************
- *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
 Oid = "1.3.6.1.2.1.2.2.1" //polling the interfaces table (returns "metricOID.wildvalue = datavalue")
 wildvalueTerms = 1
 

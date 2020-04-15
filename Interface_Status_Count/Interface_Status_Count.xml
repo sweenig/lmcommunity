@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1582223485</version>
+        <version>1586961731</version>
         <name>Interface_Status_Count</name>
         <displayedas>Port Capacity</displayedas>
         <description>Counts the number of ports that are administratively up, and that are administratively down. Also counts the number of ports that are operationally up, and that are operationally down.</description>
@@ -39,10 +39,7 @@
         </attribute>
         <attribute>
             <name>scriptgroovy</name>
-            <value>/*******************************************************************************
- *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.
- ******************************************************************************/
-Oid = &#34;1.3.6.1.2.1.2.2.1&#34; //polling the interfaces table (returns &#34;metricOID.wildvalue = datavalue&#34;)
+            <value>Oid = &#34;1.3.6.1.2.1.2.2.1&#34; //polling the interfaces table (returns &#34;metricOID.wildvalue = datavalue&#34;)
 wildvalueTerms = 1
 
 import com.santaba.agent.groovyapi.snmp.Snmp
