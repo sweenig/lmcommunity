@@ -24,7 +24,12 @@ From [my post](https://www.logicmonitor.com/blog/remote-monitoring-third-party-s
 
 That should get the device in and discovery started. Wait a few minutes and you should see the component services discovered and data should start flowing in.
 
+Service components will be grouped in the same way they are grouped on the status page. Each group also reports a status and will show up as an instance under the group having the same name as the group. This can lead to double alarms where one component is impacted and also the group is impacted. If you want to prevent this, you can exclude the group status from discovery by adding a filter like this:
+
+`auto.group NotEqual ##WILDALIAS##`
+
 ## Still, it can be easier
+Proceed only if needed. The effort involved is trivial, but so is getting the key manually. So, if you will have lots of these, use the EventSource. If you'll only have one or two, grabbing the key manually is just as hard as importing the EventSource and letting it grab the key for you. The decision is up to you.
 Once you have both the [DataSource](StatusIOServiceStatus/StatusIOServiceStatus.xml) and the [PropertySource](StatusIOKey/StatusIOKey.json) (courtesy of Jake Cohen) added to your portal, add the status page to your LogicMonitor portal as a resource. Start by going to the Resources page and clicking Add >> One Device >> Expert. For the IP Address/DNS name, put the status page address. For example, if you wanted to monitor GoToMeeting, you’d use “status.gotomeeting.com.”  For the name, put a nice friendly name for the App (like “GoToMeeting”). LogicMonitor needs at least the HTTPS DataSource to apply and collect data in order to consider the device “not dead”. If the device is considered “dead”, you won’t get any alarms. You can disable any other DataSources you might not find necessary for this device.
 
 The PropertySource should go find the key for you and load it in as a property, which will trigger the DataSource to discover the services. Once they are discovered, LogicMonitor will start monitoring the services and open alarms whenever the status is not “operational.”
