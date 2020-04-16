@@ -13,8 +13,8 @@ In both datasources, they expect a pair of properties called
 These properties are referenced in the discovery filters of each datasource. You would need to set these properties on each device you want these datasources to apply to. I recommend setting them as properties on a group containing the servers (/Devices by Type/Linux Servers or /Devices by Type/Windows Servers for example).
 
 The values of the properties need to be RegEx expressions that match on the processes desired. Starting with the simple case of wanting to monitor everything, you could set the following properties (I'm showing Windows, but the method is the same for both):
-`Windows_Service_Select.includeRegEx = .*
-Windows_Service_Select.excludeRegEx = DO NOT EXCLUDE ANYTHING`
+`Windows_Service_Select.includeRegEx = .*`
+`Windows_Service_Select.excludeRegEx = DO NOT EXCLUDE ANYTHING`
 These two properties would cause everything (.* matches everything in RegEx) to be included and nothing to be excluded, unless there were a service called "DO NOT EXCLUDE ANYTHING" (spoilers: there's probably not).
 
 On a Windows server I have the following properties set. Notice that the include property is inherited from a parent group, but the exclude property is specifically set on this device, overriding the exclude property from the parent.
