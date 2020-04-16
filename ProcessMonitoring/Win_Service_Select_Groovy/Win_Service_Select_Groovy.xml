@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1587074781</version>
+        <name>Win_Service_Select_Groovy</name>
+        <displayedas>Services</displayedas>
+        <description>Monitors state of Windows Services
+
+- It automatically erases instances that no longer match the filters applied
+- Discovers only instances set to &#39;Automatically&#39; start</description>
+        <collector>batchscript</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>180</schedule>
+        <appliesTo>isWindows() &#38;&#38; Win_Service_Select.includeRegEx &#38;&#38; Win_Service_Select.excludeRegEx</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>import com.santaba.agent.groovyapi.win32.WMI
+
+def host = hostProps.get(&#34;system.hostname&#34;)
+
+def service_list = WMI.queryAll(host, &#34;select * from win32_Service WHERE STARTMODE = \&#34;AUTO\&#34;&#34;)
+
+service_list.each {
+  wildvalue = it[&#34;NAME&#34;].replaceAll(/\=|\:|\\|\#|\s/, &#39;&#39;)
+  wildalias = it[&#34;DISPLAYNAME&#34;]
+  description = null
+  //description = it[&#34;CAPTION&#34;]  //uncomment this line to use the caption as the description (unlikely)
+  caption = it[&#34;DESCRIPTION&#34;]
+  runasuser = it[&#34;STARTNAME&#34;]
+  path = it[&#34;PATHNAME&#34;]
+    println(&#34;${wildvalue}##${wildalias}##${description ?: &#34;&#34;}####caption=${caption}&#38;runasuser=${runasuser}&#38;path=${path}&#34;)
+}
+
+return(0)
+</wildcardgroovyscript>
+        <wildcardschedule>15</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>ilp</agdmethod>
+        <agdparams>auto.runasuser</agdparams>
+        <group>_WeenigWare Community</group>
+        <tags></tags>
+        <technology>#04/16/2020
+Datasource created with the intent of don&#39;t perform a WMI query for each service instance (this will reduce the collector usage)</technology>
+        <adlist><![CDATA[{"agdmethod":"ilp","method":"ad_script","agdparams":"auto.runasuser","id":0,"filters":[{"attribute":"##WILDALIAS##","operation":"RegexMatch","value":"##Win_Service_Select.includeRegEx##"},{"attribute":"##WILDALIAS##","operation":"RegexNotMatch","value":"##Win_Service_Select.excludeRegEx##"}],"params":{"type":"embeded","groovyscript":"import com.santaba.agent.groovyapi.win32.WMI\n\ndef host = hostProps.get(\"system.hostname\")\n\ndef service_list = WMI.queryAll(host, \"select * from win32_Service WHERE STARTMODE = \\\"AUTO\\\"\")\n\nservice_list.each {\n  wildvalue = it[\"NAME\"].replaceAll(/\\=|\\:|\\\\|\\#|\\s/, '')\n  wildalias = it[\"DISPLAYNAME\"]\n  description = null\n  //description = it[\"CAPTION\"]  //uncomment this line to use the caption as the description (unlikely)\n  caption = it[\"DESCRIPTION\"]\n  runasuser = it[\"STARTNAME\"]\n  path = it[\"PATHNAME\"]\n    println(\"${wildvalue}##${wildalias}##${description ?: \"\"}####caption=${caption}&runasuser=${runasuser}&path=${path}\")\n}\n\nreturn(0)\n"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>import com.santaba.agent.groovyapi.win32.WMI
+
+def host = hostProps.get(&#34;system.hostname&#34;)
+
+def service_list = WMI.queryAll(host, &#34;select * from win32_Service WHERE STARTMODE = \&#34;AUTO\&#34;&#34;)
+
+//Enumerations obtained from https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-service and put in my preferred order so that they are in ascending severity. This allows thresholds for &#62;= 1 3 5.
+stateEnum = [
+  &#34;Running&#34;,
+  &#34;Start Pending&#34;,
+  &#34;Stop Pending&#34;,
+  &#34;Continue Pending&#34;,
+  &#34;Pause Pending&#34;,
+  &#34;Stopped&#34;,
+  &#34;Paused&#34;,
+  &#34;Unknown&#34;
+]
+
+statusEnum = [
+  &#34;OK&#34;,
+  &#34;Error&#34;,
+  &#34;Degraded&#34;,
+  &#34;Unknown&#34;,
+  &#34;Pred Fail&#34;,
+  &#34;Starting&#34;,
+  &#34;Stopping&#34;,
+  &#34;Service&#34;,
+  &#34;Stressed&#34;,
+  &#34;NonRecover&#34;,
+  &#34;No Contact&#34;,
+  &#34;Lost Comm&#34;
+]
+
+service_list.each{
+  wildvalue = it[&#34;NAME&#34;].replaceAll(/\=|\:|\\|\#|\s/, &#39;&#39;)
+  println(&#34;${wildvalue}.state: ${stateEnum.indexOf(it[&#34;STATE&#34;])}&#34;)
+  println(&#34;${wildvalue}.status: ${statusEnum.indexOf(it[&#34;STATUS&#34;])}&#34;)
+}
+return(0)</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_0</name>
+            <value>##WILDALIAS##	RegexMatch	##Win_Service_Select.includeRegEx##</value>
+            <comment>Services to include, set as property on device.</comment>
+        </attribute>
+        <attribute>
+            <name>__filter_1</name>
+            <value>##WILDALIAS##	RegexNotMatch	##Win_Service_Select.excludeRegEx##</value>
+            <comment>Services to exclude, set as property on device.</comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>State</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.state</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr>&#62;= 1 5 5</alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody>The Windows service ##INSTANCE## ##DSIDESCRIPTION## on ##HOST## is not running.
+This started at ##START## - or ##DURATION## ago.</alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue>1</maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>1</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>Status</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.status</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue>1</maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>3</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>RunningStatus</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>if(eq(State,0),Status,1)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr>&#62;= 1 1 1</alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody>The windows service ##INSTANCE## ##DSIDESCRIPTION## on ##HOST## is running, but not in the OK state.
+It may be in error, degraded or starting/stoppingstate.
+This started at ##START## - or ##DURATION## ago.</alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>If service is running, alert if Status is not OK.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>3</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>State</name>
+            <title>State</title>
+            <verticallabel>State</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>5.0</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>State</name>
+            <datapointname>State</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>State 1 = Running</legend>
+                <color>blue</color>
+                <datapointname>State</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Status</name>
+            <title>Status</title>
+            <verticallabel>Status</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>5.0</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>Status</name>
+            <datapointname>Status</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Status 1 = OK</legend>
+                <color>blue</color>
+                <datapointname>Status</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
