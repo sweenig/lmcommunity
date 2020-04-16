@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1586961152</version>
+        <version>1587060760</version>
         <name>StatusIOServiceStatus</name>
         <displayedas>Service Status</displayedas>
         <description>Monitor status of services.</description>
@@ -27,24 +27,59 @@ def statusIoDomain = hostProps.get(&#34;statusio_domain&#34;) ?: &#34;statuspage
 url = &#34;https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json&#34;
 
 def payload = url.toURL().getText()
+// println(payload);println(&#34;=&#34;.multiply(80))
 def status = new JsonSlurper().parseText(payload)
 
 status.components.each { component -&#62;
-    println &#34;${component.id}##${component.name}&#34;
+  if (component.group == true) {
+    group = &#34;group=&#34; + component.name
+  } else {
+    if (component.group_id){
+      group = &#34;group=&#34; + status.components.find{it.id == component.group_id}.name
+    } else {
+      group = &#34;&#34;
+    }
+  }
+    println &#34;${component.id}##${component.name}######${group}&#34;
 }
 
 return 0
+
+
+// import groovy.json.*
+
+// def statusIoKey = hostProps.get(&#34;statusio_key&#34;) ?: hostProps.get(&#34;auto.statusio_key&#34;)
+
+// url = &#34;https://${statusIoKey}.statuspage.io/api/v2/summary.json&#34;
+// def status = new JsonSlurper().parseText(url.toURL().getText())
+// easy_map = [:]
+//
+// status.components.each { component-&#62;
+//     if(component.group == false) {easy_map[component.id] = component}
+// }
+//
+// status.components.each {group-&#62;
+//     if(group.group == true) {
+//         group.components.each { sub_component -&#62;
+//             group_component = group.name.replace(&#34; &#34;,&#34;_&#34;) + &#34;_&#34; + easy_map[sub_component][&#39;name&#39;].replace(&#34; &#34;,&#34;_&#34;)
+//             println group_component + &#34;##&#34; + easy_map[sub_component][&#39;name&#39;] + &#34; - &#34; + group.name + &#34;######auto.status_group=${group.name}&#34;
+//         }
+//     } else if(group.group_id == null) {
+//         println group.name.replace(&#34; &#34;,&#34;_&#34;) + &#34;##&#34; + group.name
+//     }
+// }
+// return 0
 </wildcardgroovyscript>
         <wildcardschedule>60</wildcardschedule>
         <wildcarddisable>false</wildcarddisable>
         <wildcarddeleteinactive>false</wildcarddeleteinactive>
-        <agdmethod>none</agdmethod>
-        <agdparams></agdparams>
+        <agdmethod>ilp</agdmethod>
+        <agdparams>auto.group</agdparams>
         <group></group>
         <tags>chat,zoom,networking,video</tags>
         <technology>Add status.[App].io as a resource and add &#39;statusio_key&#39; as a property. To find the key, go to &#39;https://status.[App].us/api/v2#summary&#39;, expand the example, and look for the key in the url &#39;https://[key].statuspage.io/api/v2/summary.json&#39;.
 If the FQDN is not key.statuspage.io, this version of the DS will not work.</technology>
-        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"import groovy.json.JsonSlurper\n\ndef statusIoKey = hostProps.get(\"statusio_key\") ?: hostProps.get(\"auto.statusio_key\")\ndef statusIoDomain = hostProps.get(\"statusio_domain\") ?: \"statuspage.io\"\n\nurl = \"https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json\"\n\ndef payload = url.toURL().getText()\ndef status = new JsonSlurper().parseText(payload)\n\nstatus.components.each { component ->\n    println \"${component.id}##${component.name}\"\n}\n\nreturn 0\n"}}]]></adlist>
+        <adlist><![CDATA[{"agdmethod":"ilp","method":"ad_script","agdparams":"auto.group","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"import groovy.json.JsonSlurper\n\ndef statusIoKey = hostProps.get(\"statusio_key\") ?: hostProps.get(\"auto.statusio_key\")\ndef statusIoDomain = hostProps.get(\"statusio_domain\") ?: \"statuspage.io\"\n\nurl = \"https://${statusIoKey}.${statusIoDomain}/api/v2/summary.json\"\n\ndef payload = url.toURL().getText()\n// println(payload);println(\"=\".multiply(80))\ndef status = new JsonSlurper().parseText(payload)\n\nstatus.components.each { component ->\n  if (component.group == true) {\n    group = \"group=\" + component.name\n  } else {\n    if (component.group_id){\n      group = \"group=\" + status.components.find{it.id == component.group_id}.name\n    } else {\n      group = \"\"\n    }\n  }\n    println \"${component.id}##${component.name}######${group}\"\n}\n\nreturn 0\n\n\n// import groovy.json.*\n\n// def statusIoKey = hostProps.get(\"statusio_key\") ?: hostProps.get(\"auto.statusio_key\")\n\n// url = \"https://${statusIoKey}.statuspage.io/api/v2/summary.json\"\n// def status = new JsonSlurper().parseText(url.toURL().getText())\n// easy_map = [:]\n//\n// status.components.each { component->\n//     if(component.group == false) {easy_map[component.id] = component}\n// }\n//\n// status.components.each {group->\n//     if(group.group == true) {\n//         group.components.each { sub_component ->\n//             group_component = group.name.replace(\" \",\"_\") + \"_\" + easy_map[sub_component]['name'].replace(\" \",\"_\")\n//             println group_component + \"##\" + easy_map[sub_component]['name'] + \" - \" + group.name + \"######auto.status_group=${group.name}\"\n//         }\n//     } else if(group.group_id == null) {\n//         println group.name.replace(\" \",\"_\") + \"##\" + group.name\n//     }\n// }\n// return 0\n"}}]]></adlist>
         <schemaVersion>2</schemaVersion>
         <dataSourceType>1</dataSourceType>
         <attributes>

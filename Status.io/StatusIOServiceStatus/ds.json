@@ -6,8 +6,8 @@
         "deleteInactiveInstance": false,
         "disableInstance": false,
         "filters": [],
-        "instanceAutoGroupMethod": "none",
-        "instanceAutoGroupMethodParams": "",
+        "instanceAutoGroupMethod": "ilp",
+        "instanceAutoGroupMethodParams": "auto.group",
         "method": {
             "groovyScript": "ad",
             "linuxCmdline": null,
@@ -20,7 +20,7 @@
         "persistentInstance": false,
         "scheduleInterval": 60
     },
-    "checksum": "1f188de38a4ad0836421af14a666e796",
+    "checksum": "a75e687920553f4fbff50d04b5a24401",
     "collectInterval": 300,
     "collectMethod": "batchscript",
     "collectorAttribute": {
