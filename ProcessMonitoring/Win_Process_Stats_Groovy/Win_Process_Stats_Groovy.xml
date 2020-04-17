@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1587137408</version>
+        <version>1587148884</version>
         <name>Win_Process_Stats_Groovy</name>
         <displayedas>Processes</displayedas>
         <description>Monitor the resource usage of a process.</description>
@@ -35,7 +35,7 @@ return(0)
         <wildcarddeleteinactive>true</wildcarddeleteinactive>
         <agdmethod>none</agdmethod>
         <agdparams></agdparams>
-        <group>_WeenigWare Community</group>
+        <group>_WeenigWare ProcessMonitoring</group>
         <tags></tags>
         <technology>https://docs.microsoft.com/en-us/previous-versions/aa394323(v%3Dvs.85)</technology>
         <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[{"attribute":"##WILDALIAS##","operation":"RegexNotMatch","value":"##Win_Process_Stats.excludeRegEx##"},{"attribute":"##WILDALIAS##","operation":"RegexMatch","value":"##Win_Process_Stats.includeRegEx##"},{"attribute":"##WILDVALUE##","operation":"RegexNotMatch","value":"_Total|Idle"}],"params":{"type":"embeded","groovyscript":"import com.santaba.agent.groovyapi.win32.WMI\n\ndef host = hostProps.get(\"system.hostname\")\n\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\")\n\nprocess_list.each {\n  println(\"${it[\"NAME\"].replaceAll(/\\=|\\:|\\\\|\\#|\\s/, '')}##${it[\"NAME\"]}\")\n}\nreturn(0)\n"}}]]></adlist>
@@ -155,7 +155,7 @@ return(0)</value>
             <dataType>7</dataType>
             <type>2</type>
             <postprocessormethod>expression</postprocessormethod>
-            <postprocessorparam>PercentProcessorTime/100000</postprocessorparam>
+            <postprocessorparam>PercentProcessorTime/10000000*100</postprocessorparam>
             <usevalue></usevalue>
             <alertexpr></alertexpr>
             <alertmissing>1</alertmissing>
@@ -180,7 +180,7 @@ This started at ##START##, -- or ##DURATION## ago.</alertbody>
         <datapoint>
             <name>PercentProcessorTime</name>
             <dataType>7</dataType>
-            <type>2</type>
+            <type>1</type>
             <postprocessormethod>namevalue</postprocessormethod>
             <postprocessorparam>##WILDVALUE##.PercentProcessorTime</postprocessorparam>
             <usevalue>output</usevalue>
@@ -191,7 +191,7 @@ This started at ##START##, -- or ##DURATION## ago.</alertbody>
             <enableanomalyalertsuppression></enableanomalyalertsuppression>
             <description>Percentage of elapsed time that all of the threads of this process used the processor to execute instructions.</description>
             <maxvalue></maxvalue>
-            <minvalue>0</minvalue>
+            <minvalue></minvalue>
             <userparam1></userparam1>
             <userparam2></userparam2>
             <userparam3></userparam3>
@@ -443,7 +443,7 @@ The process has not been detected since ##START##, -- or ##DURATION## ago. .</al
             </virtualdatapoints>
             <lines>
             <overviewgraphline>
-                <type>1</type>
+                <type>3</type>
                 <legend>##INSTANCE##</legend>
                 <datapointname>ProcessCPUPercent</datapointname>
                 <isvirtualdatapoint>false</isvirtualdatapoint>
