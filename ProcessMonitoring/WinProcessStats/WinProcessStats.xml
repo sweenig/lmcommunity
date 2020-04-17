@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1587075252</version>
+        <name>WinProcessStats</name>
+        <displayedas>Processes</displayedas>
+        <description>Monitor the resource usage of a process.</description>
+        <collector>batchscript</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>180</schedule>
+        <appliesTo>isWindows()</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>import com.santaba.agent.groovyapi.win32.WMI;
+
+def host = hostProps.get(&#34;system.hostname&#34;);
+def process_name = [];
+
+// get the process list
+def process_list = WMI.queryAll(host, &#34;select * from Win32_PerfRawData_PerfProc_Process&#34;);
+
+// enumerate as a map
+process_list.each
+{ process_map -&#62;
+    // enumerate each of the fields in this process map
+    process_map.each
+    { key,value -&#62;
+        //grab the name
+        if ((key == &#34;NAME&#34;) )
+        {
+            //feed the svc list
+            process_name.add(value)
+        }
+    } 
+}
+
+//iterate to the built list &#39;process_name&#39; &#38; extract values to build the output line(s)
+process_name.eachWithIndex { item, index -&#62;
+    //check for SpecialCharacters &#38; remove them
+    item2=SpecialCharacterCheck(item)
+    
+    println item2+&#34;##&#34;+item;
+}
+
+return(0);
+
+//according to :
+//https://www.logicmonitor.com/support/logicmodules/datasources/active-discovery/script-active-discovery
+//active discovery WILDVALUE cannot contain  [&#39;=&#39;,&#39;:&#39;,&#39;\&#39;,&#39;#&#39;,&#39;space&#39;] characters
+//the function below will get rid of those special characters if they exist
+def SpecialCharacterCheck(process){
+	//special characters not allowed in ActiveDiscovery
+	def specialCharacters = ~/\=|\:|\\|\#|\s/
+
+	//replace the special character by nothing &#38; return the &#39;new&#39; process name
+	process=process.replaceAll(specialCharacters, &#39;&#39;)
+	//println(process); //DEBUG
+
+	return process
+}</wildcardgroovyscript>
+        <wildcardschedule>0</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>true</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare Community</group>
+        <tags></tags>
+        <technology>#04/16/2020
+Datasource created with the intent of don&#39;t perform a WMI query for each process instance (this will reduce the collector usage)</technology>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[{"attribute":"##WILDVALUE##","operation":"RegexNotMatch","value":"_Total|Idle"}],"params":{"type":"embeded","groovyscript":"import com.santaba.agent.groovyapi.win32.WMI;\n\ndef host = hostProps.get(\"system.hostname\");\ndef process_name = [];\n\n// get the process list\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\");\n\n// enumerate as a map\nprocess_list.each\n{ process_map ->\n    // enumerate each of the fields in this process map\n    process_map.each\n    { key,value ->\n        //grab the name\n        if ((key == \"NAME\") )\n        {\n            //feed the svc list\n            process_name.add(value)\n        }\n    } \n}\n\n//iterate to the built list 'process_name' & extract values to build the output line(s)\nprocess_name.eachWithIndex { item, index ->\n    //check for SpecialCharacters & remove them\n    item2=SpecialCharacterCheck(item)\n    \n    println item2+\"##\"+item;\n}\n\nreturn(0);\n\n//according to :\n//https://www.logicmonitor.com/support/logicmodules/datasources/active-discovery/script-active-discovery\n//active discovery WILDVALUE cannot contain  ['=',':','\\','#','space'] characters\n//the function below will get rid of those special characters if they exist\ndef SpecialCharacterCheck(process){\n\t//special characters not allowed in ActiveDiscovery\n\tdef specialCharacters = ~/\\=|\\:|\\\\|\\#|\\s/\n\n\t//replace the special character by nothing & return the 'new' process name\n\tprocess=process.replaceAll(specialCharacters, '')\n\t//println(process); //DEBUG\n\n\treturn process\n}"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>import com.santaba.agent.groovyapi.win32.WMI;
+
+def host = hostProps.get(&#34;system.hostname&#34;);
+def process_name = [];
+def process_percentprocessortime = [];
+def process_handlecount = [];
+def process_iodatabytespersec = [];
+def process_processid = [];
+def process_threadcount = [];
+def process_workingset = [];
+
+// get the processes list
+def process_list = WMI.queryAll(host, &#34;select * from Win32_PerfRawData_PerfProc_Process&#34;);
+
+// enumerate as a map
+process_list.each
+{ process_map -&#62;
+    // enumerate each of the fields in this process map
+    process_map.each
+    { key,value -&#62;
+        //grab the name
+        if ((key == &#34;NAME&#34;) )
+        {
+            //add the process name into the &#39;svc&#39; list
+            process_name.add(value) 
+        }
+        //grab the HandleCount
+        if ((key == &#34;HANDLECOUNT&#34;) )
+        {
+            //add the process name into the &#39;svc&#39; list
+            process_handlecount.add(value) 
+        }
+        //grab the IODataBytesPerSec
+        if ((key == &#34;IODATABYTESPERSEC&#34;) )
+        {
+            //add the process name into the &#39;svc&#39; list
+            process_iodatabytespersec.add(value) 
+        }
+        //grab the PercentProcessorTime
+        if ((key == &#34;PERCENTPROCESSORTIME&#34;) )
+        {
+            //add the process name into the &#39;svc&#39; list
+            process_percentprocessortime.add(value) 
+        }
+        //grab the ProcessID
+        if ((key == &#34;IDPROCESS&#34;) )
+        {
+            //add the process name into the &#39;svc&#39; list
+            process_processid.add(value) 
+        }
+        //grab the ThreadCount
+        if ((key == &#34;THREADCOUNT&#34;) )
+        {
+            //add the process name into the &#39;svc&#39; list
+            process_threadcount.add(value) 
+        }
+        //grab the WorkingSet
+        if ((key == &#34;WORKINGSET&#34;) )
+        {
+            //add the process name into the &#39;svc&#39; list
+            process_workingset.add(value) 
+        }
+    } 
+}
+
+//iterate to the built list &#39;process_name&#39; &#38; extract values to build the output line(s)
+process_name.eachWithIndex { item, index -&#62;
+    //check for SpecialCharacters &#38; remove them
+    item2=SpecialCharacterCheck(item)
+
+    println item2+&#34;.HandleCount=&#34;+process_handlecount[index]
+    println item2+&#34;.IODataBytesPerSec=&#34;+process_iodatabytespersec[index]
+    println item2+&#34;.PercentProcessorTime=&#34;+process_percentprocessortime[index]
+    println item2+&#34;.ProcessID=&#34;+process_processid[index]
+    println item2+&#34;.ThreadCount=&#34;+process_threadcount[index]
+    println item2+&#34;.WorkingSet=&#34;+process_workingset[index]
+}
+
+return(0);
+
+//according to :
+//https://www.logicmonitor.com/support/logicmodules/datasources/active-discovery/script-active-discovery
+//active discovery WILDVALUE cannot contain  [&#39;=&#39;,&#39;:&#39;,&#39;\&#39;,&#39;#&#39;,&#39;space&#39;] characters
+//the function below will get rid of those special characters if they exist
+def SpecialCharacterCheck(process){
+	//special characters not allowed in ActiveDiscovery
+	def specialCharacters = ~/\=|\:|\\|\#|\s/
+
+	//replace the special character by nothing &#38; return the &#39;new&#39; process name
+	process=process.replaceAll(specialCharacters, &#39;&#39;)
+	//println(process); //DEBUG
+
+	return process
+}</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_0</name>
+            <value>##WILDVALUE##	RegexNotMatch	_Total|Idle</value>
+            <comment>Excluding processes generally</comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>HandleCount</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.HandleCount</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Total number of handles the process has open. This number is the sum of the handles currently open by each thread in the process.</description>
+            <maxvalue></maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>5</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>IODataBytesPerSec</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.IODataBytesPerSec</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Rate at which the process is reading and writing bytes in I/O operations. This property counts all I/O activity generated by the process to include file, network, and device I/Os.</description>
+            <maxvalue></maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>5</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>ProcessCPUPercent</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>PercentProcessorTime/100000</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody>The process ##INSTANCE## ##DSIDESCRIPTION## on Windows host ##HOST## is taking up ##VALUE##% of CPU cycles, placing the processes into ##LEVEL## state.
+
+Values exceeding 100% means the process consumes resources of more than one CPU or core.
+
+This started at ##START##, -- or ##DURATION## ago.</alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Percent of CPU cycles. Value exceeding 100% means the process consumes resources of more than one CPU or core.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>5</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>PercentProcessorTime</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.PercentProcessorTime</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Percentage of elapsed time that all of the threads of this process used the processor to execute instructions.</description>
+            <maxvalue></maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>5</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>ProcessID</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.ProcessID</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody>The process ##INSTANCE## ##DSIDESCRIPTION## on Windows host ##HOST## has stopped and is no longer collecting data, placing the processes into ##LEVEL## state.
+
+The process has not been detected since ##START##, -- or ##DURATION## ago. .</alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Used to detect if a process is running.</description>
+            <maxvalue></maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>5</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>ThreadCount</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.ThreadCount</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Number of threads currently active in this process.</description>
+            <maxvalue></maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>5</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>WorkingSet</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.WorkingSet</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>Maximum number of bytes in the working set of this process at any point in time. The working set is the set of memory pages touched recently by the threads in the process.</description>
+            <maxvalue></maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>5</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>CPU Usage</name>
+            <title>CPU Usage</title>
+            <verticallabel>%</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>ProcessCPUPercent</name>
+            <datapointname>ProcessCPUPercent</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>2</type>
+                <legend>CPU Usage (single core)</legend>
+                <color>red</color>
+                <datapointname>ProcessCPUPercent</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Data Throughput</name>
+            <title>Data Throughput</title>
+            <verticallabel>bytes/sec</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>true</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>IODataBytesPerSec</name>
+            <datapointname>IODataBytesPerSec</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>2</type>
+                <legend>Throughput</legend>
+                <color>blue</color>
+                <datapointname>IODataBytesPerSec</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>File Handles</name>
+            <title>File Handles</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>HandleCount</name>
+            <datapointname>HandleCount</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Handle Count</legend>
+                <color>fuchsia</color>
+                <datapointname>HandleCount</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Process Memory</name>
+            <title>Process Memory</title>
+            <verticallabel>bytes</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>true</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>WorkingSet</name>
+            <datapointname>WorkingSet</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Working Set</legend>
+                <color>orange2</color>
+                <datapointname>WorkingSet</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Threads</name>
+            <title>Threads</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>ThreadCount</name>
+            <datapointname>ThreadCount</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>2</type>
+                <legend>Threads</legend>
+                <color>gray</color>
+                <datapointname>ThreadCount</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        <overviewgraph>
+            <name>Top 10 Processes by CPU Usage</name>
+            <title>Top 10 Processes by CPU Usage</title>
+            <verticallabel>%</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <aggregated>false</aggregated>
+            <datapoints>
+        <overviewgraphdatapoint>
+            <name>ProcessCPUPercent</name>
+            <datapointname>ProcessCPUPercent</datapointname>
+            <cf>1</cf>
+            <aggregateMethod>sum</aggregateMethod>
+        </overviewgraphdatapoint>
+            </datapoints>
+            <virtualdatapoints>
+            </virtualdatapoints>
+            <lines>
+            <overviewgraphline>
+                <type>1</type>
+                <legend>##INSTANCE##</legend>
+                <datapointname>ProcessCPUPercent</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>silver</color>
+            </overviewgraphline>
+            </lines>
+        </overviewgraph>
+        <overviewgraph>
+            <name>Top 10 Processes by Data Throughput</name>
+            <title>Top 10 Processes by Data Throughput</title>
+            <verticallabel>bytes/sec</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>true</base1024>
+            <aggregated>false</aggregated>
+            <datapoints>
+        <overviewgraphdatapoint>
+            <name>IODataBytesPerSec</name>
+            <datapointname>IODataBytesPerSec</datapointname>
+            <cf>1</cf>
+            <aggregateMethod>sum</aggregateMethod>
+        </overviewgraphdatapoint>
+            </datapoints>
+            <virtualdatapoints>
+            </virtualdatapoints>
+            <lines>
+            <overviewgraphline>
+                <type>1</type>
+                <legend>##INSTANCE##</legend>
+                <datapointname>IODataBytesPerSec</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>silver</color>
+            </overviewgraphline>
+            </lines>
+        </overviewgraph>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
