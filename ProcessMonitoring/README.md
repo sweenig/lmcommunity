@@ -1,6 +1,10 @@
 # Process monitoring
 
-These two datasources allow monitoring of processes on [Windows](Win_Service_Select/Win_Service_Select.xml) and on [Linux](Linux_SSH_Processes_Select/Linux_SSH_Processes_Select.xml) without having to manually specify the processes one by one on each server.  Instead, it uses active discovery to find the processes. However, since monitoring all processes on every server tends to bog down the collector, these datasources also include the ability to manipulate discovery using properties.
+These datasources allow monitoring of [Windows Services](Win_Service_Select/Win_Service_Select.xml), [Windows Processes](Win_Process_Stats_Groovy/Win_Process_Stats_Groovy.xml) and on [Linux](Linux_SSH_Processes_Select/Linux_SSH_Processes_Select.xml).
+
+## \_Select DataSources
+
+The two "\_Select" datasources work without having to manually specify the processes one by one on each server.  Instead, they use active discovery to find the processes. However, since monitoring all processes on every server tends to bog down the collector, these datasources also include the ability to manipulate discovery using properties.
 
 In both datasources, they expect a pair of properties called
 1. For Windows:
@@ -26,3 +30,10 @@ This results in discovery filtering out a few services (along with a bunch that 
 ![example1-result](example1-result.png "Results")
 
 Notice also that the RegEx for gupdate actually matched on two different services containing "gupdate". Keep in mind that the discovery filters are AND'ed together, so for a service to get discovered, it must pass each and every discovery filter.
+
+## Collector Performance
+If you want to monitor lots of processes/services on Windows systems, the \_Select DataSources might not be the best approach, since the large number of processes/services will cause huge numbers of tasks in the WMI queue on the collector. Instead, there are two Groovy based DataSources that will allow you to make one request for all the data for all services/processes on the system. This can cut the query count down from thousands in total to one per device.
+
+[Win_Service_Select_Groovy](Win_Service_Select_Groovy/Win_Service_Select_Groovy.xml) and [Win_Process_Stats_Groovy](Win_Process_Stats_Groovy/Win_Process_Stats_Groovy.xml) both use BATCHSCRIPT mode to fetch all the data for all instances in a single execution of the [collection script](Win_Service_Select_Groovy/collect.groovy). This would allow a more expansive list of processes/services to be monitored without adding significant load to the collector.
+
+Thanks to Vitor Santos for providing the basis and need for these two DataSources.
