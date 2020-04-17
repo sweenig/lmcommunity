@@ -2,21 +2,21 @@
 
 These datasources allow monitoring of [Windows Services](Win_Service_Select/Win_Service_Select.xml), [Windows Processes](Win_Process_Stats_Groovy/Win_Process_Stats_Groovy.xml) and on [Linux](Linux_SSH_Processes_Select/Linux_SSH_Processes_Select.xml).
 
-## \_Select DataSources
+The DataSources work without having to manually specify the processes/services one by one on each server.  Instead, they use active discovery to find the processes. However, since monitoring all processes/services on every server tends to bog down the collector, these datasources also include the ability to manipulate discovery using properties, as follows:
 
-The two "\_Select" datasources work without having to manually specify the processes one by one on each server.  Instead, they use active discovery to find the processes. However, since monitoring all processes on every server tends to bog down the collector, these datasources also include the ability to manipulate discovery using properties.
-
-In both datasources, they expect a pair of properties called
-1. For Windows:
+1. For [Win_Service_Select](Win_Service_Select/Win_Service_Select.xml) and [Win_Service_Select_Groovy](Win_Service_Select_Groovy/Win_Service_Select_Groovy.xml):
   * Win_Service_Select.includeRegEx
   * Win_Service_Select.excludeRegEx
-2. For Linux:
+2. For [Win_Process_Stats_Groovy](Win_Process_Stats_Groovy/Win_Process_Stats_Groovy.xml):
+  * Win_Process_Stats.excludeRegEx
+  * Win_Process_Stats.includeRegEx
+3. For [Linux_SSH_Processes_Select](Linux_SSH_Processes_Select/Linux_SSH_Processes_Select.xml):
   * Linux_SSH_Processes_Select.includeRegEx
   * Linux_SSH_Processes_Select.excludeRegEx
 
-These properties are referenced in the discovery filters of each datasource. You would need to set these properties on each device you want these datasources to apply to. I recommend setting them as properties on a group containing the servers (/Devices by Type/Linux Servers or /Devices by Type/Windows Servers for example).
+These properties are referenced in the discovery filters of each datasource. You would need to set these properties on each device you want these datasources to apply to. I recommend setting them as properties on a group containing the servers (/Devices by Type/Linux Servers or /Devices by Type/Windows Servers for example). In my portal, since I want all servers to have the same filters, I just set these properties on the root folder so they are inherited by all devices. The ones that don't need the property won't use them.
 
-The values of the properties need to be RegEx expressions that match on the processes desired. Starting with the simple case of wanting to monitor everything, you could set the following properties (I'm showing Windows, but the method is the same for both):
+The values of the properties need to be RegEx expressions that match on the processes desired. Starting with the simple case of wanting to monitor everything, you could set the following properties (I'm showing Windows, but the method is the same for all):
 `Windows_Service_Select.includeRegEx = .*`
 `Windows_Service_Select.excludeRegEx = DO NOT EXCLUDE ANYTHING`
 These two properties would cause everything (.* matches everything in RegEx) to be included and nothing to be excluded, unless there were a service called "DO NOT EXCLUDE ANYTHING" (spoilers: there's probably not).
