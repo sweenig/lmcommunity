@@ -5,14 +5,14 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1587132701</version>
+        <version>1587137408</version>
         <name>Win_Process_Stats_Groovy</name>
         <displayedas>Processes</displayedas>
         <description>Monitor the resource usage of a process.</description>
         <collector>batchscript</collector>
         <hasMultiInstances>true</hasMultiInstances>
         <schedule>180</schedule>
-        <appliesTo>isWindows()</appliesTo>
+        <appliesTo>isWindows() &#38;&#38; Win_Process_Stats.excludeRegEx &#38;&#38; Win_Process_Stats.includeRegEx</appliesTo>
         <wildcardauto>true</wildcardauto>
         <wildcardpersist>false</wildcardpersist>
         <wildcardlinuxscript>ad_script</wildcardlinuxscript>
@@ -38,7 +38,7 @@ return(0)
         <group>_WeenigWare Community</group>
         <tags></tags>
         <technology>https://docs.microsoft.com/en-us/previous-versions/aa394323(v%3Dvs.85)</technology>
-        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[{"attribute":"##WILDVALUE##","operation":"RegexNotMatch","value":"_Total|Idle"}],"params":{"type":"embeded","groovyscript":"import com.santaba.agent.groovyapi.win32.WMI\n\ndef host = hostProps.get(\"system.hostname\")\n\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\")\n\nprocess_list.each {\n  println(\"${it[\"NAME\"].replaceAll(/\\=|\\:|\\\\|\\#|\\s/, '')}##${it[\"NAME\"]}\")\n}\nreturn(0)\n"}}]]></adlist>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[{"attribute":"##WILDALIAS##","operation":"RegexNotMatch","value":"##Win_Process_Stats.excludeRegEx##"},{"attribute":"##WILDALIAS##","operation":"RegexMatch","value":"##Win_Process_Stats.includeRegEx##"},{"attribute":"##WILDVALUE##","operation":"RegexNotMatch","value":"_Total|Idle"}],"params":{"type":"embeded","groovyscript":"import com.santaba.agent.groovyapi.win32.WMI\n\ndef host = hostProps.get(\"system.hostname\")\n\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\")\n\nprocess_list.each {\n  println(\"${it[\"NAME\"].replaceAll(/\\=|\\:|\\\\|\\#|\\s/, '')}##${it[\"NAME\"]}\")\n}\nreturn(0)\n"}}]]></adlist>
         <schemaVersion>2</schemaVersion>
         <dataSourceType>1</dataSourceType>
         <attributes>
@@ -89,6 +89,16 @@ return(0)</value>
         </attribute>
         <attribute>
             <name>__filter_0</name>
+            <value>##WILDALIAS##	RegexNotMatch	##Win_Process_Stats.excludeRegEx##</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_1</name>
+            <value>##WILDALIAS##	RegexMatch	##Win_Process_Stats.includeRegEx##</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_2</name>
             <value>##WILDVALUE##	RegexNotMatch	_Total|Idle</value>
             <comment>Excluding processes generally</comment>
         </attribute>

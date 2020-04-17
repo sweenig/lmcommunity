@@ -2,14 +2,14 @@
   "id" : 13504265,
   "description" : "Monitor the resource usage of a process.",
   "group" : "_WeenigWare Community",
-  "appliesTo" : "isWindows()",
+  "appliesTo" : "isWindows() && Win_Process_Stats.excludeRegEx && Win_Process_Stats.includeRegEx",
   "technology" : "https://docs.microsoft.com/en-us/previous-versions/aa394323(v%3Dvs.85)",
   "tags" : "",
-  "checksum" : "2bc24e77cc602ef0b1652b6fda23903a",
+  "checksum" : "7a539179cf48d071900a4f7bb88a00bb",
   "lineageId" : "LbJuydTOSTK0vcttdXskrg",
   "name" : "Win_Process_Stats_Groovy",
   "displayName" : "Processes",
-  "version" : 1587132701,
+  "version" : 1587137408,
   "auditVersion" : 0,
   "hasMultiInstances" : true,
   "collectInterval" : 180,
@@ -41,6 +41,16 @@
       "groovyScript" : "import com.santaba.agent.groovyapi.win32.WMI\n\ndef host = hostProps.get(\"system.hostname\")\n\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\")\n\nprocess_list.each {\n  println(\"${it[\"NAME\"].replaceAll(/\\=|\\:|\\\\|\\#|\\s/, '')}##${it[\"NAME\"]}\")\n}\nreturn(0)\n"
     },
     "filters" : [ {
+      "attribute" : "##WILDALIAS##",
+      "operation" : "RegexNotMatch",
+      "value" : "##Win_Process_Stats.excludeRegEx##",
+      "comment" : ""
+    }, {
+      "attribute" : "##WILDALIAS##",
+      "operation" : "RegexMatch",
+      "value" : "##Win_Process_Stats.includeRegEx##",
+      "comment" : ""
+    }, {
       "attribute" : "##WILDVALUE##",
       "operation" : "RegexNotMatch",
       "value" : "_Total|Idle",

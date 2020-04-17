@@ -1,11 +1,23 @@
 {
     "LMApiVersion": "3",
-    "appliesTo": "isWindows()",
+    "appliesTo": "isWindows() && Win_Process_Stats.excludeRegEx && Win_Process_Stats.includeRegEx",
     "auditVersion": 0,
     "autoDiscoveryConfig": {
         "deleteInactiveInstance": true,
         "disableInstance": false,
         "filters": [
+            {
+                "attribute": "##WILDALIAS##",
+                "comment": "",
+                "operation": "RegexNotMatch",
+                "value": "##Win_Process_Stats.excludeRegEx##"
+            },
+            {
+                "attribute": "##WILDALIAS##",
+                "comment": "",
+                "operation": "RegexMatch",
+                "value": "##Win_Process_Stats.includeRegEx##"
+            },
             {
                 "attribute": "##WILDVALUE##",
                 "comment": "Excluding processes generally",
@@ -27,7 +39,7 @@
         "persistentInstance": false,
         "scheduleInterval": 0
     },
-    "checksum": "2bc24e77cc602ef0b1652b6fda23903a",
+    "checksum": "7a539179cf48d071900a4f7bb88a00bb",
     "collectInterval": 180,
     "collectMethod": "batchscript",
     "collectorAttribute": {
