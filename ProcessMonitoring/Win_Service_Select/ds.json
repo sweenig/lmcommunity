@@ -1,0 +1,222 @@
+{
+    "LMApiVersion": "3",
+    "appliesTo": "isWindows() && Win_Service_Select.includeRegEx && Win_Service_Select.excludeRegEx",
+    "auditVersion": 0,
+    "autoDiscoveryConfig": {
+        "deleteInactiveInstance": false,
+        "disableInstance": false,
+        "filters": [
+            {
+                "attribute": "##WILDALIAS##",
+                "comment": "Services to exclude, set as property on device.",
+                "operation": "RegexNotMatch",
+                "value": "##Win_Service_Select.excludeRegEx##"
+            },
+            {
+                "attribute": "auto.WinServiceStartMode",
+                "comment": "",
+                "operation": "NotEqual",
+                "value": "Manual"
+            },
+            {
+                "attribute": "auto.WinServiceStartMode",
+                "comment": "",
+                "operation": "NotEqual",
+                "value": "Disabled"
+            },
+            {
+                "attribute": "##WILDALIAS##",
+                "comment": "Services to include, set as property on device.",
+                "operation": "RegexMatch",
+                "value": "##Win_Service_Select.includeRegEx##"
+            }
+        ],
+        "instanceAutoGroupMethod": "ilp",
+        "instanceAutoGroupMethodParams": "auto.WinServiceStartName",
+        "method": {
+            "ILP": [
+                {
+                    "lmName": "auto.WinServiceStartName",
+                    "wmiName": "StartName"
+                },
+                {
+                    "lmName": "auto.WinServiceStartMode",
+                    "wmiName": "StartMode"
+                }
+            ],
+            "enableLinkedClassILP": false,
+            "enableWmiClassILP": true,
+            "externalResourceID": "",
+            "externalResourceType": "",
+            "linkedClasses": [],
+            "name": "ad_wmi",
+            "namespace": "CIMV2",
+            "property": "displayname",
+            "wmiClass": "Win32_Service"
+        },
+        "persistentInstance": false,
+        "scheduleInterval": 15
+    },
+    "checksum": "de0dd35537a88c4293087347fd3d8f22",
+    "collectInterval": 180,
+    "collectMethod": "wmi",
+    "collectorAttribute": {
+        "ip": "dns",
+        "methodInputs": "",
+        "methodName": "",
+        "name": "wmi",
+        "namespace": "CIMV2",
+        "queryClass": "Win32_Service",
+        "queryIndex": "displayname",
+        "queryValue": "##WILDVALUE##",
+        "targetPath": "",
+        "type": "query"
+    },
+    "coretools_format": "ds meV1",
+    "dataPoints": [
+        {
+            "alertBody": "The windows service ##INSTANCE## ##DSIDESCRIPTION## on ##HOST## ##GROUP## is running, but not in the OK state.\nIt may be in error, degraded or starting/stoppingstate.\nThis started at ##START## - or ##DURATION## ago.\nContact: ##CUSTCONTACT##",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "!= 1 1 1",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 3,
+            "dataType": 7,
+            "description": "If service is running, alert if Status is not OK.",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "0",
+            "name": "RunningStatus",
+            "postProcessorMethod": "expression",
+            "postProcessorParam": "if(eq(State,1),Status,1)",
+            "rawDataFieldName": "",
+            "type": 2,
+            "userParam1": "",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "The Windows service ##INSTANCE## ##DSIDESCRIPTION## on ##HOST## ##GROUP## is not running.\nThis started at ##START## - or ##DURATION## ago.\nContact: ##CUSTCONTACT##",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "!= 1 1 1",
+            "alertExprNote": "",
+            "alertForNoData": 1,
+            "alertSubject": "",
+            "alertTransitionInterval": 3,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "0",
+            "name": "State",
+            "postProcessorMethod": "textmatch",
+            "postProcessorParam": "Running",
+            "rawDataFieldName": "",
+            "type": 2,
+            "userParam1": "State",
+            "userParam2": "",
+            "userParam3": ""
+        },
+        {
+            "alertBody": "",
+            "alertClearTransitionInterval": 0,
+            "alertExpr": "",
+            "alertExprNote": "",
+            "alertForNoData": 3,
+            "alertSubject": "",
+            "alertTransitionInterval": 3,
+            "dataType": 7,
+            "description": "",
+            "enableAnomalyAlertSuppression": "",
+            "maxDigits": 4,
+            "maxValue": "",
+            "minValue": "0",
+            "name": "Status",
+            "postProcessorMethod": "textmatch",
+            "postProcessorParam": "OK",
+            "rawDataFieldName": "",
+            "type": 2,
+            "userParam1": "Status",
+            "userParam2": "",
+            "userParam3": ""
+        }
+    ],
+    "description": "Monitors service state of select Windows Services.",
+    "displayName": "Services",
+    "enableAutoDiscovery": true,
+    "enableEriDiscovery": false,
+    "eriDiscoveryConfig": null,
+    "eriDiscoveryInterval": -1,
+    "graphs": [
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "State",
+                    "name": "State"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "blue",
+                    "dataPointName": "State",
+                    "isVirtualDataPoint": false,
+                    "legend": "State 1 = Running",
+                    "type": 1
+                }
+            ],
+            "maxValue": 2.0,
+            "minValue": 0.0,
+            "name": "State",
+            "rigid": true,
+            "timeScale": "1day",
+            "title": "State",
+            "verticalLabel": "State",
+            "virtualDataPoints": [],
+            "width": 360
+        },
+        {
+            "base1024": false,
+            "dataPoints": [
+                {
+                    "consolidateFunc": 1,
+                    "dpName": "Status",
+                    "name": "Status"
+                }
+            ],
+            "displayPrio": 1,
+            "height": 120,
+            "lines": [
+                {
+                    "colorName": "blue",
+                    "dataPointName": "Status",
+                    "isVirtualDataPoint": false,
+                    "legend": "Status 1 = OK",
+                    "type": 1
+                }
+            ],
+            "maxValue": 2.0,
+            "minValue": 0.0,
+            "name": "Status",
+            "rigid": true,
+            "timeScale": "1day",
+            "title": "Status",
+            "verticalLabel": "Status",
+            "virtualDataPoints": [],
+            "width": 360
+        }
+    ],
+    "group": "_WeenigWare",
+    "hasMultiInstances": true,
+    "lineageId": "1SqcqlmBRMqB3O5kUkdujg",
+    "name": "Win_Service_Select",
+    "overviewgraphs": [],
+    "tags": "",
+    "technology": "Only includes services whose short name matches the RegEx pattern in Win_Service_Select.includeRegEx.\nWritten by Stuart Weenig"
+}
