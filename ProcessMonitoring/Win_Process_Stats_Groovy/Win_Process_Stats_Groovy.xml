@@ -5,8 +5,8 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1587075252</version>
-        <name>WinProcessStats</name>
+        <version>1587132701</version>
+        <name>Win_Process_Stats_Groovy</name>
         <displayedas>Processes</displayedas>
         <description>Monitor the resource usage of a process.</description>
         <collector>batchscript</collector>
@@ -19,53 +19,17 @@
         <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
         <wildcardwinscript>ad_script</wildcardwinscript>
         <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
-        <wildcardgroovyscript>import com.santaba.agent.groovyapi.win32.WMI;
+        <wildcardgroovyscript>import com.santaba.agent.groovyapi.win32.WMI
 
-def host = hostProps.get(&#34;system.hostname&#34;);
-def process_name = [];
+def host = hostProps.get(&#34;system.hostname&#34;)
 
-// get the process list
-def process_list = WMI.queryAll(host, &#34;select * from Win32_PerfRawData_PerfProc_Process&#34;);
+def process_list = WMI.queryAll(host, &#34;select * from Win32_PerfRawData_PerfProc_Process&#34;)
 
-// enumerate as a map
-process_list.each
-{ process_map -&#62;
-    // enumerate each of the fields in this process map
-    process_map.each
-    { key,value -&#62;
-        //grab the name
-        if ((key == &#34;NAME&#34;) )
-        {
-            //feed the svc list
-            process_name.add(value)
-        }
-    } 
+process_list.each {
+  println(&#34;${it[&#34;NAME&#34;].replaceAll(/\=|\:|\\|\#|\s/, &#39;&#39;)}##${it[&#34;NAME&#34;]}&#34;)
 }
-
-//iterate to the built list &#39;process_name&#39; &#38; extract values to build the output line(s)
-process_name.eachWithIndex { item, index -&#62;
-    //check for SpecialCharacters &#38; remove them
-    item2=SpecialCharacterCheck(item)
-    
-    println item2+&#34;##&#34;+item;
-}
-
-return(0);
-
-//according to :
-//https://www.logicmonitor.com/support/logicmodules/datasources/active-discovery/script-active-discovery
-//active discovery WILDVALUE cannot contain  [&#39;=&#39;,&#39;:&#39;,&#39;\&#39;,&#39;#&#39;,&#39;space&#39;] characters
-//the function below will get rid of those special characters if they exist
-def SpecialCharacterCheck(process){
-	//special characters not allowed in ActiveDiscovery
-	def specialCharacters = ~/\=|\:|\\|\#|\s/
-
-	//replace the special character by nothing &#38; return the &#39;new&#39; process name
-	process=process.replaceAll(specialCharacters, &#39;&#39;)
-	//println(process); //DEBUG
-
-	return process
-}</wildcardgroovyscript>
+return(0)
+</wildcardgroovyscript>
         <wildcardschedule>0</wildcardschedule>
         <wildcarddisable>false</wildcarddisable>
         <wildcarddeleteinactive>true</wildcarddeleteinactive>
@@ -73,9 +37,8 @@ def SpecialCharacterCheck(process){
         <agdparams></agdparams>
         <group>_WeenigWare Community</group>
         <tags></tags>
-        <technology>#04/16/2020
-Datasource created with the intent of don&#39;t perform a WMI query for each process instance (this will reduce the collector usage)</technology>
-        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[{"attribute":"##WILDVALUE##","operation":"RegexNotMatch","value":"_Total|Idle"}],"params":{"type":"embeded","groovyscript":"import com.santaba.agent.groovyapi.win32.WMI;\n\ndef host = hostProps.get(\"system.hostname\");\ndef process_name = [];\n\n// get the process list\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\");\n\n// enumerate as a map\nprocess_list.each\n{ process_map ->\n    // enumerate each of the fields in this process map\n    process_map.each\n    { key,value ->\n        //grab the name\n        if ((key == \"NAME\") )\n        {\n            //feed the svc list\n            process_name.add(value)\n        }\n    } \n}\n\n//iterate to the built list 'process_name' & extract values to build the output line(s)\nprocess_name.eachWithIndex { item, index ->\n    //check for SpecialCharacters & remove them\n    item2=SpecialCharacterCheck(item)\n    \n    println item2+\"##\"+item;\n}\n\nreturn(0);\n\n//according to :\n//https://www.logicmonitor.com/support/logicmodules/datasources/active-discovery/script-active-discovery\n//active discovery WILDVALUE cannot contain  ['=',':','\\','#','space'] characters\n//the function below will get rid of those special characters if they exist\ndef SpecialCharacterCheck(process){\n\t//special characters not allowed in ActiveDiscovery\n\tdef specialCharacters = ~/\\=|\\:|\\\\|\\#|\\s/\n\n\t//replace the special character by nothing & return the 'new' process name\n\tprocess=process.replaceAll(specialCharacters, '')\n\t//println(process); //DEBUG\n\n\treturn process\n}"}}]]></adlist>
+        <technology>https://docs.microsoft.com/en-us/previous-versions/aa394323(v%3Dvs.85)</technology>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[{"attribute":"##WILDVALUE##","operation":"RegexNotMatch","value":"_Total|Idle"}],"params":{"type":"embeded","groovyscript":"import com.santaba.agent.groovyapi.win32.WMI\n\ndef host = hostProps.get(\"system.hostname\")\n\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\")\n\nprocess_list.each {\n  println(\"${it[\"NAME\"].replaceAll(/\\=|\\:|\\\\|\\#|\\s/, '')}##${it[\"NAME\"]}\")\n}\nreturn(0)\n"}}]]></adlist>
         <schemaVersion>2</schemaVersion>
         <dataSourceType>1</dataSourceType>
         <attributes>
@@ -86,100 +49,22 @@ Datasource created with the intent of don&#39;t perform a WMI query for each pro
         </attribute>
         <attribute>
             <name>scriptgroovy</name>
-            <value>import com.santaba.agent.groovyapi.win32.WMI;
+            <value>import com.santaba.agent.groovyapi.win32.WMI
 
-def host = hostProps.get(&#34;system.hostname&#34;);
-def process_name = [];
-def process_percentprocessortime = [];
-def process_handlecount = [];
-def process_iodatabytespersec = [];
-def process_processid = [];
-def process_threadcount = [];
-def process_workingset = [];
+def host = hostProps.get(&#34;system.hostname&#34;)
 
-// get the processes list
-def process_list = WMI.queryAll(host, &#34;select * from Win32_PerfRawData_PerfProc_Process&#34;);
+def process_list = WMI.queryAll(host, &#34;select * from Win32_PerfRawData_PerfProc_Process&#34;)
 
-// enumerate as a map
-process_list.each
-{ process_map -&#62;
-    // enumerate each of the fields in this process map
-    process_map.each
-    { key,value -&#62;
-        //grab the name
-        if ((key == &#34;NAME&#34;) )
-        {
-            //add the process name into the &#39;svc&#39; list
-            process_name.add(value) 
-        }
-        //grab the HandleCount
-        if ((key == &#34;HANDLECOUNT&#34;) )
-        {
-            //add the process name into the &#39;svc&#39; list
-            process_handlecount.add(value) 
-        }
-        //grab the IODataBytesPerSec
-        if ((key == &#34;IODATABYTESPERSEC&#34;) )
-        {
-            //add the process name into the &#39;svc&#39; list
-            process_iodatabytespersec.add(value) 
-        }
-        //grab the PercentProcessorTime
-        if ((key == &#34;PERCENTPROCESSORTIME&#34;) )
-        {
-            //add the process name into the &#39;svc&#39; list
-            process_percentprocessortime.add(value) 
-        }
-        //grab the ProcessID
-        if ((key == &#34;IDPROCESS&#34;) )
-        {
-            //add the process name into the &#39;svc&#39; list
-            process_processid.add(value) 
-        }
-        //grab the ThreadCount
-        if ((key == &#34;THREADCOUNT&#34;) )
-        {
-            //add the process name into the &#39;svc&#39; list
-            process_threadcount.add(value) 
-        }
-        //grab the WorkingSet
-        if ((key == &#34;WORKINGSET&#34;) )
-        {
-            //add the process name into the &#39;svc&#39; list
-            process_workingset.add(value) 
-        }
-    } 
+process_list.each{
+  wildvalue=it[&#34;NAME&#34;].replaceAll(/\=|\:|\\|\#|\s/, &#39;&#39;)
+  println wildvalue+&#34;.HandleCount=&#34;+it[&#34;HANDLECOUNT&#34;]
+  println wildvalue+&#34;.IODataBytesPerSec=&#34;+it[&#34;IODATABYTESPERSEC&#34;]
+  println wildvalue+&#34;.PercentProcessorTime=&#34;+it[&#34;PERCENTPROCESSORTIME&#34;]
+  println wildvalue+&#34;.ProcessID=&#34;+it[&#34;IDPROCESS&#34;]
+  println wildvalue+&#34;.ThreadCount=&#34;+it[&#34;THREADCOUNT&#34;]
+  println wildvalue+&#34;.WorkingSet=&#34;+it[&#34;WORKINGSET&#34;]
 }
-
-//iterate to the built list &#39;process_name&#39; &#38; extract values to build the output line(s)
-process_name.eachWithIndex { item, index -&#62;
-    //check for SpecialCharacters &#38; remove them
-    item2=SpecialCharacterCheck(item)
-
-    println item2+&#34;.HandleCount=&#34;+process_handlecount[index]
-    println item2+&#34;.IODataBytesPerSec=&#34;+process_iodatabytespersec[index]
-    println item2+&#34;.PercentProcessorTime=&#34;+process_percentprocessortime[index]
-    println item2+&#34;.ProcessID=&#34;+process_processid[index]
-    println item2+&#34;.ThreadCount=&#34;+process_threadcount[index]
-    println item2+&#34;.WorkingSet=&#34;+process_workingset[index]
-}
-
-return(0);
-
-//according to :
-//https://www.logicmonitor.com/support/logicmodules/datasources/active-discovery/script-active-discovery
-//active discovery WILDVALUE cannot contain  [&#39;=&#39;,&#39;:&#39;,&#39;\&#39;,&#39;#&#39;,&#39;space&#39;] characters
-//the function below will get rid of those special characters if they exist
-def SpecialCharacterCheck(process){
-	//special characters not allowed in ActiveDiscovery
-	def specialCharacters = ~/\=|\:|\\|\#|\s/
-
-	//replace the special character by nothing &#38; return the &#39;new&#39; process name
-	process=process.replaceAll(specialCharacters, &#39;&#39;)
-	//println(process); //DEBUG
-
-	return process
-}</value>
+return(0)</value>
             <comment></comment>
         </attribute>
         <attribute>

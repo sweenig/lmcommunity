@@ -3,13 +3,13 @@
   "description" : "Monitor the resource usage of a process.",
   "group" : "_WeenigWare Community",
   "appliesTo" : "isWindows()",
-  "technology" : "#04/16/2020\nDatasource created with the intent of don't perform a WMI query for each process instance (this will reduce the collector usage)",
+  "technology" : "https://docs.microsoft.com/en-us/previous-versions/aa394323(v%3Dvs.85)",
   "tags" : "",
-  "checksum" : "9e27bba13c337d6bbb84382ade8b9bca",
+  "checksum" : "2bc24e77cc602ef0b1652b6fda23903a",
   "lineageId" : "LbJuydTOSTK0vcttdXskrg",
-  "name" : "WinProcessStats",
+  "name" : "Win_Process_Stats_Groovy",
   "displayName" : "Processes",
-  "version" : 1587075252,
+  "version" : 1587132701,
   "auditVersion" : 0,
   "hasMultiInstances" : true,
   "collectInterval" : 180,
@@ -18,7 +18,7 @@
     "name" : "batchscript",
     "linuxCmdline" : "",
     "linuxScript" : "",
-    "groovyScript" : "import com.santaba.agent.groovyapi.win32.WMI;\n\ndef host = hostProps.get(\"system.hostname\");\ndef process_name = [];\ndef process_percentprocessortime = [];\ndef process_handlecount = [];\ndef process_iodatabytespersec = [];\ndef process_processid = [];\ndef process_threadcount = [];\ndef process_workingset = [];\n\n// get the processes list\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\");\n\n// enumerate as a map\nprocess_list.each\n{ process_map ->\n    // enumerate each of the fields in this process map\n    process_map.each\n    { key,value ->\n        //grab the name\n        if ((key == \"NAME\") )\n        {\n            //add the process name into the 'svc' list\n            process_name.add(value) \n        }\n        //grab the HandleCount\n        if ((key == \"HANDLECOUNT\") )\n        {\n            //add the process name into the 'svc' list\n            process_handlecount.add(value) \n        }\n        //grab the IODataBytesPerSec\n        if ((key == \"IODATABYTESPERSEC\") )\n        {\n            //add the process name into the 'svc' list\n            process_iodatabytespersec.add(value) \n        }\n        //grab the PercentProcessorTime\n        if ((key == \"PERCENTPROCESSORTIME\") )\n        {\n            //add the process name into the 'svc' list\n            process_percentprocessortime.add(value) \n        }\n        //grab the ProcessID\n        if ((key == \"IDPROCESS\") )\n        {\n            //add the process name into the 'svc' list\n            process_processid.add(value) \n        }\n        //grab the ThreadCount\n        if ((key == \"THREADCOUNT\") )\n        {\n            //add the process name into the 'svc' list\n            process_threadcount.add(value) \n        }\n        //grab the WorkingSet\n        if ((key == \"WORKINGSET\") )\n        {\n            //add the process name into the 'svc' list\n            process_workingset.add(value) \n        }\n    } \n}\n\n//iterate to the built list 'process_name' & extract values to build the output line(s)\nprocess_name.eachWithIndex { item, index ->\n    //check for SpecialCharacters & remove them\n    item2=SpecialCharacterCheck(item)\n\n    println item2+\".HandleCount=\"+process_handlecount[index]\n    println item2+\".IODataBytesPerSec=\"+process_iodatabytespersec[index]\n    println item2+\".PercentProcessorTime=\"+process_percentprocessortime[index]\n    println item2+\".ProcessID=\"+process_processid[index]\n    println item2+\".ThreadCount=\"+process_threadcount[index]\n    println item2+\".WorkingSet=\"+process_workingset[index]\n}\n\nreturn(0);\n\n//according to :\n//https://www.logicmonitor.com/support/logicmodules/datasources/active-discovery/script-active-discovery\n//active discovery WILDVALUE cannot contain  ['=',':','\\','#','space'] characters\n//the function below will get rid of those special characters if they exist\ndef SpecialCharacterCheck(process){\n\t//special characters not allowed in ActiveDiscovery\n\tdef specialCharacters = ~/\\=|\\:|\\\\|\\#|\\s/\n\n\t//replace the special character by nothing & return the 'new' process name\n\tprocess=process.replaceAll(specialCharacters, '')\n\t//println(process); //DEBUG\n\n\treturn process\n}",
+    "groovyScript" : "import com.santaba.agent.groovyapi.win32.WMI\n\ndef host = hostProps.get(\"system.hostname\")\n\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\")\n\nprocess_list.each{\n  wildvalue=it[\"NAME\"].replaceAll(/\\=|\\:|\\\\|\\#|\\s/, '')\n  println wildvalue+\".HandleCount=\"+it[\"HANDLECOUNT\"]\n  println wildvalue+\".IODataBytesPerSec=\"+it[\"IODATABYTESPERSEC\"]\n  println wildvalue+\".PercentProcessorTime=\"+it[\"PERCENTPROCESSORTIME\"]\n  println wildvalue+\".ProcessID=\"+it[\"IDPROCESS\"]\n  println wildvalue+\".ThreadCount=\"+it[\"THREADCOUNT\"]\n  println wildvalue+\".WorkingSet=\"+it[\"WORKINGSET\"]\n}\nreturn(0)",
     "scriptType" : "embed",
     "windowsCmdline" : "",
     "windowsScript" : ""
@@ -38,7 +38,7 @@
       "winCmdline" : null,
       "linuxCmdline" : null,
       "linuxScript" : null,
-      "groovyScript" : "import com.santaba.agent.groovyapi.win32.WMI;\n\ndef host = hostProps.get(\"system.hostname\");\ndef process_name = [];\n\n// get the process list\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\");\n\n// enumerate as a map\nprocess_list.each\n{ process_map ->\n    // enumerate each of the fields in this process map\n    process_map.each\n    { key,value ->\n        //grab the name\n        if ((key == \"NAME\") )\n        {\n            //feed the svc list\n            process_name.add(value)\n        }\n    } \n}\n\n//iterate to the built list 'process_name' & extract values to build the output line(s)\nprocess_name.eachWithIndex { item, index ->\n    //check for SpecialCharacters & remove them\n    item2=SpecialCharacterCheck(item)\n    \n    println item2+\"##\"+item;\n}\n\nreturn(0);\n\n//according to :\n//https://www.logicmonitor.com/support/logicmodules/datasources/active-discovery/script-active-discovery\n//active discovery WILDVALUE cannot contain  ['=',':','\\','#','space'] characters\n//the function below will get rid of those special characters if they exist\ndef SpecialCharacterCheck(process){\n\t//special characters not allowed in ActiveDiscovery\n\tdef specialCharacters = ~/\\=|\\:|\\\\|\\#|\\s/\n\n\t//replace the special character by nothing & return the 'new' process name\n\tprocess=process.replaceAll(specialCharacters, '')\n\t//println(process); //DEBUG\n\n\treturn process\n}"
+      "groovyScript" : "import com.santaba.agent.groovyapi.win32.WMI\n\ndef host = hostProps.get(\"system.hostname\")\n\ndef process_list = WMI.queryAll(host, \"select * from Win32_PerfRawData_PerfProc_Process\")\n\nprocess_list.each {\n  println(\"${it[\"NAME\"].replaceAll(/\\=|\\:|\\\\|\\#|\\s/, '')}##${it[\"NAME\"]}\")\n}\nreturn(0)\n"
     },
     "filters" : [ {
       "attribute" : "##WILDVALUE##",

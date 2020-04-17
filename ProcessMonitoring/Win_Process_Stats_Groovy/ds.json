@@ -27,7 +27,7 @@
         "persistentInstance": false,
         "scheduleInterval": 0
     },
-    "checksum": "9e27bba13c337d6bbb84382ade8b9bca",
+    "checksum": "2bc24e77cc602ef0b1652b6fda23903a",
     "collectInterval": 180,
     "collectMethod": "batchscript",
     "collectorAttribute": {
@@ -364,7 +364,7 @@
     "group": "_WeenigWare Community",
     "hasMultiInstances": true,
     "lineageId": "LbJuydTOSTK0vcttdXskrg",
-    "name": "WinProcessStats",
+    "name": "Win_Process_Stats_Groovy",
     "overviewgraphs": [
         {
             "aggregated": false,
@@ -432,5 +432,5 @@
         }
     ],
     "tags": "",
-    "technology": "#04/16/2020\nDatasource created with the intent of don't perform a WMI query for each process instance (this will reduce the collector usage)"
+    "technology": "https://docs.microsoft.com/en-us/previous-versions/aa394323(v%3Dvs.85)"
 }
