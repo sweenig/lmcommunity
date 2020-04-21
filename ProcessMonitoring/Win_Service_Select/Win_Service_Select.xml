@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1581450766</version>
+        <version>1587137666</version>
         <name>Win_Service_Select</name>
         <displayedas>Services</displayedas>
         <description>Monitors service state of select Windows Services.</description>
@@ -25,7 +25,7 @@
         <wildcarddeleteinactive>false</wildcarddeleteinactive>
         <agdmethod>ilp</agdmethod>
         <agdparams>auto.WinServiceStartName</agdparams>
-        <group>_WeenigWare</group>
+        <group>_WeenigWare ProcessMonitoring</group>
         <tags></tags>
         <technology>Only includes services whose short name matches the RegEx pattern in Win_Service_Select.includeRegEx.
 Written by Stuart Weenig</technology>
