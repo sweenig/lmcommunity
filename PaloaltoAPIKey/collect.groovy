@@ -21,7 +21,7 @@ company = hostProps.get("paloalto.apikey.lm.company")
 
 if (!accessId || !accessKey || !company){
   println("LM API credentials missing.")
-  println("ID: ${accessId}\nKey: ${accessKey.replaceAll(/./,"*")}\nCompany: ${company}")
+  println("ID: ${accessId}\nKey: ${accessKey?.replaceAll(/./,"*")}\nCompany: ${company}")
   return 1
 }
 
