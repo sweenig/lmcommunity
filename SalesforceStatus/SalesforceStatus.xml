@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1589302698</version>
+        <name>SalesforceStatus</name>
+        <displayedas>Status</displayedas>
+        <description>Monitor status of Salesforce services from https://api.status.salesforce.com/v1/instances/status</description>
+        <collector>batchscript</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>300</schedule>
+        <appliesTo>system.displayname == &#34;Salesforce&#34;</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>import groovy.json.JsonSlurper
+
+hostname = hostProps.get(&#34;system.hostname&#34;)
+
+url = &#34;https://${hostname}/v1/instances/status&#34;
+
+try {
+    def payload = url.toURL().getText()
+    // println(payload);println(&#34;=&#34;.multiply(80))
+    def instances = new JsonSlurper().parseText(payload)
+
+    //instances = instances.take(3)
+    instances.each {
+      println &#34;${it.key}##${it.key}######environment=${it.environment}&#38;location=${it.location}&#38;isActive=${it.isActive}&#34;
+    }
+    return 0
+}
+catch (Exception e) {
+    println(e);return 1
+}
+</wildcardgroovyscript>
+        <wildcardschedule>60</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>ilp</agdmethod>
+        <agdparams>auto.location</agdparams>
+        <group>_WeenigWare</group>
+        <tags>chat,zoom,networking,video</tags>
+        <technology>Add api.status.salesfoce.com as an instance.</technology>
+        <adlist><![CDATA[{"agdmethod":"ilp","method":"ad_script","agdparams":"auto.location","id":0,"filters":[{"attribute":"auto.isActive","operation":"NotEqual","value":"false"}],"params":{"type":"embeded","groovyscript":"import groovy.json.JsonSlurper\n\nhostname = hostProps.get(\"system.hostname\")\n\nurl = \"https://${hostname}/v1/instances/status\"\n\ntry {\n    def payload = url.toURL().getText()\n    // println(payload);println(\"=\".multiply(80))\n    def instances = new JsonSlurper().parseText(payload)\n\n    //instances = instances.take(3)\n    instances.each {\n      println \"${it.key}##${it.key}######environment=${it.environment}&location=${it.location}&isActive=${it.isActive}\"\n    }\n    return 0\n}\ncatch (Exception e) {\n    println(e);return 1\n}\n"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>import groovy.json.JsonSlurper
+
+hostname = hostProps.get(&#34;system.hostname&#34;)
+
+url = &#34;https://${hostname}/v1/instances/status&#34;
+
+def STATUS_MAP = [&#34;OK&#34;:0,&#34;MAINTENANCE_CORE&#34;:1,&#34;MAINTENANCE_NONCORE&#34;:1,&#34;MINOR_INCIDENT_CORE&#34;:2,&#34;MINOR_INCIDENT_NONCORE&#34;:2,&#34;MAJOR_INCIDENT_CORE&#34;:3,&#34;MAJOR_INCIDENT_NONCORE&#34;:3]
+
+try {
+  def payload = url.toURL().getText()
+  def instances = new JsonSlurper().parseText(payload)
+  //instances = instances.take(50)
+  instances.each {
+      println(&#34;${it.key}.status=${STATUS_MAP.get(it.status, it.status)}&#34;)
+      println(&#34;${it.key}.incidentCount=${it.Incidents.size()}&#34;)
+      println(&#34;${it.key}.maintCount=${it.Maintenances.size()}&#34;)
+      println(&#34;${it.key}.productCount=${it.Products.size()}&#34;)
+  }
+
+  return 0
+}
+catch (Exception e) {
+  println(e)
+  return 1
+}</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>__filter_0</name>
+            <value>auto.isActive	NotEqual	false</value>
+            <comment>Exclude inactive components</comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>incidentCount</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.incidentCount</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>maintCount</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.maintCount</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>productCount</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.productCount</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>Status</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>##WILDVALUE##.status</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr>&#62;= 2 2 3</alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <description>0=OK
+1=MAINTENANCE_CORE or MAINTENANCE_NONCORE
+2=MINOR_INCIDENT_CORE or MINOR_INCIDENT_NONCORE
+3=MAJOR_INCIDENT_CORE or MAJOR_INCIDENT_NONCORE</description>
+            <maxvalue>3</maxvalue>
+            <minvalue>0</minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>2</alertTransitionIval>
+            <alertClearTransitionIval>1</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Status</name>
+            <title>Status</title>
+            <verticallabel>status code</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>3.5</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>Status</name>
+            <datapointname>Status</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+        <graphvirtualdatapoint>
+            <name>none</name>
+            <rpn>0.5</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>minor</name>
+            <rpn>1</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>major</name>
+            <rpn>1</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>critical</name>
+            <rpn>1.5</rpn>
+        </graphvirtualdatapoint>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Status</legend>
+                <color>silver</color>
+                <datapointname>Status</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Major</legend>
+                <color>red1</color>
+                <datapointname>critical</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Minor</legend>
+                <color>orange</color>
+                <datapointname>major</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Maintenance</legend>
+                <color>gray</color>
+                <datapointname>minor</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>OK</legend>
+                <color>lime</color>
+                <datapointname>none</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Status Alternate</name>
+            <title>Status Alternate</title>
+            <verticallabel>0=OK, 1=Maintenance, 2=Minor, 3=Major</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>3.5</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>Status</name>
+            <datapointname>Status</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+        <graphvirtualdatapoint>
+            <name>OK</name>
+            <rpn>if(eq(status,0),0,0)</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>minor</name>
+            <rpn>if(and(gt(status,0),le(status,1)),1,0)</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>major</name>
+            <rpn>if(and(gt(status,1),le(status,2)),2,0)</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>critical</name>
+            <rpn>if(and(gt(status,2),le(status,3)),3,0)</rpn>
+        </graphvirtualdatapoint>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>2</type>
+                <legend>OK</legend>
+                <color>olive</color>
+                <datapointname>OK</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>1</type>
+                <legend>Status</legend>
+                <color>silver</color>
+                <datapointname>Status</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>2</type>
+                <legend>Major</legend>
+                <color>red2</color>
+                <datapointname>critical</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>2</type>
+                <legend>Minor</legend>
+                <color>orange2</color>
+                <datapointname>major</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>2</type>
+                <legend>Maintenance</legend>
+                <color>gray</color>
+                <datapointname>minor</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        <overviewgraph>
+            <name>Status</name>
+            <title>Status</title>
+            <verticallabel>status code</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <aggregated>false</aggregated>
+            <datapoints>
+        <overviewgraphdatapoint>
+            <name>Status</name>
+            <datapointname>Status</datapointname>
+            <cf>1</cf>
+            <aggregateMethod>sum</aggregateMethod>
+        </overviewgraphdatapoint>
+            </datapoints>
+            <virtualdatapoints>
+            </virtualdatapoints>
+            <lines>
+            <overviewgraphline>
+                <type>1</type>
+                <legend>##INSTANCE##</legend>
+                <datapointname>Status</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+                <color>silver</color>
+            </overviewgraphline>
+            </lines>
+        </overviewgraph>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
