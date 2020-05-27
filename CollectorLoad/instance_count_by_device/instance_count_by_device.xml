@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1589991286</version>
+        <name>instance_count_by_device</name>
+        <displayedas>Instance Count by Device</displayedas>
+        <description></description>
+        <collector>script</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>180</schedule>
+        <appliesTo>instance_count_by_device.id &#38;&#38; instance_count_by_device.pass &#38;&#38; instance_count_by_device.account</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>//initialize
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+import org.apache.commons.codec.binary.Hex
+import groovy.json.JsonSlurper
+
+def generate_headers(id, key, path) {
+  try {
+    // Create encryption signature for authorization request
+    Long epoch_time = System.currentTimeMillis()  // Get current system time (epoch time)
+    Mac hmac = Mac.getInstance(&#34;HmacSHA256&#34;)
+    hmac.init(new SecretKeySpec(key.getBytes(), &#34;HmacSHA256&#34;))
+    signature = Hex.encodeHexString(hmac.doFinal(&#34;GET${epoch_time}${path}&#34;.getBytes())).bytes.encodeBase64()
+    // return headers to main function
+    return [&#34;Authorization&#34;: &#34;LMv1 $id:$signature:$epoch_time&#34;, &#34;Content-Type&#34;: &#34;application/json&#34;]
+  } catch (Exception err) {
+    // If error occurred, print the error message
+    println(&#34;ERROR: Unable to establish encryption for $path. Attempting next resource...\n${err.message}&#34;)
+  }
+}
+
+def get_response(resource, parameters, account, headers) {
+  try {
+    boolean proceed = true  // Boolean used to determine if additional pagination is required
+    // Map to store query results for each endpoint.  Contains a list to store actual returned values and a boolean to determine if successful
+    Map results = [&#34;response&#34;: [],
+             &#34;success&#34; : true]
+    add_query_parameters(resource, parameters)
+    // Add initial offset and size values to appropriate categories (skips metrics category since it&#39;s stagnate)
+    while (proceed) {
+      // Used for paginating through all availabe results.  Grabs 1000 at a time and moves offset if another query is required.
+      Map query = query_resource(account, parameters, headers)
+      // Query each API endpoint for a response (Should receive as Map)
+      // If the response was successful (including status and error messages), proceed to printing results
+      if (query &#38;&#38; query?.data &#38;&#38; query?.status == 200 &#38;&#38; query?.errmsg?.toUpperCase() == &#34;OK&#34;) {
+        if (resource != &#34;metrics&#34;) {
+          results.response.addAll(query.data.items)   // Add all the data items found to our results map data list
+          if (query?.data?.items?.size() &#60; parameters.details.size) {
+            // If we received less than 1000 results
+            proceed = false   // There is no need to execute another API query with a shifted offset
+          } else {    // Otherwise
+            parameters.details.offset += parameters.details.size
+            // Shift the offset to start 1000 numbers from current position
+          }
+        } else {
+          results.response = query.data   // Add all the data items found to our results map data list
+          proceed = false   // We&#39;ve successfully queried all values.  End while loop
+        }
+      } else {
+        // If response was not successful, print eror message for each category that failed and continue to next endpoint
+        // If response error and status can be determined, print them.  Otherwise, use UNKNOWN
+        println(&#34;ERROR: Failed to query $resource API Endpoint...\n&#34; +
+            &#34;${query?.errmsg?.toUpperCase() ?: &#39;UNKNOWN&#39;} (STATUS: ${query?.status ?: &#39;UNKNOWN&#39;})&#34;)
+        results.success = false   // Set success value to false since we failed our API query
+        proceed = false   // End while loop because of failure and proceed to next endpoint
+      }
+    }
+    return results  // Return results to main function
+  } catch (Exception err) {
+    println(&#34;ERROR: Script failed while attempting to query $resource API endpoint...\n${err?.message}&#34;)
+  }
+}
+
+def add_query_parameters(category, parameters) {
+  // Add size and offset field to map (only if collectors or admins category)
+  if (category != &#34;metrics&#34;) {
+    Map query_details = [&#34;size&#34;  : 1000, &#34;offset&#34;: 0]
+    // If there&#39;s already a details key in the details map
+    if (parameters.details) {
+      parameters.details &#60;&#60; query_details
+      // Append the query details information to the pre-existing details map
+    } else {  // Otherwise, create a details key and assign it the query details map as a value
+      parameters.put(&#34;details&#34;, query_details)
+    }
+  }
+}
+
+def query_resource(account, details, headers) {
+  try {
+    // Configure request url from account, path, and authorization headers
+    String url = &#34;https://${account}.logicmonitor.com/santaba/rest${details.path}?${pack_parameters(details.details)}&#34;
+    // Return query response, converted from JSON to usable map
+    return new JsonSlurper().parseText(url.toURL().getText(useCaches: true, allowUserInteraction: false, requestProperties: headers))
+  } catch (Exception err) { // If error occurred, print the error message
+    println(&#34;ERROR: Unable to query ${details.path} for details.\n${err.message}&#34;)
+  }
+}
+
+def pack_parameters(query_details) { // If additional query details are located in map, include them in url string
+  List pairs = []
+  query_details?.each { k, v -&#62; pairs.add(&#34;${k}=${v}&#34;)}
+  return pairs.join(&#34;&#38;&#34;)
+}
+
+//setup
+collect = false
+ds_name = &#34;instance_count_by_device&#34;
+Map credentials = [
+  &#34;id&#34;   : hostProps.get(&#34;${ds_name}.id&#34;),
+  &#34;key&#34;  : hostProps.get(&#34;${ds_name}.pass&#34;),
+  &#34;account&#34;: hostProps.get(&#34;${ds_name}.account&#34;)
+]
+Map resources = [:]
+resources[&#34;devices&#34;] = [&#34;path&#34;: &#34;/device/devices&#34;, &#34;details&#34;: [&#34;fields&#34;: &#34;id,displayName,collectorDescription,currentCollectorId&#34;]]
+// if (collect) {resources[&#34;alerts&#34;] = [&#34;path&#34;: &#34;/alert/alerts&#34;, &#34;details&#34;: [&#34;fields&#34;: &#34;id,severity,monitorObjectGroups,monitorObjectId,monitorObjectName&#34;]]}
+
+//gather
+if (credentials.account &#38;&#38; credentials.id &#38;&#38; credentials.key) {
+  resources.each() { k, v -&#62;
+    Map headers = generate_headers(credentials.id, credentials.key, v.path)
+    if (headers) {
+      Map response = get_response(k, v, credentials.account, headers)
+      if (response?.success) {resources[k][&#34;data&#34;] = response.response}
+    }
+  }
+} else {
+  println(&#34;&#34;&#34;Device is not configured with the necessary portal credentials to proceed with API queries.
+Please ensure that \&#34;${ds_name}.id\&#34;, \&#34;${ds_name}.pass\&#34;, and \&#34;${ds_name}.account\&#34; are set in the collector properties section!
+Exiting Program...&#34;&#34;&#34;)
+  return 1
+}
+
+//transform
+Map devices = resources.devices.data.collectEntries {[it.id, [&#34;id&#34;:it.id, &#34;displayName&#34;:it.displayName, &#34;collectorDescription&#34;:it.collectorDescription, &#34;currentCollectorId&#34;:it.currentCollectorId]]}
+
+//output
+devices.each(){k, v -&#62;
+  println(&#34;${k}##${v.currentCollectorId}-${v.displayName}######collector=${v.collectorDescription}&#34;)
+}
+
+return 0
+</wildcardgroovyscript>
+        <wildcardschedule>15</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>true</wildcarddeleteinactive>
+        <agdmethod>ilp</agdmethod>
+        <agdparams>auto.collector</agdparams>
+        <group>_WeenigWare</group>
+        <tags></tags>
+        <technology></technology>
+        <adlist><![CDATA[{"agdmethod":"ilp","method":"ad_script","agdparams":"auto.collector","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"//initialize\nimport javax.crypto.Mac\nimport javax.crypto.spec.SecretKeySpec\nimport org.apache.commons.codec.binary.Hex\nimport groovy.json.JsonSlurper\n\ndef generate_headers(id, key, path) {\n  try {\n    // Create encryption signature for authorization request\n    Long epoch_time = System.currentTimeMillis()  // Get current system time (epoch time)\n    Mac hmac = Mac.getInstance(\"HmacSHA256\")\n    hmac.init(new SecretKeySpec(key.getBytes(), \"HmacSHA256\"))\n    signature = Hex.encodeHexString(hmac.doFinal(\"GET${epoch_time}${path}\".getBytes())).bytes.encodeBase64()\n    // return headers to main function\n    return [\"Authorization\": \"LMv1 $id:$signature:$epoch_time\", \"Content-Type\": \"application/json\"]\n  } catch (Exception err) {\n    // If error occurred, print the error message\n    println(\"ERROR: Unable to establish encryption for $path. Attempting next resource...\\n${err.message}\")\n  }\n}\n\ndef get_response(resource, parameters, account, headers) {\n  try {\n    boolean proceed = true  // Boolean used to determine if additional pagination is required\n    // Map to store query results for each endpoint.  Contains a list to store actual returned values and a boolean to determine if successful\n    Map results = [\"response\": [],\n             \"success\" : true]\n    add_query_parameters(resource, parameters)\n    // Add initial offset and size values to appropriate categories (skips metrics category since it's stagnate)\n    while (proceed) {\n      // Used for paginating through all availabe results.  Grabs 1000 at a time and moves offset if another query is required.\n      Map query = query_resource(account, parameters, headers)\n      // Query each API endpoint for a response (Should receive as Map)\n      // If the response was successful (including status and error messages), proceed to printing results\n      if (query && query?.data && query?.status == 200 && query?.errmsg?.toUpperCase() == \"OK\") {\n        if (resource != \"metrics\") {\n          results.response.addAll(query.data.items)   // Add all the data items found to our results map data list\n          if (query?.data?.items?.size() < parameters.details.size) {\n            // If we received less than 1000 results\n            proceed = false   // There is no need to execute another API query with a shifted offset\n          } else {    // Otherwise\n            parameters.details.offset += parameters.details.size\n            // Shift the offset to start 1000 numbers from current position\n          }\n        } else {\n          results.response = query.data   // Add all the data items found to our results map data list\n          proceed = false   // We've successfully queried all values.  End while loop\n        }\n      } else {\n        // If response was not successful, print eror message for each category that failed and continue to next endpoint\n        // If response error and status can be determined, print them.  Otherwise, use UNKNOWN\n        println(\"ERROR: Failed to query $resource API Endpoint...\\n\" +\n            \"${query?.errmsg?.toUpperCase() ?: 'UNKNOWN'} (STATUS: ${query?.status ?: 'UNKNOWN'})\")\n        results.success = false   // Set success value to false since we failed our API query\n        proceed = false   // End while loop because of failure and proceed to next endpoint\n      }\n    }\n    return results  // Return results to main function\n  } catch (Exception err) {\n    println(\"ERROR: Script failed while attempting to query $resource API endpoint...\\n${err?.message}\")\n  }\n}\n\ndef add_query_parameters(category, parameters) {\n  // Add size and offset field to map (only if collectors or admins category)\n  if (category != \"metrics\") {\n    Map query_details = [\"size\"  : 1000, \"offset\": 0]\n    // If there's already a details key in the details map\n    if (parameters.details) {\n      parameters.details << query_details\n      // Append the query details information to the pre-existing details map\n    } else {  // Otherwise, create a details key and assign it the query details map as a value\n      parameters.put(\"details\", query_details)\n    }\n  }\n}\n\ndef query_resource(account, details, headers) {\n  try {\n    // Configure request url from account, path, and authorization headers\n    String url = \"https://${account}.logicmonitor.com/santaba/rest${details.path}?${pack_parameters(details.details)}\"\n    // Return query response, converted from JSON to usable map\n    return new JsonSlurper().parseText(url.toURL().getText(useCaches: true, allowUserInteraction: false, requestProperties: headers))\n  } catch (Exception err) { // If error occurred, print the error message\n    println(\"ERROR: Unable to query ${details.path} for details.\\n${err.message}\")\n  }\n}\n\ndef pack_parameters(query_details) { // If additional query details are located in map, include them in url string\n  List pairs = []\n  query_details?.each { k, v -> pairs.add(\"${k}=${v}\")}\n  return pairs.join(\"&\")\n}\n\n//setup\ncollect = false\nds_name = \"instance_count_by_device\"\nMap credentials = [\n  \"id\"   : hostProps.get(\"${ds_name}.id\"),\n  \"key\"  : hostProps.get(\"${ds_name}.pass\"),\n  \"account\": hostProps.get(\"${ds_name}.account\")\n]\nMap resources = [:]\nresources[\"devices\"] = [\"path\": \"/device/devices\", \"details\": [\"fields\": \"id,displayName,collectorDescription,currentCollectorId\"]]\n// if (collect) {resources[\"alerts\"] = [\"path\": \"/alert/alerts\", \"details\": [\"fields\": \"id,severity,monitorObjectGroups,monitorObjectId,monitorObjectName\"]]}\n\n//gather\nif (credentials.account && credentials.id && credentials.key) {\n  resources.each() { k, v ->\n    Map headers = generate_headers(credentials.id, credentials.key, v.path)\n    if (headers) {\n      Map response = get_response(k, v, credentials.account, headers)\n      if (response?.success) {resources[k][\"data\"] = response.response}\n    }\n  }\n} else {\n  println(\"\"\"Device is not configured with the necessary portal credentials to proceed with API queries.\nPlease ensure that \\\"${ds_name}.id\\\", \\\"${ds_name}.pass\\\", and \\\"${ds_name}.account\\\" are set in the collector properties section!\nExiting Program...\"\"\")\n  return 1\n}\n\n//transform\nMap devices = resources.devices.data.collectEntries {[it.id, [\"id\":it.id, \"displayName\":it.displayName, \"collectorDescription\":it.collectorDescription, \"currentCollectorId\":it.currentCollectorId]]}\n\n//output\ndevices.each(){k, v ->\n  println(\"${k}##${v.currentCollectorId}-${v.displayName}######collector=${v.collectorDescription}\")\n}\n\nreturn 0\n"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>//initialize
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+import org.apache.commons.codec.binary.Hex
+import groovy.json.JsonSlurper
+
+debug = false
+
+def generate_headers(id, key, path) {
+  try {
+    // Create encryption signature for authorization request
+    Long epoch_time = System.currentTimeMillis()  // Get current system time (epoch time)
+    Mac hmac = Mac.getInstance(&#34;HmacSHA256&#34;)
+    hmac.init(new SecretKeySpec(key.getBytes(), &#34;HmacSHA256&#34;))
+    signature = Hex.encodeHexString(hmac.doFinal(&#34;GET${epoch_time}${path}&#34;.getBytes())).bytes.encodeBase64()
+    // return headers to main function
+    return [&#34;Authorization&#34;: &#34;LMv1 $id:$signature:$epoch_time&#34;, &#34;Content-Type&#34;: &#34;application/json&#34;]
+  } catch (Exception err) {
+    // If error occurred, print the error message
+    println(&#34;ERROR: Unable to establish encryption for $path. Attempting next resource...\n${err.message}&#34;)
+  }
+}
+
+def get_response(resource, parameters, account, headers) {
+  try {
+    boolean proceed = true  // Boolean used to determine if additional pagination is required
+    // Map to store query results for each endpoint.  Contains a list to store actual returned values and a boolean to determine if successful
+    Map results = [&#34;response&#34;: [],&#34;success&#34; : true]
+    add_query_parameters(resource, parameters)
+    // Add initial offset and size values to appropriate categories (skips metrics category since it&#39;s stagnate)
+    while (proceed) {
+      // Used for paginating through all availabe results.  Grabs 1000 at a time and moves offset if another query is required.
+      Map query = query_resource(account, parameters, headers)
+      // Query each API endpoint for a response (Should receive as Map)
+      // If the response was successful (including status and error messages), proceed to printing results
+      if (query &#38;&#38; query?.data &#38;&#38; query?.status == 200 &#38;&#38; query?.errmsg?.toUpperCase() == &#34;OK&#34;) {
+        if (resource != &#34;metrics&#34;) {
+          results.response.addAll(query.data.items)   // Add all the data items found to our results map data list
+          if (query?.data?.items?.size() &#60; parameters.details.size) {
+            // If we received less than 1000 results
+            proceed = false   // There is no need to execute another API query with a shifted offset
+          } else {    // Otherwise
+            parameters.details.offset += parameters.details.size
+            // Shift the offset to start 1000 numbers from current position
+          }
+        } else {
+          results.response = query.data   // Add all the data items found to our results map data list
+          proceed = false   // We&#39;ve successfully queried all values.  End while loop
+        }
+      } else {
+        // If response was not successful, print eror message for each category that failed and continue to next endpoint
+        // If response error and status can be determined, print them.  Otherwise, use UNKNOWN
+        println(&#34;ERROR: Failed to query $resource API Endpoint...\n&#34; +
+            &#34;${query?.errmsg?.toUpperCase() ?: &#39;UNKNOWN&#39;} (STATUS: ${query?.status ?: &#39;UNKNOWN&#39;})&#34;)
+        results.success = false   // Set success value to false since we failed our API query
+        proceed = false   // End while loop because of failure and proceed to next endpoint
+      }
+    }
+    return results  // Return results to main function
+  } catch (Exception err) {
+    println(&#34;ERROR: Script failed while attempting to query $resource API endpoint...\n${err?.message}&#34;)
+  }
+}
+
+def add_query_parameters(category, parameters) {
+  // Add size and offset field to map (only if collectors or admins category)
+  if (category != &#34;metrics&#34;) {
+    Map query_details = [&#34;size&#34;  : 1000, &#34;offset&#34;: 0]
+    // If there&#39;s already a details key in the details map
+    if (parameters.details) {
+      parameters.details &#60;&#60; query_details
+      // Append the query details information to the pre-existing details map
+    } else {  // Otherwise, create a details key and assign it the query details map as a value
+      parameters.put(&#34;details&#34;, query_details)
+    }
+  }
+}
+
+def query_resource(account, details, headers) {
+  try {
+    // Configure request url from account, path, and authorization headers
+    String url = &#34;https://${account}.logicmonitor.com/santaba/rest${details.path}?${pack_parameters(details.details)}&#34;
+    if (debug) {println(&#34;URL: ${url}&#34;)}
+    // Return query response, converted from JSON to usable map
+    returnValue = new JsonSlurper().parseText(url.toURL().getText(useCaches: true, allowUserInteraction: false, requestProperties: headers))
+    if (debug) {println(&#34;Response: ${returnValue}&#34;)}
+    return returnValue
+  } catch (Exception err) { // If error occurred, print the error message
+    println(&#34;ERROR: Unable to query ${details.path} for details.\n${err.message}&#34;)
+  }
+}
+
+def pack_parameters(query_details) { // If additional query details are located in map, include them in url string
+  List pairs = []
+  query_details?.each { k, v -&#62; pairs.add(&#34;${k}=${v}&#34;)}
+  return pairs.join(&#34;&#38;&#34;)
+}
+
+//setup
+deviceid = instanceProps.get(&#34;wildvalue&#34;) ?: 115
+ds_name = &#34;instance_count_by_device&#34;
+Map credentials = [
+  &#34;id&#34;   : hostProps.get(&#34;${ds_name}.id&#34;),
+  &#34;key&#34;  : hostProps.get(&#34;${ds_name}.pass&#34;),
+  &#34;account&#34;: hostProps.get(&#34;${ds_name}.account&#34;)
+]
+Map resources = [:]
+resources[&#34;instances&#34;] = [&#34;path&#34;: &#34;/device/devices/${deviceid}/instances&#34;, &#34;details&#34;: [&#34;fields&#34;: &#34;id&#34;]]
+
+//gather
+if (credentials.account &#38;&#38; credentials.id &#38;&#38; credentials.key) {
+  resources.each() { k, v -&#62;
+    Map headers = generate_headers(credentials.id, credentials.key, v.path)
+    if (headers) {
+      Map response = get_response(k, v, credentials.account, headers)
+      if (response?.success) {resources[k][&#34;data&#34;] = response.response}
+    }
+  }
+} else {
+  println(&#34;&#34;&#34;Device is not configured with the necessary portal credentials to proceed with API queries.
+Please ensure that \&#34;${ds_name}.id\&#34;, \&#34;${ds_name}.pass\&#34;, and \&#34;${ds_name}.account\&#34; are set in the collector properties section!
+Exiting Program...&#34;&#34;&#34;)
+  return 1
+}
+
+//transform
+//Map instances = resources.instances.items.collectEntries {[it.id, [&#34;id&#34;:it.id]]}
+
+//output
+println(&#34;instancecount: ${resources.instances.data.size()}&#34;)
+return 0</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>instancecount</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>instancecount</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>true</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>

@@ -1,0 +1,670 @@
+{
+  "santabaRelease": 136,
+  "widgetTokens": [
+    {
+      "name": "defaultResourceGroup",
+      "value": "*"
+    },
+    {
+      "name": "defaultResourceName",
+      "value": "LogicMonitor"
+    }
+  ],
+  "name": "Collector Load Metrics",
+  "description": "Populated by the LogicMonitor_Portal_Metrics datasource. We recommended creating a LogicMonitor \"device\" in the portal, then applying this module to that device.\n\nFor additional instructions, see: https://bit.ly/2HSsAjl",
+  "overwriteGroupFields": false,
+  "widgetsConfigVersion": 2,
+  "type": "dashboard",
+  "widgets": [
+    {
+      "position": {
+        "col": 4,
+        "sizex": 5,
+        "row": 1,
+        "sizey": 3
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "Collector Instance Loads",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "graphInfo": {
+          "virtualDataPoints": [],
+          "minValue": "NaN",
+          "topX": 0,
+          "maxValue": "NaN",
+          "dataPoints": [
+            {
+              "dataPointName": "instancecount",
+              "instanceName": {
+                "isGlob": true,
+                "value": "6-*"
+              },
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "consolidateFunction": "average",
+              "display": {
+                "color": "yellow",
+                "legend": "Static Collector",
+                "type": "stack",
+                "option": "custom"
+              },
+              "name": "instancecount6",
+              "aggregateFunction": "SUM",
+              "deviceDisplayName": {
+                "isGlob": true,
+                "value": "*"
+              },
+              "deviceGroupFullPath": {
+                "isGlob": true,
+                "value": "##defaultResourceGroup##"
+              }
+            },
+            {
+              "dataPointName": "instancecount",
+              "instanceName": {
+                "isGlob": true,
+                "value": "20-*"
+              },
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "consolidateFunction": "average",
+              "display": {
+                "color": "fuchsia",
+                "legend": "Ubuntu Collector",
+                "type": "stack",
+                "option": "custom"
+              },
+              "name": "instancecount20",
+              "aggregateFunction": "SUM",
+              "deviceDisplayName": {
+                "isGlob": true,
+                "value": "*"
+              },
+              "deviceGroupFullPath": {
+                "isGlob": true,
+                "value": "##defaultResourceGroup##"
+              }
+            },
+            {
+              "dataPointName": "instancecount",
+              "instanceName": {
+                "isGlob": true,
+                "value": "4-*"
+              },
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "consolidateFunction": "average",
+              "display": {
+                "color": "green",
+                "legend": "Docker 4",
+                "type": "stack",
+                "option": "custom"
+              },
+              "name": "instancecount4",
+              "aggregateFunction": "SUM",
+              "deviceDisplayName": {
+                "isGlob": true,
+                "value": "*"
+              },
+              "deviceGroupFullPath": {
+                "isGlob": true,
+                "value": "##defaultResourceGroup##"
+              }
+            },
+            {
+              "dataPointName": "instancecount",
+              "instanceName": {
+                "isGlob": true,
+                "value": "5-*"
+              },
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "consolidateFunction": "average",
+              "display": {
+                "color": "blue",
+                "legend": "Docker 5",
+                "type": "stack",
+                "option": "custom"
+              },
+              "name": "instancecount5",
+              "aggregateFunction": "SUM",
+              "deviceDisplayName": {
+                "isGlob": true,
+                "value": "*"
+              },
+              "deviceGroupFullPath": {
+                "isGlob": true,
+                "value": "##defaultResourceGroup##"
+              }
+            },
+            {
+              "dataPointName": "instancecount",
+              "instanceName": {
+                "isGlob": true,
+                "value": "23-*"
+              },
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "consolidateFunction": "average",
+              "display": {
+                "color": "lime",
+                "legend": "Docker 23",
+                "type": "stack",
+                "option": "custom"
+              },
+              "name": "instancecount23",
+              "aggregateFunction": "SUM",
+              "deviceDisplayName": {
+                "isGlob": true,
+                "value": "*"
+              },
+              "deviceGroupFullPath": {
+                "isGlob": true,
+                "value": "##defaultResourceGroup##"
+              }
+            },
+            {
+              "dataPointName": "instancecount",
+              "instanceName": {
+                "isGlob": true,
+                "value": "24-*"
+              },
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "consolidateFunction": "average",
+              "display": {
+                "color": "orange2",
+                "legend": "Docker 24",
+                "type": "stack",
+                "option": "custom"
+              },
+              "name": "instancecount24",
+              "aggregateFunction": "SUM",
+              "deviceDisplayName": {
+                "isGlob": true,
+                "value": "*"
+              },
+              "deviceGroupFullPath": {
+                "isGlob": true,
+                "value": "##defaultResourceGroup##"
+              }
+            }
+          ],
+          "verticalLabel": "count",
+          "aggregate": true,
+          "desc": true,
+          "scaleUnit": 1000,
+          "globalConsolidateFunction": "VaST"
+        },
+        "type": "cgraph",
+        "timescale": "2hour",
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 1,
+        "sizex": 3,
+        "row": 1,
+        "sizey": 3
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "All Collector Load",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "type": "pieChart",
+        "timescale": "day",
+        "pieChartInfo": {
+          "maxSlicesCanBeShown": 25,
+          "virtualDataPoints": [],
+          "showLabelsAndLinesOnPC": true,
+          "counters": [],
+          "dataPoints": [
+            {
+              "dataPointName": "instancecount",
+              "top10": false,
+              "instanceName": "*6-*",
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "name": "StaticCollector",
+              "aggregateFunction": "SUM",
+              "deviceGroupFullPath": "##defaultResourceGroup##",
+              "deviceDisplayName": "*",
+              "aggregate": true
+            },
+            {
+              "dataPointName": "instancecount",
+              "top10": false,
+              "instanceName": "*23-*",
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "name": "Docker23",
+              "aggregateFunction": "SUM",
+              "deviceGroupFullPath": "##defaultResourceGroup##",
+              "deviceDisplayName": "*",
+              "aggregate": true
+            },
+            {
+              "dataPointName": "instancecount",
+              "top10": false,
+              "instanceName": "*24-*",
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "name": "Docker24",
+              "aggregateFunction": "SUM",
+              "deviceGroupFullPath": "##defaultResourceGroup##",
+              "deviceDisplayName": "*",
+              "aggregate": true
+            },
+            {
+              "dataPointName": "instancecount",
+              "top10": false,
+              "instanceName": "*20-*",
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "name": "UbuntuCollector",
+              "aggregateFunction": "SUM",
+              "deviceGroupFullPath": "##defaultResourceGroup##",
+              "deviceDisplayName": "*",
+              "aggregate": true
+            },
+            {
+              "dataPointName": "instancecount",
+              "top10": false,
+              "instanceName": "*4-*",
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "name": "Docker4",
+              "aggregateFunction": "SUM",
+              "deviceGroupFullPath": "##defaultResourceGroup##",
+              "deviceDisplayName": "*",
+              "aggregate": true
+            },
+            {
+              "dataPointName": "instancecount",
+              "top10": false,
+              "instanceName": "*5-*",
+              "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+              "name": "Docker5",
+              "aggregateFunction": "SUM",
+              "deviceGroupFullPath": "##defaultResourceGroup##",
+              "deviceDisplayName": "*",
+              "aggregate": true
+            }
+          ],
+          "hideZeroPercentSlices": true,
+          "groupRemainingAsOthers": false,
+          "pieChartItems": [
+            {
+              "dataPointName": "Docker24",
+              "color": "orange2",
+              "legend": "Docker24"
+            },
+            {
+              "dataPointName": "Docker23",
+              "color": "lime",
+              "legend": "Docker23"
+            },
+            {
+              "dataPointName": "Docker5",
+              "color": "blue",
+              "legend": "Docker 5"
+            },
+            {
+              "dataPointName": "Docker4",
+              "color": "green",
+              "legend": "Docker 4"
+            },
+            {
+              "dataPointName": "UbuntuCollector",
+              "color": "fuchsia",
+              "legend": "Ubuntu Collector"
+            },
+            {
+              "dataPointName": "StaticCollector",
+              "color": "yellow",
+              "legend": "Static Collector"
+            }
+          ],
+          "title": "All Collector Load"
+        },
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 1,
+        "sizex": 3,
+        "row": 10,
+        "sizey": 3
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "Devices on Docker Collector 4 with the most Instances",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "type": "pieChart",
+        "timescale": "day",
+        "pieChartInfo": {
+          "maxSlicesCanBeShown": 24,
+          "virtualDataPoints": [],
+          "showLabelsAndLinesOnPC": true,
+          "counters": [],
+          "dataPoints": [{
+            "dataPointName": "instancecount",
+            "top10": false,
+            "instanceName": "*-4-*",
+            "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+            "name": "instancecount",
+            "aggregateFunction": "SUM",
+            "deviceGroupFullPath": "##defaultResourceGroup##",
+            "deviceDisplayName": "*",
+            "aggregate": false
+          }],
+          "hideZeroPercentSlices": true,
+          "groupRemainingAsOthers": true,
+          "pieChartItems": [{
+            "dataPointName": "instancecount",
+            "color": "Auto",
+            "legend": "##INSTANCE##"
+          }],
+          "title": "Devices on Docker Collector 4 with the most Instances"
+        },
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 4,
+        "sizex": 3,
+        "row": 10,
+        "sizey": 3
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "Devices on Docker Collector 5 with the most Instances",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "type": "pieChart",
+        "timescale": "day",
+        "pieChartInfo": {
+          "maxSlicesCanBeShown": 24,
+          "virtualDataPoints": [],
+          "showLabelsAndLinesOnPC": true,
+          "counters": [],
+          "dataPoints": [{
+            "dataPointName": "instancecount",
+            "top10": false,
+            "instanceName": "*-5-*",
+            "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+            "name": "instancecount",
+            "aggregateFunction": "SUM",
+            "deviceGroupFullPath": "##defaultResourceGroup##",
+            "deviceDisplayName": "*",
+            "aggregate": false
+          }],
+          "hideZeroPercentSlices": true,
+          "groupRemainingAsOthers": true,
+          "pieChartItems": [{
+            "dataPointName": "instancecount",
+            "color": "Auto",
+            "legend": "##INSTANCE##"
+          }],
+          "title": "Devices on Docker Collector 5 with the most Instances"
+        },
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 1,
+        "sizex": 3,
+        "row": 7,
+        "sizey": 3
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "Devices on Static Collector with the most Instances",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "type": "pieChart",
+        "timescale": "day",
+        "pieChartInfo": {
+          "maxSlicesCanBeShown": 24,
+          "virtualDataPoints": [],
+          "showLabelsAndLinesOnPC": true,
+          "counters": [],
+          "dataPoints": [{
+            "dataPointName": "instancecount",
+            "top10": false,
+            "instanceName": "*-6-*",
+            "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+            "name": "instancecount",
+            "aggregateFunction": "SUM",
+            "deviceGroupFullPath": "##defaultResourceGroup##",
+            "deviceDisplayName": "*",
+            "aggregate": false
+          }],
+          "hideZeroPercentSlices": true,
+          "groupRemainingAsOthers": true,
+          "pieChartItems": [{
+            "dataPointName": "instancecount",
+            "color": "Auto",
+            "legend": "##INSTANCE##"
+          }],
+          "title": "Devices on Static Collector with the most Instances"
+        },
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 1,
+        "sizex": 3,
+        "row": 4,
+        "sizey": 3
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "Devices on Ubuntu Collector with the most Instances",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "type": "pieChart",
+        "timescale": "day",
+        "pieChartInfo": {
+          "maxSlicesCanBeShown": 24,
+          "virtualDataPoints": [],
+          "showLabelsAndLinesOnPC": true,
+          "counters": [],
+          "dataPoints": [{
+            "dataPointName": "instancecount",
+            "top10": false,
+            "instanceName": "*-20-*",
+            "dataSourceFullName": "Instance Count by Device (instance_count_by_device)",
+            "name": "instancecount",
+            "aggregateFunction": "SUM",
+            "deviceGroupFullPath": "##defaultResourceGroup##",
+            "deviceDisplayName": "*",
+            "aggregate": false
+          }],
+          "hideZeroPercentSlices": true,
+          "groupRemainingAsOthers": true,
+          "pieChartItems": [{
+            "dataPointName": "instancecount",
+            "color": "Auto",
+            "legend": "##INSTANCE##"
+          }],
+          "title": "Devices on Ubuntu Collector with the most Instances"
+        },
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 9,
+        "sizex": 4,
+        "row": 1,
+        "sizey": 7
+      },
+      "config": {
+        "displaySettings": {"pageSize": "25"},
+        "columns": [{
+          "rpn": "",
+          "dataPointName": "percentTasksNoData",
+          "displayType": "percent",
+          "minValue": 0,
+          "unitLabel": "",
+          "maxValue": 100,
+          "colorThresholds": [
+            {
+              "level": 2,
+              "threshold": 5,
+              "relation": ">"
+            },
+            {
+              "level": 3,
+              "threshold": 10,
+              "relation": ">"
+            },
+            {
+              "level": 4,
+              "threshold": 15,
+              "relation": ">"
+            }
+          ],
+          "columnName": "% No Data",
+          "enableForecast": false,
+          "roundingDecimal": 2
+        }],
+        "description": "",
+        "forecast": {
+          "severity": "warn",
+          "confidence": 70,
+          "timeRange": "Last 30 days",
+          "algorithm": "Linear"
+        },
+        "type": "dynamicTable",
+        "rows": [{
+          "instanceName": "*",
+          "label": "##RESOURCENAME##",
+          "deviceDisplayName": "*",
+          "groupFullPath": "##defaultResourceGroup##"
+        }],
+        "version": 2,
+        "topX": 25,
+        "dataSourceFullName": "NoData Tasks Overall (NoData_Tasks_Overall)",
+        "sortOrder": "descending",
+        "name": "No Data Percentages",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "timescale": "day"
+      }
+    },
+    {
+      "position": {
+        "col": 4,
+        "sizex": 5,
+        "row": 7,
+        "sizey": 3
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "Static Collector DS Weight",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "graphInfo": {
+          "virtualDataPoints": [],
+          "minValue": 0,
+          "topX": 10,
+          "maxValue": "NaN",
+          "dataPoints": [{
+            "dataPointName": "count",
+            "instanceName": {
+              "isGlob": true,
+              "value": "*"
+            },
+            "dataSourceFullName": "Instances by DataSource (instance_count_by_ds)",
+            "consolidateFunction": "average",
+            "display": {
+              "color": "Auto",
+              "legend": "##INSTANCE##",
+              "type": "stack",
+              "option": "custom"
+            },
+            "name": "count",
+            "aggregateFunction": "sum",
+            "deviceDisplayName": {
+              "isGlob": false,
+              "value": "staticcollector.local"
+            },
+            "deviceGroupFullPath": {
+              "isGlob": true,
+              "value": "*"
+            }
+          }],
+          "verticalLabel": "instance count",
+          "aggregate": false,
+          "desc": true,
+          "scaleUnit": 1000,
+          "globalConsolidateFunction": "default"
+        },
+        "type": "cgraph",
+        "timescale": "1day",
+        "version": 2
+      }
+    },
+    {
+      "position": {
+        "col": 4,
+        "sizex": 5,
+        "row": 4,
+        "sizey": 3
+      },
+      "config": {
+        "displaySettings": {},
+        "name": "Ubuntu Collector DS Weight",
+        "description": "",
+        "theme": "newBorderGray",
+        "interval": 3,
+        "graphInfo": {
+          "virtualDataPoints": [],
+          "minValue": 0,
+          "topX": 10,
+          "maxValue": "NaN",
+          "dataPoints": [{
+            "dataPointName": "count",
+            "instanceName": {
+              "isGlob": true,
+              "value": "*"
+            },
+            "dataSourceFullName": "Instances by DataSource (instance_count_by_ds)",
+            "consolidateFunction": "average",
+            "display": {
+              "color": "Auto",
+              "legend": "##INSTANCE##",
+              "type": "stack",
+              "option": "custom"
+            },
+            "name": "count",
+            "aggregateFunction": "SUM",
+            "deviceDisplayName": {
+              "isGlob": false,
+              "value": "Ubuntu Collector"
+            },
+            "deviceGroupFullPath": {
+              "isGlob": true,
+              "value": "*"
+            }
+          }],
+          "verticalLabel": "instance count",
+          "aggregate": false,
+          "desc": true,
+          "scaleUnit": 1000,
+          "globalConsolidateFunction": "default"
+        },
+        "type": "cgraph",
+        "timescale": "1day",
+        "version": 2
+      }
+    }
+  ],
+  "version": 2
+}
