@@ -5,7 +5,7 @@
   <errmsg>OK</errmsg>
   <interval>0</interval>
     <entry type="predatasource">
-        <version>1586526561</version>
+        <version>1598285555</version>
         <name>StockPrice</name>
         <displayedas>Stock Price</displayedas>
         <description>Tracks stock prices for symbols defined in the &#34;stocks&#34; property. Data from finnhub.io.</description>
@@ -22,15 +22,12 @@
         <wildcardgroovyscript>import groovy.json.JsonSlurper
 stocks = hostProps.get(&#34;stocks&#34;).tokenize(&#34;,| &#34;)
 token = hostProps.get(&#34;finnhub.api.key&#34;)
+url = &#34;https://finnhub.io/api/v1/stock/symbol?exchange=US&#38;token=${token}&#34;
 try {
-  url = &#34;https://finnhub.io/api/v1/stock/symbol?exchange=US&#38;token=${token}&#34;
   jsondata = url.toURL().getText()
-  // println(jsondata)
   data = new JsonSlurper().parseText(jsondata)
   data.each{
-     if (stocks.contains(it.symbol)) {
-       println(&#34;${it.symbol}##${it.description}&#34;)
-     }
+     if (stocks.contains(it.symbol)) {println(&#34;${it.symbol}##${it.description}&#34;)}
   }
 } catch (Exception e) {println(e);return 1}
 return 0
@@ -40,11 +37,11 @@ return 0
         <wildcarddeleteinactive>true</wildcarddeleteinactive>
         <agdmethod>none</agdmethod>
         <agdparams></agdparams>
-        <group>_WeenigWare Community</group>
+        <group>_WeenigWare Non-Infrastructure</group>
         <tags></tags>
         <technology>Must have an API key for Finnhub.io. The API key must be saved as a new custom property under the device you want to run this datasource on called, &#34;finnhub.api.key&#34; with the value being the API Key.
 Create a comma, space, or pipe separated list of ticker symbols as a property called &#34;stocks&#34;.</technology>
-        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"import groovy.json.JsonSlurper\nstocks = hostProps.get(\"stocks\").tokenize(\",| \")\ntoken = hostProps.get(\"finnhub.api.key\")\ntry {\n  url = \"https://finnhub.io/api/v1/stock/symbol?exchange=US&token=${token}\"\n  jsondata = url.toURL().getText()\n  // println(jsondata)\n  data = new JsonSlurper().parseText(jsondata)\n  data.each{\n     if (stocks.contains(it.symbol)) {\n       println(\"${it.symbol}##${it.description}\")\n     }\n  }\n} catch (Exception e) {println(e);return 1}\nreturn 0\n"}}]]></adlist>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"import groovy.json.JsonSlurper\nstocks = hostProps.get(\"stocks\").tokenize(\",| \")\ntoken = hostProps.get(\"finnhub.api.key\")\nurl = \"https://finnhub.io/api/v1/stock/symbol?exchange=US&token=${token}\"\ntry {\n  jsondata = url.toURL().getText()\n  data = new JsonSlurper().parseText(jsondata)\n  data.each{\n     if (stocks.contains(it.symbol)) {println(\"${it.symbol}##${it.description}\")}\n  }\n} catch (Exception e) {println(e);return 1}\nreturn 0\n"}}]]></adlist>
         <schemaVersion>2</schemaVersion>
         <dataSourceType>1</dataSourceType>
         <attributes>
@@ -63,10 +60,7 @@ stocks.each{
     url = &#34;https://finnhub.io/api/v1/quote?token=${token}&#38;symbol=${it}&#34;
     jsondata = url.toURL().getText()
     data = new JsonSlurper().parseText(jsondata)
-    // println(data)
-    data.each{k,v-&#62;
-      println(&#34;${it}.${k}: ${v}&#34;)
-    }
+    data.each{k,v-&#62; println(&#34;${it}.${k}: ${v}&#34;)}
   } catch (Exception e) {println(e);return 1}
 }
 return 0</value>
@@ -106,6 +100,10 @@ return 0</value>
             <alertsubject></alertsubject>
             <alertbody></alertbody>
             <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
             <description></description>
             <maxvalue></maxvalue>
             <minvalue></minvalue>
@@ -128,7 +126,11 @@ return 0</value>
             <alertmissing>1</alertmissing>
             <alertsubject></alertsubject>
             <alertbody></alertbody>
-            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <enableanomalyalertsuppression>1,1,1</enableanomalyalertsuppression>
+            <adadvsettingenabled>true</adadvsettingenabled>
+            <warnadadvsetting>1,100,1.5,1,1,5</warnadadvsetting>
+            <erroradadvsetting>1,100,2.0,1,1,5</erroradadvsetting>
+            <criticaladadvsetting>1,100,3.0,1,1,5</criticaladadvsetting>
             <description>Current price</description>
             <maxvalue></maxvalue>
             <minvalue></minvalue>
@@ -152,6 +154,10 @@ return 0</value>
             <alertsubject></alertsubject>
             <alertbody></alertbody>
             <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
             <description>High price of the day</description>
             <maxvalue></maxvalue>
             <minvalue></minvalue>
@@ -175,6 +181,10 @@ return 0</value>
             <alertsubject></alertsubject>
             <alertbody></alertbody>
             <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
             <description>Low price of the day</description>
             <maxvalue></maxvalue>
             <minvalue></minvalue>
@@ -198,6 +208,10 @@ return 0</value>
             <alertsubject></alertsubject>
             <alertbody></alertbody>
             <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
             <description>Open price of the day</description>
             <maxvalue></maxvalue>
             <minvalue></minvalue>
@@ -221,6 +235,10 @@ return 0</value>
             <alertsubject></alertsubject>
             <alertbody></alertbody>
             <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
             <description>Previous close price</description>
             <maxvalue></maxvalue>
             <minvalue></minvalue>
@@ -234,6 +252,35 @@ return 0</value>
         </datapoint>
         </datapoints>
         <graphs>
+        <graph>
+            <name>Current Stock Price</name>
+            <title>Current Stock Price</title>
+            <verticallabel>$</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>NaN</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>currentPrice</name>
+            <datapointname>currentPrice</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Current Price</legend>
+                <color>silver</color>
+                <datapointname>currentPrice</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
         <graph>
             <name>Stock Price</name>
             <title>Stock Price</title>
@@ -336,7 +383,7 @@ return 0</value>
             </virtualdatapoints>
             <lines>
             <overviewgraphline>
-                <type>1</type>
+                <type>3</type>
                 <legend>##INSTANCE##</legend>
                 <datapointname>currentPrice</datapointname>
                 <isvirtualdatapoint>false</isvirtualdatapoint>
