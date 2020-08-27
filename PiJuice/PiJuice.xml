@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1598561445</version>
+        <name>PiJuice</name>
+        <displayedas>PiJuice Status</displayedas>
+        <description></description>
+        <collector>script</collector>
+        <hasMultiInstances>false</hasMultiInstances>
+        <schedule>180</schedule>
+        <appliesTo>system.displayname == &#34;bathroom&#34;</appliesTo>
+        <wildcardauto>false</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript></wildcardlinuxscript>
+        <wildcardlinuxcmdline></wildcardlinuxcmdline>
+        <wildcardwinscript></wildcardwinscript>
+        <wildcardwincmdline></wildcardwincmdline>
+        <wildcardgroovyscript></wildcardgroovyscript>
+        <wildcardschedule>1440</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare Non-Infrastructure</group>
+        <tags></tags>
+        <technology></technology>
+        <adlist><![CDATA[{"agdmethod":"none","agdparams":"","id":0,"filters":[],"params":{}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>import com.jcraft.jsch.JSch
+import groovy.json.JsonSlurper
+import com.santaba.agent.util.Settings
+
+host = hostProps.get(&#34;system.hostname&#34;)
+user = hostProps.get(&#34;ssh.user&#34;)
+pass = hostProps.get(&#34;ssh.pass&#34;)
+port = hostProps.get(&#34;ssh.port&#34;) ?: 22
+cert = hostProps.get(&#34;ssh.cert&#34;) ?: &#39;~/.ssh/id_rsa&#39;
+timeout = 15000 // timeout in milliseconds
+
+pythonScript = &#34;&#34;&#34;import json
+from pijuice import PiJuice
+x=PiJuice(1,0x14)
+output = {}
+output[&#34;charge&#34;] = x.status.GetChargeLevel()
+output[&#34;status&#34;] = x.status.GetStatus()
+output[&#34;temp&#34;] = x.status.GetBatteryTemperature()
+output[&#34;voltage&#34;] = x.status.GetBatteryVoltage()
+output[&#34;current&#34;] = x.status.GetBatteryCurrent()
+output[&#34;iovoltage&#34;] = x.status.GetIoVoltage()
+output[&#34;iocurrent&#34;] = x.status.GetIoCurrent()
+print(json.dumps(output))
+&#34;&#34;&#34;
+
+power_input_status = [&#34;NOT_PRESENT&#34;: 0, &#34;BAD&#34;: 1, &#34;WEAK&#34;: 2, &#34;PRESENT&#34;: 3]
+battery_status = [&#34;NORMAL&#34;: 0, &#34;CHARGING_FROM_IN&#34;: 1, &#34;CHARGING_FROM_5V_IO&#34;: 2, &#34;NOT_PRESENT&#34;: 3]
+
+try {
+  def userCmd = getCommandOutput(&#34;python3 -c \&#34;${pythonScript.replaceAll(&#34;\&#34;&#34;,&#34;&#39;&#34;).replaceAll(&#34;\n&#34;,&#34;;&#34;)}\&#34;&#34;)
+  data = new JsonSlurper().parseText(userCmd)
+  println(&#34;5v_power_input_status: ${power_input_status[data.status.data.powerInput5vIo]}&#34;)
+  println(&#34;charge: ${data.charge.data}&#34;)
+  println(&#34;battery_status: ${battery_status[data.status.data.battery]}&#34;)
+  println(&#34;power_input_status: ${power_input_status[data.status.data.powerInput]}&#34;)
+  return 0
+}
+catch (Exception e) {println &#34;Unexpected Exception : &#34; + e; return 1}
+
+def getCommandOutput(String input_command) {
+  try {
+    jsch = new JSch()
+    if (user &#38;&#38; !pass) {jsch.addIdentity(cert)}
+    session = jsch.getSession(user, host, port)
+    session.setConfig(&#34;StrictHostKeyChecking&#34;, &#34;no&#34;)
+    String authMethod = Settings.getSetting(Settings.SSH_PREFEREDAUTHENTICATION, Settings.DEFAULT_SSH_PREFEREDAUTHENTICATION)
+    session.setConfig(&#34;PreferredAuthentications&#34;, authMethod)
+    session.setTimeout(timeout)
+    if (pass) {session.setPassword(pass)}
+    session.connect()
+    channel = session.openChannel(&#34;exec&#34;)
+    channel.setCommand(input_command)
+    def commandOutput = channel.getInputStream()
+    channel.connect()
+    def output = commandOutput.text
+    channel.disconnect()
+    return output
+  }
+  catch (Exception e) {e.printStackTrace();println(&#34;Error in SSH connection.&#34;)}
+  finally {session.disconnect()}
+}</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>battery_charge</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>charge</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr>&#60; 5</alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>Current charge level percentage [0-100%]</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>Execution_Time</name>
+            <dataType>4</dataType>
+            <type>2</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam></postprocessorparam>
+            <usevalue>responseTime</usevalue>
+            <alertexpr>&#62; 7000</alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>5V_Input_Power</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>5v_power_input_status</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>&#34;NOT_PRESENT&#34;: 0, &#34;BAD&#34;: 1, &#34;WEAK&#34;: 2, &#34;PRESENT&#34;: 3</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>battery_status</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>battery_status</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>&#34;NORMAL&#34;: 0, &#34;CHARGING_FROM_IN&#34;: 1, &#34;CHARGING_FROM_5V_IO&#34;: 2, &#34;NOT_PRESENT&#34;: 3</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>pijuice_input_status</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>power_input_status</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>&#34;NOT_PRESENT&#34;: 0, &#34;BAD&#34;: 1, &#34;WEAK&#34;: 2, &#34;PRESENT&#34;: 3</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>pi_perc</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>100 * 5V_Input_Power / if(eq(5V_Input_Power + pijuice_input_status,0), 1,5V_Input_Power + pijuice_input_status)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>pijuice_perc</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>expression</postprocessormethod>
+            <postprocessorparam>100 * pijuice_input_status / if(eq(5V_Input_Power + pijuice_input_status,0), 1,5V_Input_Power + pijuice_input_status)</postprocessorparam>
+            <usevalue></usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Battery Charge</name>
+            <title>Battery Charge</title>
+            <verticallabel>%</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>100.0</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1week</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>battery_charge</name>
+            <datapointname>battery_charge</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>battery_status</name>
+            <datapointname>battery_status</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+        <graphvirtualdatapoint>
+            <name>from_pi</name>
+            <rpn>if(in(battery_status,2),100,unkn())</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>from_usb</name>
+            <rpn>if(in(battery_status,1),100,unkn())</rpn>
+        </graphvirtualdatapoint>
+        <graphvirtualdatapoint>
+            <name>not_charging</name>
+            <rpn>if(in(0,3,battery_status),100,unkn())</rpn>
+        </graphvirtualdatapoint>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>3</type>
+                <legend>Charging from RPi</legend>
+                <color>silver</color>
+                <datapointname>from_pi</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Charging from USB</legend>
+                <color>green</color>
+                <datapointname>from_usb</datapointname>
+                <isvirtualdatapoint>true</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>1</type>
+                <legend>Charge Level</legend>
+                <color>fuchsia</color>
+                <datapointname>battery_charge</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Collection Statistics</name>
+            <title>Collection Statistics</title>
+            <verticallabel>ms</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>10</displayprio>
+            <timescale>1month</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>Execution_Time</name>
+            <datapointname>Execution_Time</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>2</type>
+                <legend>Execution Time</legend>
+                <color>silver</color>
+                <datapointname>Execution_Time</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Power Input</name>
+            <title>Power Input</title>
+            <verticallabel>energy contributed</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>5V_Input_Power</name>
+            <datapointname>5V_Input_Power</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>pijuice_input_status</name>
+            <datapointname>pijuice_input_status</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>3</type>
+                <legend>pi</legend>
+                <color>silver</color>
+                <datapointname>5V_Input_Power</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>usb</legend>
+                <color>green</color>
+                <datapointname>pijuice_input_status</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Power Input Percentage</name>
+            <title>Power Input Percentage</title>
+            <verticallabel>energy contributed</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>100.0</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>pijuice_perc</name>
+            <datapointname>pijuice_perc</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>pi_perc</name>
+            <datapointname>pi_perc</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>3</type>
+                <legend>pi</legend>
+                <color>silver</color>
+                <datapointname>pi_perc</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>pijuice</legend>
+                <color>green</color>
+                <datapointname>pijuice_perc</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
