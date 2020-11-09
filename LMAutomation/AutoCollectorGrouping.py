@@ -39,6 +39,8 @@ collector_dynamic_group_created = 0 # increments if collector dynamic group had 
 c_alert_e2d = 0 # number of collectors whose devices were switched from alerting enabled to alerting disabled
 c_alert_d2e = 0 # number of collectors whose devices were switches from alerting disabled to alerting enabled
 c = 0 # total number of collectors
+c_enabled = 0
+c_disabled = 0
 
 
 ##########################
@@ -179,6 +181,7 @@ try:
                     if debug >= 4: print(result)
                 else:
                     if debug >= 1: print(f"  {collector.description} group alerting is already disabled.")
+                c_disabled += 1
             else:
                 if debug >= 1: print(f"  Collector {collector.description} is not in SDT.")
                 if collectorResourceGroups[collectorCleanDescription].disable_alerting == True:
@@ -190,6 +193,7 @@ try:
                     if debug >= 4: print(result)
                 else:
                     if debug >= 1: print(f"  {collector.description} group alerting is already enabled.")
+                c_enabled += 1
     else:
         print("Not cascading collector SDTs to the devices they are monitoring")
 
@@ -200,6 +204,8 @@ try:
         print(f"c_alert_e2d: {c_alert_e2d}")
         print(f"c_alert_d2e: {c_alert_d2e}")
         print(f"c: {c}")
+        print(f"c_disabled: {c_disabled}")
+        print(f"c_enabled: {c_enabled}")
 
 except logicmonitor_sdk.rest.ApiException as e:
     print(f"Exception when calling LMApi: ${e}")
