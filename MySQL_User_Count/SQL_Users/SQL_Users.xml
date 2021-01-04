@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1609775481</version>
+        <name>SQL_Users</name>
+        <displayedas>SQL Users</displayedas>
+        <description></description>
+        <collector>jdbc</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>180</schedule>
+        <appliesTo>hasCategory(&#34;MySQL&#34;)</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>/*******************************************************************************
+ *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+
+import groovy.sql.Sql
+
+// set host variables.
+def hostname = hostProps.get(&#34;system.hostname&#34;)
+def user = hostProps.get(&#34;jdbc.mysql.user&#34;)
+def pass = hostProps.get(&#34;jdbc.mysql.pass&#34;)
+def port = (hostProps.get(&#34;jdbc.mysql.port&#34;) ? hostProps.get(&#34;jdbc.mysql.port&#34;).toInteger() : 3306)
+
+// construct the URL.
+def url = &#34;jdbc:mysql://&#34; + hostname + &#34;:&#34; + port
+
+// MariaDB driver (works for both MariaDB &#38; MySQL)
+def driver = &#34;org.mariadb.jdbc.Driver&#34;
+
+// Create a connection to the SQL server
+sql = Sql.newInstance(url, user, pass, driver)
+
+// Iterate over query results and list the databases
+sql.eachRow(&#39;select host, user from mysql.user;&#39;) {
+    println(it.User + &#34;@&#34; + it.Host + &#34;##&#34; + it.User + &#34;@&#34; + it.Host + &#34;####host=&#34; + it.Host)
+}
+
+// Close the connection
+sql.close()
+
+return 0</wildcardgroovyscript>
+        <wildcardschedule>0</wildcardschedule>
+        <wildcarddisable>true</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare</group>
+        <tags></tags>
+        <technology></technology>
+        <adlist><![CDATA[{"agdmethod":"none","method":"ad_script","agdparams":"","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"/*******************************************************************************\n *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\n\nimport groovy.sql.Sql\n\n// set host variables.\ndef hostname = hostProps.get(\"system.hostname\")\ndef user = hostProps.get(\"jdbc.mysql.user\")\ndef pass = hostProps.get(\"jdbc.mysql.pass\")\ndef port = (hostProps.get(\"jdbc.mysql.port\") ? hostProps.get(\"jdbc.mysql.port\").toInteger() : 3306)\n\n// construct the URL.\ndef url = \"jdbc:mysql://\" + hostname + \":\" + port\n\n// MariaDB driver (works for both MariaDB & MySQL)\ndef driver = \"org.mariadb.jdbc.Driver\"\n\n// Create a connection to the SQL server\nsql = Sql.newInstance(url, user, pass, driver)\n\n// Iterate over query results and list the databases\nsql.eachRow('select host, user from mysql.user;') {\n    println(it.User + \"@\" + it.Host + \"##\" + it.User + \"@\" + it.Host + \"####host=\" + it.Host)\n}\n\n// Close the connection\nsql.close()\n\nreturn 0"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>url</name>
+            <value>jdbc:mysql://##HOSTNAME##:3306</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>username</name>
+            <value>##jdbc.mysql.user##</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>password</name>
+            <value>##jdbc.mysql.pass##</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>query</name>
+            <value>select count(*) user_count from mysql.user;</value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>status</name>
+            <dataType>2</dataType>
+            <type>5</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam></postprocessorparam>
+            <usevalue>status</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>user_count</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>user_count</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
