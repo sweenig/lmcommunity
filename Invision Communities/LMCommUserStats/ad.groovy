@@ -28,7 +28,7 @@ try {
   }
   userdata.each{
     if (communityUsers.contains(it.id.toString())){
-      println("${it.id}##${it.name} (${it.email})######primaryGroup=${it.primaryGroup.name}")
+      println("${it.id}##${it.name} (${it.email})######primaryGroup=${it.primaryGroup.name}&emailDomain=${it.email.tokenize("@")[1]}&photURL=${it.photoUrl}")
     } else {
       //println("${it.name} isn't interesting ${it.id}.")
     }
