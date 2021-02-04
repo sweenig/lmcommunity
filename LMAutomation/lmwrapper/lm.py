@@ -1,4 +1,4 @@
-# (C) 2020 Stuart Weenig
+# (C) 2021 Stuart Weenig
 import logicmonitor_sdk, json
 from os import path
 import __main__ as main
