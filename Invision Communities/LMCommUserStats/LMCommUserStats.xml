@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1599236587</version>
+        <name>LMCommUserStats</name>
+        <displayedas>LM Community User Statistics</displayedas>
+        <description></description>
+        <collector>script</collector>
+        <hasMultiInstances>true</hasMultiInstances>
+        <schedule>180</schedule>
+        <appliesTo>lmcomm.key &#38;&#38; lmcomm.userid</appliesTo>
+        <wildcardauto>true</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript>ad_script</wildcardlinuxscript>
+        <wildcardlinuxcmdline>type=&#34;embeded&#34; </wildcardlinuxcmdline>
+        <wildcardwinscript>ad_script</wildcardwinscript>
+        <wildcardwincmdline>type=&#34;embeded&#34; </wildcardwincmdline>
+        <wildcardgroovyscript>/*******************************************************************************
+ *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+import com.santaba.agent.groovyapi.http.HTTP
+import groovy.json.JsonSlurper
+import groovy.time.*
+
+communityUsers = hostProps.get(&#34;lmcomm.userid&#34;).tokenize(&#34;, |&#34;)
+apitoken = hostProps.get(&#34;lmcomm.key&#34;)
+resourcePath = &#34;/core/members/?perPage=500&#34;
+
+try {
+  httpClient = HTTP.open(&#34;communities.logicmonitor.com&#34;, 443)
+  headers = [&#34;Authorization&#34;: &#34;Basic ${&#34;${apitoken}:&#34;.bytes.encodeBase64().toString()}&#34;]
+  url = &#34;https://communities.logicmonitor.com/api/${resourcePath}&#34;
+  page = 1
+  max_size = 9999999999999
+  userdata = []
+  while (userdata.size() &#60; max_size){
+    getResponse = httpClient.get(url + &#34;&#38;page=${page}&#34;, headers)
+    body = httpClient.getResponseBody()
+    response_obj = new JsonSlurper().parseText(body)
+    userdata += response_obj.results
+    fetched = response_obj.results.size()
+    max_size = response_obj.totalResults.toInteger()
+    //println(&#34;Fetched ${fetched} of ${max_size} (${max_size - userdata.size()} remaining)&#34;)
+    page += 1
+  }
+  userdata.each{
+    if (communityUsers.contains(it.id.toString())){
+      println(&#34;${it.id}##${it.name} (${it.email})######primaryGroup=${it.primaryGroup.name}&#34;)
+    } else {
+      //println(&#34;${it.name} isn&#39;t interesting ${it.id}.&#34;)
+    }
+  }
+  return 0
+}
+catch (Exception e) {println e;return 1}
+finally {httpClient.close()}
+</wildcardgroovyscript>
+        <wildcardschedule>0</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>true</wildcarddeleteinactive>
+        <agdmethod>ilp</agdmethod>
+        <agdparams>auto.primaryGroup</agdparams>
+        <group>_WeenigWare Community</group>
+        <tags></tags>
+        <technology></technology>
+        <adlist><![CDATA[{"agdmethod":"ilp","method":"ad_script","agdparams":"auto.primaryGroup","id":0,"filters":[],"params":{"type":"embeded","groovyscript":"/*******************************************************************************\n *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.\n ******************************************************************************/\nimport com.santaba.agent.groovyapi.http.HTTP\nimport groovy.json.JsonSlurper\nimport groovy.time.*\n\ncommunityUsers = hostProps.get(\"lmcomm.userid\").tokenize(\", |\")\napitoken = hostProps.get(\"lmcomm.key\")\nresourcePath = \"/core/members/?perPage=500\"\n\ntry {\n  httpClient = HTTP.open(\"communities.logicmonitor.com\", 443)\n  headers = [\"Authorization\": \"Basic ${\"${apitoken}:\".bytes.encodeBase64().toString()}\"]\n  url = \"https://communities.logicmonitor.com/api/${resourcePath}\"\n  page = 1\n  max_size = 9999999999999\n  userdata = []\n  while (userdata.size() < max_size){\n    getResponse = httpClient.get(url + \"&page=${page}\", headers)\n    body = httpClient.getResponseBody()\n    response_obj = new JsonSlurper().parseText(body)\n    userdata += response_obj.results\n    fetched = response_obj.results.size()\n    max_size = response_obj.totalResults.toInteger()\n    //println(\"Fetched ${fetched} of ${max_size} (${max_size - userdata.size()} remaining)\")\n    page += 1\n  }\n  userdata.each{\n    if (communityUsers.contains(it.id.toString())){\n      println(\"${it.id}##${it.name} (${it.email})######primaryGroup=${it.primaryGroup.name}\")\n    } else {\n      //println(\"${it.name} isn't interesting ${it.id}.\")\n    }\n  }\n  return 0\n}\ncatch (Exception e) {println e;return 1}\nfinally {httpClient.close()}\n"}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>embed</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value>/*******************************************************************************
+ *  © 2007-2019 - LogicMonitor, Inc. All rights reserved.
+ ******************************************************************************/
+import com.santaba.agent.groovyapi.http.HTTP
+import groovy.json.JsonSlurper
+import groovy.time.*
+
+//communityUser = hostProps.get(&#34;lmcomm.userid&#34;)
+communityUser = instanceProps.get(&#34;wildvalue&#34;)
+apitoken = hostProps.get(&#34;lmcomm.key&#34;)
+resourcePath = &#34;/core/members/${communityUser}&#34;
+
+try {
+  httpClient = HTTP.open(&#34;communities.logicmonitor.com&#34;, 443)
+  headers = [&#34;Authorization&#34;: &#34;Basic ${&#34;${apitoken}:&#34;.bytes.encodeBase64().toString()}&#34;]
+  url = &#34;https://communities.logicmonitor.com/api/${resourcePath}&#34;
+  getResponse = httpClient.get(url, headers)
+  body = httpClient.getResponseBody()
+  response_obj = new JsonSlurper().parseText(body)
+  println(&#34;posts: ${response_obj.posts}&#34;)
+  println(&#34;profileViews: ${response_obj.profileViews}&#34;)
+  println(&#34;reputationPoints: ${response_obj.reputationPoints}&#34;)
+
+  def currEpoch = (new Date().getTime()/1000).toInteger()
+  def lastActivity = currEpoch - response_obj.lastActivity
+  println(&#34;lastActivity: ${(currEpoch - response_obj.lastActivity)/60/60}&#34;)
+
+  def lastPost = TimeCategory.minus(new Date(), Date.parse(&#34;yyy-MM-dd&#39;T&#39;HH:mm:ss&#39;Z&#39;&#34;,response_obj.lastPost, TimeZone.getTimeZone(&#34;UTC&#34;)))
+  println(&#34;lastPost: ${lastPost.getDays()*24 + lastPost.getHours() + lastPost.getMinutes()/60}&#34;)
+
+  def lastVisit = TimeCategory.minus(new Date(),Date.parse(&#34;yyy-MM-dd&#39;T&#39;HH:mm:ss&#39;Z&#39;&#34;,response_obj.lastVisit, TimeZone.getTimeZone(&#34;UTC&#34;)))
+  println(&#34;lastVisit: ${lastVisit.getDays()*24 + lastVisit.getHours() + lastVisit.getMinutes()/60}&#34;)
+
+  def joined = TimeCategory.minus(new Date(),Date.parse(&#34;yyy-MM-dd&#39;T&#39;HH:mm:ss&#39;Z&#39;&#34;,response_obj.joined, TimeZone.getTimeZone(&#34;UTC&#34;)))
+  println(&#34;joined: ${joined.getDays() + joined.getHours()/24 + joined.getMinutes()/24/60}&#34;)
+
+  return 0
+}
+catch (Exception e) {println e;return 1}
+finally {httpClient.close()}</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>joined</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>joined</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>lastActivity</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>lastActivity</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>lastPost</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>lastPost</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>lastVisit</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>lastVisit</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>posts</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>posts</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression>1,1,1</enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting>1,100,1.5,1,0,5</warnadadvsetting>
+            <erroradadvsetting>1,100,2.0,1,0,5</erroradadvsetting>
+            <criticaladadvsetting>1,100,3.0,1,0,5</criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>profileViews</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>profileViews</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>reputationPoints</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>reputationPoints</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression>1,1,1</enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting>1,100,1.5,1,0,5</warnadadvsetting>
+            <erroradadvsetting>1,100,2.0,1,0,5</erroradadvsetting>
+            <criticaladadvsetting>1,100,3.0,1,0,5</criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        </scripts>
+    </entry>
+</feed>
