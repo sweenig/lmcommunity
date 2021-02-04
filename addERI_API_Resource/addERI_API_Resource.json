@@ -1,0 +1,47 @@
+{
+    "scheduleOption": 0,
+    "dataType": 1,
+    "description": "",
+    "appliesTo": "hasCategory(\"apiresource\")",
+    "technology": "",
+    "type": "propertyrule",
+    "params": [
+        {
+            "name": "linuxcmdline",
+            "comment": "",
+            "value": ""
+        },
+        {
+            "name": "linuxscript",
+            "comment": "",
+            "value": ""
+        },
+        {
+            "name": "scriptgroovy",
+            "comment": "",
+            "value": "import groovy.json.JsonOutput\nhostname = hostProps.get(\"system.displayName\")\ndata = [\n    \"rawERIs\":[\n        [\n            \"category\":\"net.l2\",\n            \"priority\":2,\n            \"type\":\"API\",\n            \"value\":hostname\n        ]\n    ]\n]\nprintln(\"rawERIs=\" + JsonOutput.toJson(data))\nreturn 0"
+        },
+        {
+            "name": "scripttype",
+            "comment": "embed",
+            "value": "embed"
+        },
+        {
+            "name": "windowscmdline",
+            "comment": "",
+            "value": ""
+        },
+        {
+            "name": "windowsscript",
+            "comment": "",
+            "value": ""
+        }
+    ],
+    "version": 1590011601,
+    "tags": "",
+    "auditVersion": 0,
+    "name": "addERI_API_Resource",
+    "interval": 43200,
+    "id": 143,
+    "group": "_WeenigWare"
+}
