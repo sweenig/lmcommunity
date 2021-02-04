@@ -1,3 +1,4 @@
+# (C) 2020 Stuart Weenig
 import logicmonitor_sdk, json
 from os import path
 import __main__ as main
@@ -48,11 +49,3 @@ else:
 #                              'smg_id': 2},
 #                             {'geo_info': 'US - Oregon',
 # (etc. etc. etc.)
-
-
-# read-only-creds.json
-# {
-#     "API_ACCESS_ID": "adelarthrosomatous",
-#     "API_ACCESS_KEY": "zygomaticoauricularis",
-#     "COMPANY_NAME": "lmstuartweenig"
-# }
