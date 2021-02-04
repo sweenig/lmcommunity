@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<feed  version="1.0" hasPendingRequests="false" >
+  <company></company>
+  <status>200</status>
+  <errmsg>OK</errmsg>
+  <interval>0</interval>
+    <entry type="predatasource">
+        <version>1604070656</version>
+        <name>Devices_by_Collector_Auto_Groups</name>
+        <displayedas>Devices by Collector Auto Groups</displayedas>
+        <description>Automatically creates/updates a &#34;Devices by Collector&#34; group under the root. Under that, creates/updates groups mimicking the Collector groups (from the Collectors page). Under those, creates/updates a dynamic group for each Collector with AppliesTo to include devices monitored by that Collector. Also sync&#39;s SDT from Collector to the devices that Collector monitors by disabling alerting on the Collector dynamic group.</description>
+        <collector>script</collector>
+        <hasMultiInstances>false</hasMultiInstances>
+        <schedule>120</schedule>
+        <appliesTo>dbcag.company &#38;&#38; dbcag.lmaccess.id &#38;&#38; dbcag.lmaccess.key</appliesTo>
+        <wildcardauto>false</wildcardauto>
+        <wildcardpersist>false</wildcardpersist>
+        <wildcardlinuxscript></wildcardlinuxscript>
+        <wildcardlinuxcmdline></wildcardlinuxcmdline>
+        <wildcardwinscript></wildcardwinscript>
+        <wildcardwincmdline></wildcardwincmdline>
+        <wildcardgroovyscript></wildcardgroovyscript>
+        <wildcardschedule>1440</wildcardschedule>
+        <wildcarddisable>false</wildcarddisable>
+        <wildcarddeleteinactive>false</wildcarddeleteinactive>
+        <agdmethod>none</agdmethod>
+        <agdparams></agdparams>
+        <group>_WeenigWare LM Stats</group>
+        <tags></tags>
+        <technology>Requires Python3 and the logicmonitor_sdk library, which isn&#39;t installed on the collector by default. Every time it runs, the script will attempt to install it if it&#39;s missing, then exit. The second run should be successful if the installation was successful.</technology>
+        <adlist><![CDATA[{"agdmethod":"none","agdparams":"","id":0,"filters":[],"params":{}}]]></adlist>
+        <schemaVersion>2</schemaVersion>
+        <dataSourceType>1</dataSourceType>
+        <attributes>
+        <attribute>
+            <name>scripttype</name>
+            <value>file</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>scriptgroovy</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowsscript</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxscript</name>
+            <value>AutoCollectorGrouping.py</value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>windowscmdline</name>
+            <value></value>
+            <comment></comment>
+        </attribute>
+        <attribute>
+            <name>linuxcmdline</name>
+            <value>--company ##dbcag.company## --access_id ##dbcag.lmaccess.id## --access_key ##dbcag.lmaccess.key## -s -d -1</value>
+            <comment></comment>
+        </attribute>
+        </attributes>
+        <datapoints>
+        <datapoint>
+            <name>exit_code</name>
+            <dataType>4</dataType>
+            <type>2</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam></postprocessorparam>
+            <usevalue>exitCode</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>runtime</name>
+            <dataType>4</dataType>
+            <type>2</type>
+            <postprocessormethod>none</postprocessormethod>
+            <postprocessorparam></postprocessorparam>
+            <usevalue>responseTime</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description></description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>c</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>c</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>Total number of collectors evaluated.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>c_alert_d2e</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>c_alert_d2e</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>The number of Collectors whose dynamic group had alerting switched from disabled to enabled because the Collector is no longer in SDT.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>c_alert_e2d</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>c_alert_e2d</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>The number of Collectors whose dynamic group had alerting switched from enabled to disabled because the Collector is now in SDT.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>collector_dynamic_group_created</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>collector_dynamic_group_created</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>The number of Collector specific dynamic groups that had to be created.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>collector_group_group_created</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>collector_group_group_created</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>The number of Collector group resources groups that had to be created by the script.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>parent_group_created</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>parent_group_created</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>1 if the &#34;/Devices by Collector&#34; group doesn&#39;t exist and the script has to build it. 0 otherwise.</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>c_disabled</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>c_disabled</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>The number of collectors that are in SDT</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        <datapoint>
+            <name>c_enabled</name>
+            <dataType>7</dataType>
+            <type>2</type>
+            <postprocessormethod>namevalue</postprocessormethod>
+            <postprocessorparam>c_enabled</postprocessorparam>
+            <usevalue>output</usevalue>
+            <alertexpr></alertexpr>
+            <alertmissing>1</alertmissing>
+            <alertsubject></alertsubject>
+            <alertbody></alertbody>
+            <enableanomalyalertsuppression></enableanomalyalertsuppression>
+            <adadvsettingenabled>false</adadvsettingenabled>
+            <warnadadvsetting></warnadadvsetting>
+            <erroradadvsetting></erroradadvsetting>
+            <criticaladadvsetting></criticaladadvsetting>
+            <description>The number of collectors not in SDT</description>
+            <maxvalue></maxvalue>
+            <minvalue></minvalue>
+            <userparam1></userparam1>
+            <userparam2></userparam2>
+            <userparam3></userparam3>
+            <iscomposite>false</iscomposite>
+            <rpn></rpn>
+            <alertTransitionIval>0</alertTransitionIval>
+            <alertClearTransitionIval>0</alertClearTransitionIval>
+        </datapoint>
+        </datapoints>
+        <graphs>
+        <graph>
+            <name>Code Execution Status</name>
+            <title>Code Execution Status</title>
+            <verticallabel>0=Success, 1=Failure, -1=Timeout</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>2.0</maxvalue>
+            <minvalue>-1.0</minvalue>
+            <displayprio>10</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>exit_code</name>
+            <datapointname>exit_code</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Exit Code</legend>
+                <color>silver</color>
+                <datapointname>exit_code</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Collector Count</name>
+            <title>Collector Count</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>c</name>
+            <datapointname>c</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Collectors</legend>
+                <color>silver</color>
+                <datapointname>c</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Collector SDT Count</name>
+            <title>Collector SDT Count</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>c_disabled</name>
+            <datapointname>c_disabled</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>c_enabled</name>
+            <datapointname>c_enabled</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>3</type>
+                <legend>In SDT</legend>
+                <color>orange</color>
+                <datapointname>c_disabled</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>3</type>
+                <legend>Not in SDT</legend>
+                <color>silver</color>
+                <datapointname>c_enabled</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Groups Created</name>
+            <title>Groups Created</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>collector_dynamic_group_created</name>
+            <datapointname>collector_dynamic_group_created</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>collector_group_group_created</name>
+            <datapointname>collector_group_group_created</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>parent_group_created</name>
+            <datapointname>parent_group_created</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Parent Group</legend>
+                <color>silver</color>
+                <datapointname>parent_group_created</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>1</type>
+                <legend>Collector Specific Dynamic Group</legend>
+                <color>green</color>
+                <datapointname>collector_dynamic_group_created</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>1</type>
+                <legend>Collector Group</legend>
+                <color>fuchsia</color>
+                <datapointname>collector_group_group_created</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>Response Time</name>
+            <title>Response Time</title>
+            <verticallabel>ms</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>10</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>runtime</name>
+            <datapointname>runtime</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Response Time</legend>
+                <color>silver</color>
+                <datapointname>runtime</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        <graph>
+            <name>SDT Synchronization</name>
+            <title>SDT Synchronization</title>
+            <verticallabel>count</verticallabel>
+            <rigid>false</rigid>
+            <maxvalue>NaN</maxvalue>
+            <minvalue>0.0</minvalue>
+            <displayprio>1</displayprio>
+            <timescale>1day</timescale>
+            <base1024>false</base1024>
+            <graphdatapoints>
+        <graphdatapoint>
+            <name>c_alert_d2e</name>
+            <datapointname>c_alert_d2e</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+        <graphdatapoint>
+            <name>c_alert_e2d</name>
+            <datapointname>c_alert_e2d</datapointname>
+            <cf>1</cf>
+        </graphdatapoint>
+            </graphdatapoints>
+            <graphvirtualdatapoints>
+            </graphvirtualdatapoints>
+            <graphdatas>
+            <graphdata>
+                <type>1</type>
+                <legend>Disabled to Enabled</legend>
+                <color>silver</color>
+                <datapointname>c_alert_d2e</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            <graphdata>
+                <type>1</type>
+                <legend>Enabled to Disabled</legend>
+                <color>olive</color>
+                <datapointname>c_alert_e2d</datapointname>
+                <isvirtualdatapoint>false</isvirtualdatapoint>
+            </graphdata>
+            </graphdatas>
+        </graph>
+        </graphs>
+        <overviewgraphs>
+        </overviewgraphs>
+        <scripts>
+        <script>
+            <platform>Linux</platform>
+            <filename>AutoCollectorGrouping.py</filename>
+            <usedfor>collectorAttribute</usedfor>
+            <content><![CDATA[IyEvdXNyL2Jpbi9lbnYgcHl0aG9uMwoKIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj
+IyMjIyMjIyMjIyMjIyMjCiMgKEMpIDIwMjAgLSBTdHVhcnQgV2VlbmlnLCBBbGwgcmlnaHRzIHJl
+c2VydmVkCiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwpm
+cm9tIHBwcmludCBpbXBvcnQgcHByaW50CmltcG9ydCBhcmdwYXJzZSwgc3VicHJvY2Vzcywgc3lz
+Cgp0cnk6CiAgICBpbXBvcnQgbG9naWNtb25pdG9yX3NkawpleGNlcHQgSW1wb3J0RXJyb3I6CiAg
+ICBzdWJwcm9jZXNzLmNoZWNrX2NhbGwoW3N5cy5leGVjdXRhYmxlLCAiLW0iLCAicGlwIiwgImlu
+c3RhbGwiLCAibG9naWNtb25pdG9yX3NkayJdKQogICAgcHJpbnQoImxvZ2ljbW9uaXRvcl9zZGsg
+d2FzIG5vdCBpbnN0YWxsZWQuIEFuIGF0dGVtcHQgaGFzIGJlZW4gbWFkZSB0byBpbnN0YWxsIGl0
+LlxuVHJ5IGFnYWluIG5vdyB0aGF0IGl0IGlzIGluc3RhbGxlZC4iKQogICAgcXVpdCgpCgojIyMj
+IyMjIyMjIyMjIyMjIyMjIyMjIyMjIwojIEFSR1VNRU5UIFBBUlNJTkcKIyMjIyMjIyMjIyMjIyMj
+IyMjIyMjIyMjIyMKbXlfcGFyc2VyID0gYXJncGFyc2UuQXJndW1lbnRQYXJzZXIodXNhZ2U9YXJn
+cGFyc2UuU1VQUFJFU1MpCm15X3BhcnNlci5hZGRfYXJndW1lbnQoIi1kIiwiLS1kZWJ1Z2xldmVs
+IiwgZGVmYXVsdD0wLCB0eXBlPWludCwgaGVscD0iRGVidWdnaW5nIHZlcmJvc2l0eTogMC3iiJ4s
+IGhpZ2hlciBudW1iZXIgbWVhbnMgbW9yZSB2ZXJib3NlIG91dHB1dC5cbk4gQSB2YWx1ZSBvZiAt
+MSB3aWxsIHByb2R1Y2Ugb3V0cHV0IHN1aXRhYmxlIGZvciBEUyBvdXRwdXQuIikKbXlfcGFyc2Vy
+LmFkZF9hcmd1bWVudCgiLXMiLCItLWNhc2NhZGVTRFQiLCBhY3Rpb249J3N0b3JlX3RydWUnLCBo
+ZWxwPSJBZGQgYSBmbGFnIHRvIGVhY2ggY29sbGVjdG9yIGdyb3VwIHRoYXQgZGlzYWJsZXMgYWxl
+cnRpbmcgZm9yIGFsbCBkZXZpY2VzIGluIHRoYXQgZ3JvdXAgaWYgdGhlIGNvbGxlY3RvciBpcyBp
+biBTRFQiKQpmb3IgYXJnIGluIFsnY29tcGFueScsJ2FjY2Vzc19pZCcsJ2FjY2Vzc19rZXknXToK
+ICAgIG15X3BhcnNlci5hZGRfYXJndW1lbnQoIi0tIiArIGFyZywgdHlwZT1zdHIsIHJlcXVpcmVk
+PVRydWUpCnRyeToKICAgIGFyZ3MgPSBteV9wYXJzZXIucGFyc2VfYXJncygpCmV4Y2VwdCBTeXN0
+ZW1FeGl0OgogICAgbXlfcGFyc2VyLnByaW50X2hlbHAoKQogICAgcmFpc2UKCmNhc2NhZGVTRFQg
+PSBhcmdzLmNhc2NhZGVTRFQKZGVidWcgPSBhcmdzLmRlYnVnbGV2ZWwKCiMjIyMjIyMjIyMjIyMj
+IyMjIyMjIyMjIyMjCiMgR2xvYmFsIGNvdW50ZXJzIGZvciBEUyBvdXRwdXQKIyMjIyMjIyMjIyMj
+IyMjIyMjIyMjIyMjIyMKcGFyZW50X2dyb3VwX2NyZWF0ZWQgPSAwICMgaW5jcmVtZW50cyBpZiAv
+RGV2aWNlcyBieSBDb2xsZWN0b3IgZ3JvdXAgaGFkIHRvIGJlIGNyZWF0ZWQKY29sbGVjdG9yX2dy
+b3VwX2dyb3VwX2NyZWF0ZWQgPSAwICMgaW5jcmVtZW50cyBpZiBjb2xsZWN0b3IgZ3JvdXAgZ3Jv
+dXBzIGhhZCB0byBiZSBjcmVhdGVkCmNvbGxlY3Rvcl9keW5hbWljX2dyb3VwX2NyZWF0ZWQgPSAw
+ICMgaW5jcmVtZW50cyBpZiBjb2xsZWN0b3IgZHluYW1pYyBncm91cCBoYWQgdG8gYmUgY3JlYXRl
+ZApjX2FsZXJ0X2UyZCA9IDAgIyBudW1iZXIgb2YgY29sbGVjdG9ycyB3aG9zZSBkZXZpY2VzIHdl
+cmUgc3dpdGNoZWQgZnJvbSBhbGVydGluZyBlbmFibGVkIHRvIGFsZXJ0aW5nIGRpc2FibGVkCmNf
+YWxlcnRfZDJlID0gMCAjIG51bWJlciBvZiBjb2xsZWN0b3JzIHdob3NlIGRldmljZXMgd2VyZSBz
+d2l0Y2hlcyBmcm9tIGFsZXJ0aW5nIGRpc2FibGVkIHRvIGFsZXJ0aW5nIGVuYWJsZWQKYyA9IDAg
+IyB0b3RhbCBudW1iZXIgb2YgY29sbGVjdG9ycwpjX2VuYWJsZWQgPSAwCmNfZGlzYWJsZWQgPSAw
+CgoKIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKIyBTZXR1cCBBUEkgQ29ubmVjdGlvbgojIyMj
+IyMjIyMjIyMjIyMjIyMjIyMjIyMjIwpjb25maWd1cmF0aW9uID0gbG9naWNtb25pdG9yX3Nkay5D
+b25maWd1cmF0aW9uKCkKY29uZmlndXJhdGlvbi5jb21wYW55ID0gYXJncy5jb21wYW55CmNvbmZp
+Z3VyYXRpb24uYWNjZXNzX2lkID0gYXJncy5hY2Nlc3NfaWQKY29uZmlndXJhdGlvbi5hY2Nlc3Nf
+a2V5ID0gYXJncy5hY2Nlc3Nfa2V5CmFwaSA9IGxvZ2ljbW9uaXRvcl9zZGsuTE1BcGkobG9naWNt
+b25pdG9yX3Nkay5BcGlDbGllbnQoY29uZmlndXJhdGlvbikpCgojIyMjIyMjIyMjIyMjIyMjIyMj
+IyMjIyMjIwojIE1BSU4gUFJPR1JBTQojIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwp0cnk6CiAg
+ICAjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwogICAgIyBCdWlsZCBncm91cHMgaWYgdGhleSBk
+b250JyBleGlzdAogICAgIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKICAgICMgVmFsaWRhdGUv
+Y3JlYXRlIHRoZSBwYXJlbnQgZ3JvdXAKICAgIGlmIGRlYnVnID49IDE6IHByaW50KCJDaGVja2lu
+ZyBpZiBwYXJlbnQgZ3JvdXAgZXhpc3RzLi4uIikKICAgIHBhcmVudFJlc291cmNlR3JvdXAgPSBh
+cGkuZ2V0X2RldmljZV9ncm91cF9saXN0KGZpbHRlcj0ibmFtZTpcIkRldmljZXMgYnkgQ29sbGVj
+dG9yXCIiLHNpemU9MTAwMCkKICAgIGlmIGxlbihwYXJlbnRSZXNvdXJjZUdyb3VwLml0ZW1zKSA-
+IDA6CiAgICAgICAgcGFyZW50UmVzb3VyY2VHcm91cElkID0gcGFyZW50UmVzb3VyY2VHcm91cC5p
+dGVtc1swXS5pZAogICAgICAgIGlmIGRlYnVnID49IDE6IHByaW50KGYiUGFyZW50IGdyb3VwIGV4
+aXN0cyAoaWQ9e3BhcmVudFJlc291cmNlR3JvdXBJZH0pLiIpCiAgICBlbHNlOgogICAgICAgIHBh
+cmVudFJlc291cmNlR3JvdXAgPSBhcGkuYWRkX2RldmljZV9ncm91cCh7Im5hbWUiOiJEZXZpY2Vz
+IGJ5IENvbGxlY3RvciIsInBhcmVudElkIjoxfSkKICAgICAgICBwYXJlbnRSZXNvdXJjZUdyb3Vw
+SWQgPSBwYXJlbnRSZXNvdXJjZUdyb3VwLmlkCiAgICAgICAgcGFyZW50X2dyb3VwX2NyZWF0ZWQg
+Kz0gMQogICAgICAgIGlmIGRlYnVnID49IDA6IHByaW50KGYiUGFyZW50IGdyb3VwIGRpZG4ndCBl
+eGlzdC4gQ3JlYXRlZCBpdC4gKGlkPXtwYXJlbnRSZXNvdXJjZUdyb3VwLmlkfSkiKQogICAgaWYg
+ZGVidWcgPj0gNDogcHJpbnQocGFyZW50UmVzb3VyY2VHcm91cCkKCiAgICAjIEdldCB0aGUgbGlz
+dCBvZiBjaGlsZCBncm91cHMgdW5kZXIgdGhlIHBhcmVudAogICAgY29sbGVjdG9yUmVzb3VyY2VH
+cm91cExpc3QgPSBhcGkuZ2V0X2RldmljZV9ncm91cF9saXN0KGZpbHRlcj1mInBhcmVudElkOntw
+YXJlbnRSZXNvdXJjZUdyb3VwSWR9IikKICAgIGlmIGRlYnVnID49IDQ6IHByaW50KGNvbGxlY3Rv
+clJlc291cmNlR3JvdXBMaXN0KQogICAgY29sbGVjdG9yUmVzb3VyY2VHcm91cHMgPSB7eC5uYW1l
+IDogeCBmb3IgeCBpbiBjb2xsZWN0b3JSZXNvdXJjZUdyb3VwTGlzdC5pdGVtc30KICAgIGlmIGRl
+YnVnID49IDI6CiAgICAgICAgZm9yIGssdiBpbiBjb2xsZWN0b3JSZXNvdXJjZUdyb3Vwcy5pdGVt
+cygpOgogICAgICAgICAgICBwcmludChmIkNvbGxlY3RvciByZXNvdXJjZSBncm91cDoge2t9IikK
+ICAgICAgICAgICAgaWYgZGVidWcgPj0gMzoKICAgICAgICAgICAgICAgIGZvciBqLHUgaW4gdi50
+b19kaWN0KCkuaXRlbXMoKTogcHJpbnQoZiIgIHtqfToge3V9IikKCiAgICAjIEZldGNoIHRoZSBj
+b2xsZWN0b3IgZ3JvdXBzCiAgICBpZiBkZWJ1ZyA-PSAxOiBwcmludCgiRmV0Y2hpbmcgY29sbGVj
+dG9yIGdyb3Vwcy4uLiIpCiAgICBjb2xsZWN0b3JSZWFsR3JvdXBMaXN0ID0gYXBpLmdldF9jb2xs
+ZWN0b3JfZ3JvdXBfbGlzdChmaWVsZHM9ImlkLG5hbWUsZGVzY3JpcHRpb24sbnVtT2ZDb2xsZWN0
+b3JzIixzaXplPTEwMDApCiAgICBjb2xsZWN0b3JSZWFsR3JvdXBzID0ge3gubmFtZSA6IHggZm9y
+IHggaW4gY29sbGVjdG9yUmVhbEdyb3VwTGlzdC5pdGVtc30KICAgIGlmIGRlYnVnID49IDI6CiAg
+ICAgICAgZm9yIGssdiBpbiBjb2xsZWN0b3JSZWFsR3JvdXBzLml0ZW1zKCk6CiAgICAgICAgICAg
+IHByaW50KGYiQ29sbGVjdG9yIGdyb3VwOiB7a30iKQogICAgICAgICAgICBpZiBkZWJ1ZyA-PSAz
+OgogICAgICAgICAgICAgICAgZm9yIGosdSBpbiB2LnRvX2RpY3QoKS5pdGVtcygpOiBwcmludChm
+IiAge2p9OiB7dX0iKQoKICAgICMgdmFsaWRhdGUvY3JlYXRlIHRoZSBjb2xsZWN0b3IgZ3JvdXBz
+IGFzIHJlc291cmNlIGdyb3VwcwogICAgaWYgZGVidWcgPj0gMTogcHJpbnQoIlZhbGlkYXRpbmcv
+Y3JlYXRpbmcgY29sbGVjdG9yIHJlc291cmNlIGdyb3Vwcy4uLiIpCiAgICBpZiBkZWJ1ZyA-PSAy
+OiBwcmludChmIkNvbGxlY3RvciBSZXNvdXJjZSBHcm91cHM6IHtjb2xsZWN0b3JSZXNvdXJjZUdy
+b3Vwcy5rZXlzKCl9IikKICAgIGZvciBrLHYgaW4gY29sbGVjdG9yUmVhbEdyb3Vwcy5pdGVtcygp
+OgogICAgICAgIGlmIGRlYnVnID49IDI6IHByaW50KGYiQ2hlY2tpbmcgdGhhdCByZXNvdXJjZSBn
+cm91cCBmb3IgXCJ7a31cIiBleGlzdHMuLi4iKQogICAgICAgIGlmIGsgaW4gY29sbGVjdG9yUmVz
+b3VyY2VHcm91cHMua2V5cygpOgogICAgICAgICAgICBpZiBkZWJ1ZyA-PSAyOiBwcmludChmIiAg
+Q29sbGVjdG9yIHJlc291cmNlIGdyb3VwIGV4aXN0cyBmb3IgY29sbGVjdG9yIFwie2t9XCIiKQog
+ICAgICAgIGVsc2U6CiAgICAgICAgICAgIGlmIGRlYnVnID49IDE6IHByaW50KGYiICBDb2xsZWN0
+b3IgcmVzb3VyY2UgZ3JvdXAgZG9lc24ndCBleGlzdCBmb3IgY29sbGVjdG9yIFwie2t9XCIiKQog
+ICAgICAgICAgICBuZXdDb2xsZWN0b3JSZXNvdXJjZUdyb3VwID0gYXBpLmFkZF9kZXZpY2VfZ3Jv
+dXAoeyJuYW1lIjprLCAicGFyZW50SWQiOiBwYXJlbnRSZXNvdXJjZUdyb3VwSWR9KQogICAgICAg
+ICAgICBjb2xsZWN0b3JfZ3JvdXBfZ3JvdXBfY3JlYXRlZCArPSAxCiAgICAgICAgICAgIGlmIGRl
+YnVnID49IDE6IHByaW50KGYiICBDb2xsZWN0b3IgcmVzb3VyY2UgZ3JvdXAgZGlkbid0IGV4aXN0
+LiBDcmVhdGVkIGl0ICh7bmV3Q29sbGVjdG9yUmVzb3VyY2VHcm91cC5pZH0pIikKCiAgICAjIHJl
+ZnJlc2ggdGhlIGNvbGxlY3RvciByZXNvdXJjZSBncm91cCBsaXN0CiAgICBjb2xsZWN0b3JSZXNv
+dXJjZUdyb3VwTGlzdCA9IGFwaS5nZXRfZGV2aWNlX2dyb3VwX2xpc3QoZmlsdGVyPWYicGFyZW50
+SWQ6e3BhcmVudFJlc291cmNlR3JvdXBJZH0iKQogICAgaWYgZGVidWcgPj0gNDogcHJpbnQoY29s
+bGVjdG9yUmVzb3VyY2VHcm91cExpc3QpCiAgICBjb2xsZWN0b3JSZXNvdXJjZUdyb3VwcyA9IHt4
+Lm5hbWUgOiB4IGZvciB4IGluIGNvbGxlY3RvclJlc291cmNlR3JvdXBMaXN0Lml0ZW1zfQoKICAg
+ICMgR2V0IHRoZSBsaXN0IG9mIGNvbGxlY3RvcnMgKHdpdGggYWxsIHRoZWlyIGF0dHJpYnV0ZXMp
+CiAgICBjb2xsZWN0b3JMaXN0ID0gYXBpLmdldF9jb2xsZWN0b3JfbGlzdCgpCiAgICBjID0gbGVu
+KGNvbGxlY3Rvckxpc3QuaXRlbXMpCiAgICBpZiBkZWJ1ZyA-PSAxOiBwcmludChmIntsZW4oY29s
+bGVjdG9yTGlzdC5pdGVtcyl9IGNvbGxlY3RvcnMgZm91bmQuIikKICAgIGZvciBjb2xsZWN0b3Ig
+aW4gY29sbGVjdG9yTGlzdC5pdGVtczoKICAgICAgICBpZiBkZWJ1ZyA-PSAzOgogICAgICAgICAg
+ICBmb3IgY29sbGVjdG9yIGluIGNvbGxlY3Rvckxpc3QuaXRlbXM6IHByaW50KGNvbGxlY3RvcikK
+ICAgICAgICBpZiBkZWJ1ZyA-PSAwOiBwcmludChmIkluc3BlY3RpbmcgY29sbGVjdG9yIFwie2Nv
+bGxlY3Rvci5kZXNjcmlwdGlvbn1cIiAoR3JvdXA6IFwie2NvbGxlY3Rvci5jb2xsZWN0b3JfZ3Jv
+dXBfbmFtZX1cIikiKQogICAgICAgIGNvbGxlY3RvckNsZWFuRGVzY3JpcHRpb24gPSBjb2xsZWN0
+b3IuZGVzY3JpcHRpb24ucmVwbGFjZSgiXFwiLCJfIikucmVwbGFjZSgiLCIsIl8iKQogICAgICAg
+IGlmIGRlYnVnID49IDI6CiAgICAgICAgICAgIHByaW50KGYiICBDaGVja2luZyBpZiBkeW5hbWlj
+IGdyb3VwIGV4aXN0cyBmb3IgY29sbGVjdG9yIHtjb2xsZWN0b3IuZGVzY3JpcHRpb259IikKICAg
+ICAgICAgICAgaWYgZGVidWcgPj0gMzoKICAgICAgICAgICAgICAgIGZvciB4IGluIGNvbGxlY3Rv
+clJlc291cmNlR3JvdXBzW2NvbGxlY3Rvci5jb2xsZWN0b3JfZ3JvdXBfbmFtZV0uc3ViX2dyb3Vw
+czoKICAgICAgICAgICAgICAgICAgICBwcmludChmInt4LmlkfToge3gubmFtZX0gKHt4LmFwcGxp
+ZXNfdG99KSIpCiAgICAgICAgaWYgY29sbGVjdG9yQ2xlYW5EZXNjcmlwdGlvbiBpbiBbeC5uYW1l
+IGZvciB4IGluIGNvbGxlY3RvclJlc291cmNlR3JvdXBzW2NvbGxlY3Rvci5jb2xsZWN0b3JfZ3Jv
+dXBfbmFtZV0uc3ViX2dyb3Vwc106CiAgICAgICAgICAgIHdoaWNoZ3JvdXAgPSBbeC5uYW1lIGZv
+ciB4IGluIGNvbGxlY3RvclJlc291cmNlR3JvdXBzW2NvbGxlY3Rvci5jb2xsZWN0b3JfZ3JvdXBf
+bmFtZV0uc3ViX2dyb3Vwc10uaW5kZXgoY29sbGVjdG9yQ2xlYW5EZXNjcmlwdGlvbikKICAgICAg
+ICAgICAgY29sbGVjdG9yUmVzb3VyY2VHcm91cElkID0gY29sbGVjdG9yUmVzb3VyY2VHcm91cHNb
+Y29sbGVjdG9yLmNvbGxlY3Rvcl9ncm91cF9uYW1lXS5zdWJfZ3JvdXBzW3doaWNoZ3JvdXBdLmlk
+CiAgICAgICAgICAgIGNvbGxlY3RvclJlc291cmNlR3JvdXBBcHBsaWVzVG8gPSBjb2xsZWN0b3JS
+ZXNvdXJjZUdyb3Vwc1tjb2xsZWN0b3IuY29sbGVjdG9yX2dyb3VwX25hbWVdLnN1Yl9ncm91cHNb
+d2hpY2hncm91cF0uYXBwbGllc190bwogICAgICAgICAgICBpZiBkZWJ1ZyA-PSAxOiBwcmludChm
+IiAge2NvbGxlY3Rvci5kZXNjcmlwdGlvbn0gZHluYW1pYyBncm91cCBleGlzdHMgdW5kZXIge2Nv
+bGxlY3Rvci5jb2xsZWN0b3JfZ3JvdXBfbmFtZX0gcmVzb3VyY2UgZm9sZGVyLiIpCiAgICAgICAg
+ICAgIGlmIGRlYnVnID49IDI6IHByaW50KGYiICBDaGVja2luZyBhcHBsaWVzVG8gZm9yIHJlc291
+cmNlIGdyb3VwIFwie2NvbGxlY3RvckNsZWFuRGVzY3JpcHRpb259XCIgKGlkOiB7Y29sbGVjdG9y
+UmVzb3VyY2VHcm91cElkfSkiKQogICAgICAgICAgICBpZiBjb2xsZWN0b3JSZXNvdXJjZUdyb3Vw
+QXBwbGllc1RvICE9IGYic3lzdGVtLnByZWZjb2xsZWN0b3JpZCA9PSBcIntjb2xsZWN0b3IuaWR9
+XCIiOgogICAgICAgICAgICAgICAgaWYgZGVidWcgPj0gMTogcHJpbnQoZiIgIEFwcGxpZXNUbyBl
+eHByZXNzaW9uIGlzIG5vdCBjb3JyZWN0OiB7Y29sbGVjdG9yUmVzb3VyY2VHcm91cEFwcGxpZXNU
+b30iKQogICAgICAgICAgICAgICAgaWQgPSBjb2xsZWN0b3JSZXNvdXJjZUdyb3VwSWQKICAgICAg
+ICAgICAgICAgIGJvZHkgPSB7Im5hbWUiOmNvbGxlY3RvckNsZWFuRGVzY3JpcHRpb24sICJhcHBs
+aWVzVG8iOiBmInN5c3RlbS5wcmVmY29sbGVjdG9yaWQgPT0gXCJ7Y29sbGVjdG9yLmlkfVwiIn0K
+ICAgICAgICAgICAgICAgIHJlc3VsdCA9IGFwaS5wYXRjaF9kZXZpY2VfZ3JvdXBfYnlfaWQoaWQs
+Ym9keSkKICAgICAgICAgICAgICAgIGlmIGRlYnVnID49IDA6IHByaW50KGYiICB7Y29sbGVjdG9y
+LmRlc2NyaXB0aW9ufSBncm91cCBhdCBcIntyZXN1bHQuZnVsbF9wYXRofVwiIHdpdGggaWQge2lk
+fSB1cGRhdGVkIHRvIGhhdmUgdGhlIGNvcnJlY3QgQXBwbGllc1RvOiB7cmVzdWx0LmFwcGxpZXNf
+dG99IikKICAgICAgICAgICAgICAgIGlmIGRlYnVnID49IDQ6IHByaW50KHJlc3VsdCkKICAgICAg
+ICAgICAgZWxzZToKICAgICAgICAgICAgICAgIGlmIGRlYnVnID49IDE6IHByaW50KGYiICBBcHBs
+aWVzVG8gZXhwcmVzc2lvbiBpcyBjb3JyZWN0LiBObyBjaGFuZ2VzIG5lZWRlZC4iKQogICAgICAg
+IGVsc2U6CiAgICAgICAgICAgIGlmIGRlYnVnID49IDE6IHByaW50KGYiICBDb3VsZCBub3QgZmlu
+ZCBhIHJlc291cmNlIGdyb3VwIGZvciBcIntjb2xsZWN0b3JDbGVhbkRlc2NyaXB0aW9ufVwiIikK
+ICAgICAgICAgICAgYm9keSA9IHsKICAgICAgICAgICAgICAgICJuYW1lIjpjb2xsZWN0b3JDbGVh
+bkRlc2NyaXB0aW9uLAogICAgICAgICAgICAgICAgInBhcmVudElkIjogY29sbGVjdG9yUmVzb3Vy
+Y2VHcm91cHNbY29sbGVjdG9yLmNvbGxlY3Rvcl9ncm91cF9uYW1lXS5pZCwKICAgICAgICAgICAg
+ICAgICJhcHBsaWVzVG8iOiBmInN5c3RlbS5wcmVmY29sbGVjdG9yaWQgPT0gXCJ7Y29sbGVjdG9y
+LmlkfVwiIgogICAgICAgICAgICB9CiAgICAgICAgICAgIGlmIGRlYnVnID49IDQ6IHBwcmludChi
+b2R5KQogICAgICAgICAgICByZXN1bHQgPSBhcGkuYWRkX2RldmljZV9ncm91cChib2R5KQogICAg
+ICAgICAgICBjb2xsZWN0b3JfZHluYW1pY19ncm91cF9jcmVhdGVkICs9IDEKICAgICAgICAgICAg
+aWYgZGVidWcgPj0gMDogcHJpbnQoZiIgIHtjb2xsZWN0b3IuZGVzY3JpcHRpb259IGdyb3VwIGNy
+ZWF0ZWQgYXQge3Jlc3VsdC5mdWxsX3BhdGh9IHdpdGggaWQge3Jlc3VsdC5pZH0iKQogICAgICAg
+ICAgICBpZiBkZWJ1ZyA-PSA0OiBwcmludChyZXN1bHQpCgogICAgI3JlZnJlc2ggdGhlIGNvbGxl
+Y3RvciBncm91cCBsaXN0CiAgICBjb2xsZWN0b3JSZXNvdXJjZUdyb3VwTGlzdCA9IGFwaS5nZXRf
+ZGV2aWNlX2dyb3VwX2xpc3QoZmlsdGVyPWYiZnVsbFBhdGh-XCJEZXZpY2VzIGJ5IENvbGxlY3Rv
+ci8qLypcIiIpCiAgICBpZiBkZWJ1ZyA-PSA0OiBwcmludChjb2xsZWN0b3JSZXNvdXJjZUdyb3Vw
+TGlzdCkKICAgIGNvbGxlY3RvclJlc291cmNlR3JvdXBzID0ge3gubmFtZSA6IHggZm9yIHggaW4g
+Y29sbGVjdG9yUmVzb3VyY2VHcm91cExpc3QuaXRlbXN9CiAgICBpZiBkZWJ1ZyA-PSAzOgogICAg
+ICAgIGZvciBrLHYgaW4gY29sbGVjdG9yUmVzb3VyY2VHcm91cHMuaXRlbXMoKToKICAgICAgICAg
+ICAgcHJpbnQoZiJ7a306XG4gIHt2fSIpCgogICAgIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMK
+ICAgICMgQ2FzY2FkZSBTRFQgZnJvbSBjb2xsZWN0b3IgdG8gZGV2aWNlcyBpdCBtb25pdG9ycwog
+ICAgIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMKICAgIGlmIGNhc2NhZGVTRFQ6CiAgICAgICAg
+Zm9yIGNvbGxlY3RvciBpbiBjb2xsZWN0b3JMaXN0Lml0ZW1zOgogICAgICAgICAgICBpZiBkZWJ1
+ZyA-PSAwOiBwcmludChmIlN5bmNocm9uaXppbmcgU0RUIGZyb20gXCJ7Y29sbGVjdG9yLmRlc2Ny
+aXB0aW9ufVwiIHRvIGRldmljZXMgKGVuYWJsZS9kaXNhYmxlIGFsZXJ0aW5nKSIpCiAgICAgICAg
+ICAgICNwdXQgdGhlIGdyb3VwIGluIFNEVCAobm90IHJlYWxseSwganVzdCBkaXNhYmxlIGFsZXJ0
+aW5nKSBpZiB0aGUgY29sbGVjdG9yJ3MgaW4gU0RUCiAgICAgICAgICAgIGNvbGxlY3RvckNsZWFu
+RGVzY3JpcHRpb24gPSBjb2xsZWN0b3IuZGVzY3JpcHRpb24ucmVwbGFjZSgiXFwiLCJfIikucmVw
+bGFjZSgiLCIsIl8iKQogICAgICAgICAgICBpZCA9IGNvbGxlY3RvclJlc291cmNlR3JvdXBzW2Nv
+bGxlY3RvckNsZWFuRGVzY3JpcHRpb25dLmlkCiAgICAgICAgICAgIGJvZHkgPSBjb2xsZWN0b3JS
+ZXNvdXJjZUdyb3Vwc1tjb2xsZWN0b3JDbGVhbkRlc2NyaXB0aW9uXQogICAgICAgICAgICBpZiBj
+b2xsZWN0b3IuaW5fc2R0OgogICAgICAgICAgICAgICAgaWYgZGVidWcgPj0gMTogcHJpbnQoZiIg
+IENvbGxlY3RvciB7Y29sbGVjdG9yLmRlc2NyaXB0aW9ufSBpcyBpbiBTRFQuIikKICAgICAgICAg
+ICAgICAgIGlmIGNvbGxlY3RvclJlc291cmNlR3JvdXBzW2NvbGxlY3RvckNsZWFuRGVzY3JpcHRp
+b25dLmRpc2FibGVfYWxlcnRpbmcgPT0gRmFsc2U6CiAgICAgICAgICAgICAgICAgICAgaWYgZGVi
+dWcgPj0gMTogcHJpbnQoZiIgIFNldHRpbmcgZ3JvdXAge2NvbGxlY3RvclJlc291cmNlR3JvdXBz
+W2NvbGxlY3RvckNsZWFuRGVzY3JpcHRpb25dLmlkfSB0byBub3QgYWxhcm0uIikKICAgICAgICAg
+ICAgICAgICAgICBib2R5LmRpc2FibGVfYWxlcnRpbmcgPSBUcnVlCiAgICAgICAgICAgICAgICAg
+ICAgcmVzdWx0ID0gYXBpLnVwZGF0ZV9kZXZpY2VfZ3JvdXBfYnlfaWQoaWQsYm9keSkKICAgICAg
+ICAgICAgICAgICAgICBjX2FsZXJ0X2UyZCArPSAxCiAgICAgICAgICAgICAgICAgICAgaWYgZGVi
+dWcgPj0gMDogcHJpbnQoZiIgIHtjb2xsZWN0b3IuZGVzY3JpcHRpb259IGlzIG5vdyBpbiBTRFQu
+IHtyZXN1bHQuZnVsbF9wYXRofSBncm91cCB1cGRhdGVkIHRvIGRpc2FibGUgYWxlcnRpbmcuIikK
+ICAgICAgICAgICAgICAgICAgICBpZiBkZWJ1ZyA-PSA0OiBwcmludChyZXN1bHQpCiAgICAgICAg
+ICAgICAgICBlbHNlOgogICAgICAgICAgICAgICAgICAgIGlmIGRlYnVnID49IDE6IHByaW50KGYi
+ICB7Y29sbGVjdG9yLmRlc2NyaXB0aW9ufSBncm91cCBhbGVydGluZyBpcyBhbHJlYWR5IGRpc2Fi
+bGVkLiIpCiAgICAgICAgICAgICAgICBjX2Rpc2FibGVkICs9IDEKICAgICAgICAgICAgZWxzZToK
+ICAgICAgICAgICAgICAgIGlmIGRlYnVnID49IDE6IHByaW50KGYiICBDb2xsZWN0b3Ige2NvbGxl
+Y3Rvci5kZXNjcmlwdGlvbn0gaXMgbm90IGluIFNEVC4iKQogICAgICAgICAgICAgICAgaWYgY29s
+bGVjdG9yUmVzb3VyY2VHcm91cHNbY29sbGVjdG9yQ2xlYW5EZXNjcmlwdGlvbl0uZGlzYWJsZV9h
+bGVydGluZyA9PSBUcnVlOgogICAgICAgICAgICAgICAgICAgIGlmIGRlYnVnID49IDE6IHByaW50
+KGYiICBTZXR0aW5nIGdyb3VwIHtjb2xsZWN0b3JSZXNvdXJjZUdyb3Vwc1tjb2xsZWN0b3JDbGVh
+bkRlc2NyaXB0aW9uXS5pZH0gdG8gbm90IGFsYXJtLiIpCiAgICAgICAgICAgICAgICAgICAgYm9k
+eS5kaXNhYmxlX2FsZXJ0aW5nID0gRmFsc2UKICAgICAgICAgICAgICAgICAgICByZXN1bHQgPSBh
+cGkudXBkYXRlX2RldmljZV9ncm91cF9ieV9pZChpZCxib2R5KQogICAgICAgICAgICAgICAgICAg
+IGNfYWxlcnRfZDJlICs9IDEKICAgICAgICAgICAgICAgICAgICBpZiBkZWJ1ZyA-PSAwOiBwcmlu
+dChmIiAge2NvbGxlY3Rvci5kZXNjcmlwdGlvbn0gaXMgbm8gbG9uZ2VyIGluIFNEVC4ge3Jlc3Vs
+dC5mdWxsX3BhdGh9IGdyb3VwIHVwZGF0ZWQgdG8gZW5hYmxlIGFsZXJ0aW5nLiIpCiAgICAgICAg
+ICAgICAgICAgICAgaWYgZGVidWcgPj0gNDogcHJpbnQocmVzdWx0KQogICAgICAgICAgICAgICAg
+ZWxzZToKICAgICAgICAgICAgICAgICAgICBpZiBkZWJ1ZyA-PSAxOiBwcmludChmIiAge2NvbGxl
+Y3Rvci5kZXNjcmlwdGlvbn0gZ3JvdXAgYWxlcnRpbmcgaXMgYWxyZWFkeSBlbmFibGVkLiIpCiAg
+ICAgICAgICAgICAgICBjX2VuYWJsZWQgKz0gMQogICAgZWxzZToKICAgICAgICBwcmludCgiTm90
+IGNhc2NhZGluZyBjb2xsZWN0b3IgU0RUcyB0byB0aGUgZGV2aWNlcyB0aGV5IGFyZSBtb25pdG9y
+aW5nIikKCiAgICBpZiBkZWJ1ZyA8IDA6CiAgICAgICAgcHJpbnQoZiJwYXJlbnRfZ3JvdXBfY3Jl
+YXRlZDoge3BhcmVudF9ncm91cF9jcmVhdGVkfSIpCiAgICAgICAgcHJpbnQoZiJjb2xsZWN0b3Jf
+Z3JvdXBfZ3JvdXBfY3JlYXRlZDoge2NvbGxlY3Rvcl9ncm91cF9ncm91cF9jcmVhdGVkfSIpCiAg
+ICAgICAgcHJpbnQoZiJjb2xsZWN0b3JfZHluYW1pY19ncm91cF9jcmVhdGVkOiB7Y29sbGVjdG9y
+X2R5bmFtaWNfZ3JvdXBfY3JlYXRlZH0iKQogICAgICAgIHByaW50KGYiY19hbGVydF9lMmQ6IHtj
+X2FsZXJ0X2UyZH0iKQogICAgICAgIHByaW50KGYiY19hbGVydF9kMmU6IHtjX2FsZXJ0X2QyZX0i
+KQogICAgICAgIHByaW50KGYiYzoge2N9IikKICAgICAgICBwcmludChmImNfZGlzYWJsZWQ6IHtj
+X2Rpc2FibGVkfSIpCiAgICAgICAgcHJpbnQoZiJjX2VuYWJsZWQ6IHtjX2VuYWJsZWR9IikKCmV4
+Y2VwdCBsb2dpY21vbml0b3Jfc2RrLnJlc3QuQXBpRXhjZXB0aW9uIGFzIGU6CiAgICBwcmludChm
+IkV4Y2VwdGlvbiB3aGVuIGNhbGxpbmcgTE1BcGk6ICR7ZX0iKQo
+]]></content>
+        </script>
+        </scripts>
+    </entry>
+</feed>
