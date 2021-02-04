@@ -1,5 +1,6 @@
 import logicmonitor_sdk, json
 from os import path
+import __main__ as main
 
 credsfile = "creds.json"
 
@@ -7,7 +8,7 @@ if path.exists(credsfile):
     with open(credsfile) as f: creds = json.load(f)
     if len(creds) == 0:
         print(f"No credentials found in file {credsfile}.")
-    elif len(creds) == 1:
+    elif len(creds) == 1 or hasattr(main,'__file__'):
         creds = list(creds.values())[0]
     elif len(creds) > 1:
         print(f"The following credentials were found in {credsfile}.")
